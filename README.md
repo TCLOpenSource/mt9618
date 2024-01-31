@@ -1,2 +1,2 @@
-# mt9653_na
+# mt9618
 TCL TV Kernel OpenSource
