@@ -1,0 +1,7 @@
+. ${ROOT_DIR}/${KERNEL_VER}/build.config.aarch64
+. ${ROOT_DIR}/${KERNEL_VER}/build.config.mtktv
+
+KMI_SYMBOL_LIST=android/abi_gki_aarch64_mtktv
+
+TRIM_NONLISTED_KMI=1
+KMI_ENFORCED=1

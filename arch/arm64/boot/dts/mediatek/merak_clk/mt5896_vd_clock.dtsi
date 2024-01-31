@@ -1,0 +1,84 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	vd_en_reg: vd_en_reg_swen {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_gate_en";
+		num = <CLK_VD_EN_NR>;
+
+		cmbai2vd {
+			id = <CLK_VD_EN_CMBAI2VD>;
+			parent = "cmbai2vd_int_ck";
+		};
+
+		cmbao2vd {
+			id = <CLK_VD_EN_CMBAO2VD>;
+			parent = "cmbao2vd_int_ck";
+		};
+
+		cmbbi2vd {
+			id = <CLK_VD_EN_CMBBI2VD>;
+			parent = "cmbbi2vd_int_ck";
+		};
+
+		cmbbo2vd {
+			id = <CLK_VD_EN_CMBBO2VD>;
+			parent = "cmbbo2vd_int_ck";
+		};
+
+		mcu_mail02vd {
+			id = <CLK_VD_EN_MCU_MAIL02VD>;
+			parent = "mcu_mail02vd_int_ck";
+		};
+
+		mcu_mail12vd {
+			id = <CLK_VD_EN_MCU_MAIL12VD>;
+			parent = "mcu_mail12vd_int_ck";
+		};
+
+		smi2mcu_m2mcu {
+			id = <CLK_VD_EN_SMI2MCU_M2MCU>;
+			parent = "smi2mcu_m2mcu_int_ck";
+		};
+
+		smi2vd {
+			id = <CLK_VD_EN_SMI2VD>;
+			parent = "smi2vd_int_ck";
+		};
+
+		vd2x2vd {
+			id = <CLK_VD_EN_VD2X2VD>;
+			parent = "vd2x2vd_int_ck";
+		};
+
+		vd_32fsc2vd {
+			id = <CLK_VD_EN_VD_32FSC2VD>;
+			parent = "vd_32fsc2vd_int_ck";
+		};
+
+		vd2vd {
+			id = <CLK_VD_EN_VD2VD>;
+			parent = "vd2vd_int_ck";
+		};
+
+		xtal_12m2vd {
+			id = <CLK_VD_EN_XTAL_12M2VD>;
+			parent = "xtal_12m2vd_int_ck";
+		};
+
+		xtal_12m2mcu_m2riu {
+			id = <CLK_VD_EN_XTAL_12M2MCU_M2RIU>;
+			parent = "xtal_12m2mcu_m2riu_int_ck";
+		};
+
+		xtal_12m2mcu_m2mcu {
+			id = <CLK_VD_EN_XTAL_12M2MCU_M2MCU>;
+			parent = "xtal_12m2mcu_m2mcu_int_ck";
+		};
+
+	};
+};
+

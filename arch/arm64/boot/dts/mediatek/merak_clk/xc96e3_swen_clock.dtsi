@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+
+/{
+	xc96e3_OOXX: xc96e3_swen {
+		#clock-cells = <1>;
+
+	};
+};

@@ -1,0 +1,516 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mtk_srccap0: mtk_srccap0 {
+		compatible = "mediatek,srccap0";
+		device_node_num = <0xFF>; /* 0xFF for unspecified node num */
+		interrupts-extended = <&mtk_intc1_irq_low 0x0 0x4 0x4>,   /*phy*/
+				      <&mtk_intc1_irq_low 0x0 0x5 0x4>,   /*mac*/
+				      <&mtk_intc1_irq_high 0x0 0x19 0x4>, /*pkt que*/
+				      <&mtk_intc2_irq_high 0x0 0x1b 0x4>, /*pm sqh all wk pm27*/
+				      <&mtk_intc2_irq_high 0x0 0x1d 0x4>, /*pm scdc 29*/
+				      <&mtk_intc2_fiq_high 0x0 0xf 0x4>,  /*pm clk det fiq0*/
+				      <&mtk_intc2_fiq_high 0x0 0x10 0x4>, /*pm clk det fiq1*/
+				      <&mtk_intc2_fiq_high 0x0 0x11 0x4>, /*pm clk det fiq2*/
+				      <&mtk_intc2_fiq_high 0x0 0x12 0x4>, /*pm clk det fiq3*/
+				      <&mtk_intc0_irq 0x0 0x23 0x4>,	  /*xc_int*/
+				      <&mtk_intc0_irq 0x0 0x1b 0x4>;      /*vbi*/
+		iommus = <&iommu 0>;
+		clocks =
+			/* ip1 xtal clk */
+			<&scip_mux_gate CLK_SCIP_XTAL_IP1_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_12M_CK>, /* 12m */
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+
+			/* hdmi src clk */
+			<&scip_mux_gate CLK_SCIP_SIDCLK_HD0_INT_CK>,
+			<&scip_mux_gate CLK_SCIP_XTAL_IP1_INT_CK>, /* hv mode */
+			<&sc_fix CLK_XC_HDMI0_CK>, /* de mode */
+
+			/* hdmi2 src clk */
+			<&scip_mux_gate CLK_SCIP_SIDCLK_HD1_INT_CK>,
+			<&scip_mux_gate CLK_SCIP_XTAL_IP1_INT_CK>, /* hv mode */
+			<&sc_fix CLK_XC_HDMI1_CK>, /* de mode */
+
+			/* hdmi3 src clk */
+			<&scip_mux_gate CLK_SCIP_SIDCLK_HD2_INT_CK>,
+			<&scip_mux_gate CLK_SCIP_XTAL_IP1_INT_CK>, /* hv mode */
+			<&sc_fix CLK_XC_HDMI2_CK>, /* de mode */
+
+			/* hdmi4 src clk */
+			<&scip_mux_gate CLK_SCIP_SIDCLK_HD3_INT_CK>,
+			<&scip_mux_gate CLK_SCIP_XTAL_IP1_INT_CK>, /* hv mode */
+			<&sc_fix CLK_XC_HDMI3_CK>, /* de mode */
+
+			/* adc clk */
+			<&scip_mux_gate CLK_SCIP_XC_ADC_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_ADC_CK>, /* adc */
+			<&sc_fix CLK_XC_CLK_144_BUF_CK>,
+
+			/* hdmi clk */
+			<&scip_mux_gate CLK_SCIP_XC_HDMI0_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_HDMI0_CK>, /* hdmi */
+			<&topgen_fix_factor CLK_TOPGEN_SYS1PLL_VCOD2_624M_CK>,
+
+			/* hdmi2 clk */
+			<&scip_mux_gate CLK_SCIP_XC_HDMI1_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_HDMI1_CK>, /* hdmi2 */
+			<&topgen_fix_factor CLK_TOPGEN_SYS1PLL_VCOD2_624M_CK>,
+
+			/* hdmi3 clk */
+			<&scip_mux_gate CLK_SCIP_XC_HDMI2_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_HDMI2_CK>, /* hdmi3 */
+			<&topgen_fix_factor CLK_TOPGEN_SYS1PLL_VCOD2_624M_CK>,
+
+			/* hdmi4 clk */
+			<&scip_mux_gate CLK_SCIP_XC_HDMI3_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_HDMI3_CK>, /* hdmi4 */
+			<&topgen_fix_factor CLK_TOPGEN_SYS1PLL_VCOD2_624M_CK>,
+
+			/* ipdma0 clk */
+			<&scip_mux_gate CLK_SCIP_XC_ID0_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_HDMI0_CK>, /* hdmi */
+			<&sc_fix CLK_XC_HDMI1_CK>, /* hdmi2 */
+			<&sc_fix CLK_XC_HDMI2_CK>, /* hdmi3 */
+			<&sc_fix CLK_XC_HDMI3_CK>, /* hdmi4 */
+			<&topgen_mux_gate CLK_TOPGEN_VD_CK>, /* vd */
+			<&sc_fix CLK_XC_ADC_CK>, /* adc */
+			<&topgen_fix_factor CLK_TOPGEN_SYS1PLL_VCOD2_624M_CK>,
+
+			/* vd clk */
+			<&vd_en_reg CLK_VD_EN_CMBAI2VD>,
+			<&vd_en_reg CLK_VD_EN_CMBAO2VD>,
+			<&vd_en_reg CLK_VD_EN_CMBBI2VD>,
+			<&vd_en_reg CLK_VD_EN_CMBBO2VD>,
+			<&vd_en_reg CLK_VD_EN_MCU_MAIL02VD>,
+			<&vd_en_reg CLK_VD_EN_MCU_MAIL12VD>,
+			<&vd_en_reg CLK_VD_EN_SMI2MCU_M2MCU>,
+			<&vd_en_reg CLK_VD_EN_SMI2VD>,
+			<&vd_en_reg CLK_VD_EN_VD2X2VD>,
+			<&vd_en_reg CLK_VD_EN_VD_32FSC2VD>,
+			<&vd_en_reg CLK_VD_EN_VD2VD>,
+			<&vd_en_reg CLK_VD_EN_XTAL_12M2VD>,
+			<&vd_en_reg CLK_VD_EN_XTAL_12M2MCU_M2RIU>,
+			<&vd_en_reg CLK_VD_EN_XTAL_12M2MCU_M2MCU>,
+			<&vd_fix CLK_VD_ATV_INPUT>,
+			<&vd_fix CLK_VD_CVBS_INPUT>,
+			<&vd_mux_gate CLK_VD_ATV_CVBS_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_HDMI_R2_CK>,
+			<&hdmi_mux_gate CLK_HDMI_MCU_HDMI_INT_CK>,
+			<&hdmirx_clkmg CLK_HDMI_EN_CLK_XTAL_HDMI_122MAC>,
+			<&hdmirx_clkmg CLK_HDMI_EN_CLK_R2_HDMI2MAC>,
+			<&hdmirx_clkmg CLK_HDMI_EN_SMI2MAC>,
+
+			/* adc table clk swen */
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADC2ADC>, /*swen 0*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADC2MIU2ADC>, /*swen 1*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADC2MIUSC2ADC>, /*swen 2*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADC2SC2ADC>, /*swen 3*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADCPLL2002ADC>, /*swen 4*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADCPLL4002ADC>, /*swen 5*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_B_ADC2ADC>, /*swen 6*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_B_INT2ADC>, /*swen 7*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CLKPLL2ADC>, /*swen 8*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CVBS_DAC_A_DIGITAL0_MUX2ADC>, /*swen 9*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CVBS_DAC_A_DIGITAL02ADC>, /*swen 10*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CVBS_DAC_A_DIGITAL12ADC>, /*swen 11*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_DIG_2162ADC>, /*swen 12*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_FBLANK2ADC>, /*swen 13*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_FSC_VD2ADC>, /*swen 14*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_G_ADC2ADC>, /*swen 15*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_G_INT2ADC>, /*swen 16*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ISOG2ADC>, /*swen 17*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_NCO_CLK2ADC>, /*swen 18*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_R_ADC2ADC>, /*swen 19*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_R_INT2ADC>, /*swen 20*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VD_ICLAMP2ADC>, /*swen 21*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VD_ICLAMP2VIDEO_ATOP>, /*swen 22*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VD_NCO_CLK2ADC>, /*swen 23*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VD2ADC>, /*swen 24*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VDPLL4002ADC>, /*swen 25*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_XTAL12_4INTERRUPT2ADC>, /*swen 26*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_XTAL12_4PLUGDET2ADC>, /*swen 27*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_XTAL122ADC>, /*swen 28*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_XTAL242ADC>, /*swen 29*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_Y_ADC2ADC>, /*swen 30*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_Y_INT2ADC>, /*swen 31*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_YUV_ADC2ADC>, /*swen 32*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VD2MHEG5_ADC>, /*swen 33*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_VD2X2MHEG5_ADC>, /*swen 34*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_ADCPLB_MPLL2ADC>, /*swen 35*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CLKD_ADC2ADC_TOP_DATA>, /*swen 36*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CLKD_ADC2GEMIU2ADC_TOP_DATA>, /*swen 37*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CLKD_ADC2SC2ADC_TOP_DATA>, /*swen 38*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CLKD_VD2ADC_TOP_DATA>, /*swen 39*/
+			<&nonpm_adc_OOXX CLK_NONPM_ADC_EN_CLKFSCX2_VD2ADC_TOP_DATA>, /*swen 40*/
+			<&pm_adc_OOXX CLK_PM_ADC_EN_SD2PM>, /*swen 41*/
+
+			/* adc table clk settings */
+			<&adcpll_mux_gate CLK_ADCPLL_CLKD_ADC_P_INT_CK>, /*setting 0*/
+			<&adcpll_mux_gate CLK_ADCPLL_CLKD_ATOP_INT_CK>, /*setting 1*/
+			<&adcpll_mux_gate CLK_ADCPLL_CLKD_ATOP_INTERNAL_INT_CK>, /*setting 2*/
+			<&adcpll_mux_gate CLK_ADCPLL_R_INT_INT_CK>, /*setting 3*/
+			<&adcpll_mux_gate CLK_ADCPLL_G_INT_INT_CK>, /*setting 4*/
+			<&adcpll_mux_gate CLK_ADCPLL_B_INT_INT_CK>, /*setting 5*/
+			<&adcpll_mux_gate CLK_ADCPLL_Y_INT_INT_CK>, /*setting 6*/
+			<&adcpll_mux_gate CLK_ADCPLL_R_ADC_INT_CK>, /*setting 7*/
+			<&adcpll_mux_gate CLK_ADCPLL_G_ADC_INT_CK>, /*setting 8*/
+			<&adcpll_mux_gate CLK_ADCPLL_B_ADC_INT_CK>, /*setting 9*/
+			<&adcpll_mux_gate CLK_ADCPLL_Y_ADC_INT_CK>, /*setting 10*/
+			<&adcpll_mux_gate CLK_ADCPLL_YUV_ADC_INT_CK>, /*setting 11*/
+			<&adcpll_mux_gate CLK_ADCPLL_ICLAMP_RGB_INT_CK>, /*setting 12*/
+			<&adcpll_mux_gate CLK_ADCPLL_ADC_INT_CK>, /*setting 13*/
+			<&adcpll_mux_gate CLK_ADCPLL_VD_INT_CK>, /*setting 14*/
+			<&adcpll_mux_gate CLK_ADCPLL_ADC2SC_INT_CK>, /*setting 15*/
+			<&adcpll_mux_gate CLK_ADCPLL_FBLANK_INT_CK>, /*setting 16*/
+			<&adcpll_mux_gate CLK_ADCPLL_FSCX2_FB2ATOP_INT_CK>, /*setting 17*/
+			<&adcpll_mux_gate CLK_ADCPLL_ADC2MIU_INT_CK>, /*setting 18*/
+			<&adcpll_mux_gate CLK_ADCPLL_ADC2MIUSC_INT_CK>, /*setting 19*/
+			<&pm_mux_gate CLK_PM_SD_INT_CK>, /*setting 20*/
+
+			/* adc table clk parents */
+			<&adcpll_mux_gate CLK_ADCPLL_CLKD_ATOP_INT_CK>, /*parent 0*/
+			<&ADC_fix CLK_ADC_CLKD_R_ATOP_CK>, /*parent 1*/
+			<&ADC_fix CLK_ADC_CLKD_G_ATOP_CK>, /*parent 2*/
+			<&ADC_fix CLK_ADC_CLKD_B_ATOP_CK>, /*parent 3*/
+			<&ADC_fix CLK_ADC_CLKD_VD_ATOP_CK>, /*parent 4*/
+			<&adcpll_mux_gate CLK_ADCPLL_CLKD_ATOP_INTERNAL_INT_CK>, /*parent 5*/
+			<&ADC_fix CLK_ADC_CLKD_VD_ATOP_INT_CK>, /*parent 6*/
+			<&ADC_fix CLK_ADC_CLKD_R_ATOP_INT_CK>, /*parent 7*/
+			<&ADC_fix CLK_ADC_CLKD_G_ATOP_INT_CK>, /*parent 8*/
+			<&ADC_fix CLK_ADC_CLKD_B_ATOP_INT_CK>, /*parent 9*/
+			<&ADC_fix CLK_ADC_CLKD_2ICLAMP_S_CK>, /*parent 10*/
+			<&ADC_fix CLK_ADC_CLK_DIG_108_CK>, /*parent 11*/
+			<&adcpll_mux_gate CLK_ADCPLL_CLKD_ADC_P_INT_CK>, /*parent 12*/
+			<&ADC_fix CLK_ADC_VD_DIV2_EN_TO_LOCAL_CK>, /*parent 13*/
+			<&ADC_fix CLK_ADC_CK_CVBS_DAC_A_DIGITAL_P_CK>, /*parent 14*/
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_12M_CK>, /*parent 15*/
+			<&pm_fix CLK_PM_XTAL_PM_VCOD2_12M_CK>, /*parent 16*/
+			<&pm_fix CLK_PM_XTAL_PM_VCOD6_4M_CK>, /*parent 17*/
+			<&pm_fixdiv CLK_PM_XTAL_PM_VCOD16_1P5M_CK>, /*parent 18*/
+			<&pm_fix CLK_PM_XTAL_PM_VCOD24_1M_CK>, /*parent 19*/
+			<&pm_fixdiv CLK_PM_XTAL_PM_VCOD32_750K_CK>, /*parent 20*/
+			<&pm_fix CLK_PM_XTAL_PM_VCOD4_6M_CK>, /*parent 21*/
+			<&pm_fix CLK_PM_XTAL_PM_VCOD8_3M_CK> /*parent 22*/
+			;
+
+		clock-names =
+			/* ip1 xtal clk */
+			"srccap_ip1_xtal_ck",
+			"srccap_ip1_xtal_ck_xtal_12m_ck", /* 12m */
+			"srccap_ip1_xtal_ck_xtal_24m_ck", /* 24m */
+
+			/* hdmi src clk */
+			"srccap_hdmi_idclk_ck",
+			"srccap_hdmi_idclk_ck_ip1_xtal_ck", /* hv mode */
+			"srccap_hdmi_idclk_ck_hdmi_ck", /* de mode */
+
+			/* hdmi2 src clk */
+			"srccap_hdmi2_idclk_ck",
+			"srccap_hdmi2_idclk_ck_ip1_xtal_ck", /* hv mode */
+			"srccap_hdmi2_idclk_ck_hdmi2_ck", /* de mode */
+
+			/* hdmi3 src clk */
+			"srccap_hdmi3_idclk_ck",
+			"srccap_hdmi3_idclk_ck_ip1_xtal_ck", /* hv mode */
+			"srccap_hdmi3_idclk_ck_hdmi3_ck", /* de mode */
+
+			/* hdmi4 src clk */
+			"srccap_hdmi4_idclk_ck",
+			"srccap_hdmi4_idclk_ck_ip1_xtal_ck", /* hv mode */
+			"srccap_hdmi4_idclk_ck_hdmi4_ck", /* de mode */
+
+			/* adc clk */
+			"srccap_adc_ck",
+			"srccap_adc_ck_xtal_24m_ck", /* 24m */
+			"srccap_adc_ck_adc_ck", /* adc */
+			"srccap_adc_ck_144_buf_ck",
+
+			/* hdmi clk */
+			"srccap_hdmi_ck",
+			"srccap_hdmi_ck_xtal_24m_ck", /* 24m */
+			"srccap_hdmi_ck_hdmi_ck", /* hdmi */
+			"srccap_hdmi_ck_sys1pll_vcod2_624m_ck",
+
+			/* hdmi2 clk */
+			"srccap_hdmi2_ck",
+			"srccap_hdmi2_ck_xtal_24m_ck", /* 24m */
+			"srccap_hdmi2_ck_hdmi2_ck", /* hdmi2 */
+			"srccap_hdmi2_ck_sys1pll_vcod2_624m_ck",
+
+			/* hdmi3 clk */
+			"srccap_hdmi3_ck",
+			"srccap_hdmi3_ck_xtal_24m_ck", /* 24m */
+			"srccap_hdmi3_ck_hdmi3_ck", /* hdmi3 */
+			"srccap_hdmi3_ck_sys1pll_vcod2_624m_ck",
+
+			/* hdmi4 clk */
+			"srccap_hdmi4_ck",
+			"srccap_hdmi4_ck_xtal_24m_ck", /* 24m */
+			"srccap_hdmi4_ck_hdmi4_ck", /* hdmi4 */
+			"srccap_hdmi4_ck_sys1pll_vcod2_624m_ck",
+
+			/* ipdma0 clk */
+			"srccap_ipdma0_ck",
+			"srccap_ipdma0_ck_xtal_24m_ck", /* 24m */
+			"srccap_ipdma0_ck_hdmi_ck", /* hdmi */
+			"srccap_ipdma0_ck_hdmi2_ck", /* hdmi2 */
+			"srccap_ipdma0_ck_hdmi3_ck", /* hdmi3 */
+			"srccap_ipdma0_ck_hdmi4_ck", /* hdmi4 */
+			"srccap_ipdma0_ck_vd_ck", /* vd */
+			"srccap_ipdma0_ck_adc_ck", /* adc */
+			"srccap_ipdma0_ck_sys1pll_vcod2_624m_ck",
+
+			/* vd clk */
+			"VD_EN_CMBAI2VD",
+			"VD_EN_CMBAO2VD",
+			"VD_EN_CMBBI2VD",
+			"VD_EN_CMBBO2VD",
+			"VD_EN_MCU_MAIL02VD",
+			"VD_EN_MCU_MAIL12VD",
+			"VD_EN_SMI2MCU_M2MCU",
+			"VD_EN_SMI2VD",
+			"VD_EN_VD2X2VD",
+			"VD_EN_VD_32FSC2VD",
+			"VD_EN_VD2VD",
+			"VD_EN_XTAL_12M2VD",
+			"VD_EN_XTAL_12M2MCU_M2RIU",
+			"VD_EN_XTAL_12M2MCU_M2MCU",
+			"VD_CLK_ATV_INPUT",
+			"VD_CLK_CVBS_INPUT",
+			"VD_CLK_BUF_SEL",
+			"hdmi_r2_ck",
+			"hdmi_mcu_ck",
+			"hdmi_en_clk_xtal",
+			"hdmi_en_clk_r2_hdmi2mac",
+			"hdmi_en_smi2mac",
+
+			/* adc table clk swen */
+			"adctbl_swen_adc2adc", /*swen 0*/
+			"adctbl_swen_adc2miu2adc", /*swen 1*/
+			"adctbl_swen_adc2miusc2adc", /*swen 2*/
+			"adctbl_swen_adc2sc2adc", /*swen 3*/
+			"adctbl_swen_adcpll2002adc", /*swen 4*/
+			"adctbl_swen_adcpll4002adc", /*swen 5*/
+			"adctbl_swen_b_adc2adc", /*swen 6*/
+			"adctbl_swen_b_int2adc", /*swen 7*/
+			"adctbl_swen_clkpll2adc", /*swen 8*/
+			"adctbl_swen_cvbs_dac_a_digital0_mux2adc", /*swen 9*/
+			"adctbl_swen_cvbs_dac_a_digital02adc", /*swen 10*/
+			"adctbl_swen_cvbs_dac_a_digital12adc", /*swen 11*/
+			"adctbl_swen_dig_2162adc", /*swen 12*/
+			"adctbl_swen_fblank2adc", /*swen 13*/
+			"adctbl_swen_fsc_vd2adc", /*swen 14*/
+			"adctbl_swen_g_adc2adc", /*swen 15*/
+			"adctbl_swen_g_int2adc", /*swen 16*/
+			"adctbl_swen_isog2adc", /*swen 17*/
+			"adctbl_swen_nco_clk2adc", /*swen 18*/
+			"adctbl_swen_r_adc2adc", /*swen 19*/
+			"adctbl_swen_r_int2adc", /*swen 20*/
+			"adctbl_swen_vd_iclamp2adc", /*swen 21*/
+			"adctbl_swen_vd_iclamp2video_atop", /*swen 22*/
+			"adctbl_swen_vd_nco_clk2adc", /*swen 23*/
+			"adctbl_swen_vd2adc", /*swen 24*/
+			"adctbl_swen_vdpll4002adc", /*swen 25*/
+			"adctbl_swen_xtal12_4interrupt2adc", /*swen 26*/
+			"adctbl_swen_xtal12_4plugdet2adc", /*swen 27*/
+			"adctbl_swen_xtal122adc", /*swen 28*/
+			"adctbl_swen_xtal242adc", /*swen 29*/
+			"adctbl_swen_y_adc2adc", /*swen 30*/
+			"adctbl_swen_y_int2adc", /*swen 31*/
+			"adctbl_swen_yuv_adc2adc", /*swen 32*/
+			"adctbl_swen_vd2mheg5_adc", /*swen 33*/
+			"adctbl_swen_vd2x2mheg5_adc", /*swen 34*/
+			"adctbl_swen_adcplb_mpll2adc", /*swen 35*/
+			"adctbl_swen_clkd_adc2adc_top_data", /*swen 36*/
+			"adctbl_swen_clkd_adc2gemiu2adc_top_data", /*swen 37*/
+			"adctbl_swen_clkd_adc2sc2adc_top_data", /*swen 38*/
+			"adctbl_swen_clkd_vd2adc_top_data", /*swen 39*/
+			"adctbl_swen_clkfscx2_vd2adc_top_data", /*swen 40*/
+			"adctbl_swen_sd2pm", /*swen 41*/
+
+			/* adc table clk settings */
+			"adctbl_clkd_adc_p_int_ck", /*setting 0*/
+			"adctbl_clkd_atop_int_ck", /*setting 1*/
+			"adctbl_clkd_atop_internal_int_ck", /*setting 2*/
+			"adctbl_r_int_int_ck", /*setting 3*/
+			"adctbl_g_int_int_ck", /*setting 4*/
+			"adctbl_b_int_int_ck", /*setting 5*/
+			"adctbl_y_int_int_ck", /*setting 6*/
+			"adctbl_r_adc_int_ck", /*setting 7*/
+			"adctbl_g_adc_int_ck", /*setting 8*/
+			"adctbl_b_adc_int_ck", /*setting 9*/
+			"adctbl_y_adc_int_ck", /*setting 10*/
+			"adctbl_yuv_adc_int_ck", /*setting 11*/
+			"adctbl_iclamp_rgb_int_ck", /*setting 12*/
+			"adctbl_adc_int_ck", /*setting 13*/
+			"adctbl_vd_adcpll_init_ck", /*setting 14*/
+			"adctbl_adc2sc_int_ck", /*setting 15*/
+			"adctbl_fblank_int_ck", /*setting 16*/
+			"adctbl_fscx2_fb2atop_int_ck", /*setting 17*/
+			"adctbl_adc2miu_int_ck", /*setting 18*/
+			"adctbl_adc2miusc_int_ck", /*setting 19*/
+			"adctbl_sd_int_ck", /*setting 20*/
+
+			/* adc table clk parents */
+			"adctbl_prnt_clkd_atop_buf_ck", /*parent 0*/
+			"adctbl_prnt_clkd_r_atop_buf_ck", /*parent 1*/
+			"adctbl_prnt_clkd_g_atop_buf_ck", /*parent 2*/
+			"adctbl_prnt_clkd_b_atop_buf_ck", /*parent 3*/
+			"adctbl_prnt_clkd_vd_atop_buf_ck", /*parent 4*/
+			"adctbl_prnt_clkd_atop_internal_buf_ck", /*parent 5*/
+			"adctbl_prnt_clkd_vd_atop_int_buf_ck", /*parent 6*/
+			"adctbl_prnt_clkd_r_atop_int_buf_ck", /*parent 7*/
+			"adctbl_prnt_clkd_g_atop_int_buf_ck", /*parent 8*/
+			"adctbl_prnt_clkd_b_atop_int_buf_ck", /*parent 9*/
+			"adctbl_prnt_clkd_2iclamp_s_buf_ck", /*parent 10*/
+			"adctbl_prnt_clk_dig_108_buf_ck", /*parent 11*/
+			"adctbl_prnt_clkd_adc_p_buf_ck", /*parent 12*/
+			"adctbl_prnt_vd_div2_en_to_local_buf_ck", /*parent 13*/
+			"adctbl_prnt_ck_cvbs_dac_a_digital_p_buf_ck", /*parent 14*/
+			"adctbl_prnt_xtal_12m_buf_ck", /*parent 15*/
+			"adctbl_prnt_xtal_pm_vcod2_12m_ck", /*parent 16*/
+			"adctbl_prnt_xtal_pm_vcod6_4m_ck", /*parent 17*/
+			"adctbl_prnt_xtal_pm_vcod16_1p5m_ck", /*parent 18*/
+			"adctbl_prnt_xtal_pm_vcod24_1m_ck", /*parent 19*/
+			"adctbl_prnt_xtal_pm_vcod32_750k_ck", /*parent 20*/
+			"adctbl_prnt_xtal_pm_vcod4_6m_ck", /*parent 21*/
+			"adctbl_prnt_xtal_pm_vcod8_3m_ck" /*parent 22*/
+			;
+
+		reg_count = <0x12>;
+		ioremap = <0x00000000 0x1C480000 0x00000000 0x00000200>, /* adc_atop(2400H)*/
+				<0x00000000 0x1C480200 0x00000000 0x00000200>, /* adc_dtop(2401H)*/
+				<0x00000000 0x1C480400 0x00000000 0x00000200>, /* adc_dtopb(2402H)*/
+				<0x00000000 0x1C480600 0x00000000 0x00000200>, /* adc_atopb(2403H)*/
+				<0x00000000 0x1C480800 0x00000000 0x00000200>, /* adc_pllm(2404H)*/
+				<0x00000000 0x1C4A0000 0x00000000 0x00000200>, /* afec(2500H) */
+				<0x00000000 0x1C4A0200 0x00000000 0x00000200>, /* vbi(2501H) */
+				<0x00000000 0x1C4A0400 0x00000000 0x00000200>, /* scm(2502H) */
+				<0x00000000 0x1C4A0600 0x00000000 0x00000200>, /* comb(2503H) */
+				<0x00000000 0x1C4A0800 0x00000000 0x00000200>, /* comb1(2504H) */
+				<0x00000000 0x1C4A0A00 0x00000000 0x00000200>, /* comb2(2505H) */
+				<0x00000000 0x1C4A0C00 0x00000000 0x00000200>, /* comb3(2506H) */
+				<0x00000000 0x1C4A0E00 0x00000000 0x00000200>, /* comb4(2507H) */
+				<0x00000000 0x1C4A1000 0x00000000 0x00000200>, /* comb5(2508H) */
+				<0x00000000 0x1CC02000 0x00000000 0x00000200>, /* vdmcu51(6010H) */
+				<0x00000000 0x1CC03600 0x00000000 0x00000100>, /* 601BH */
+				<0x00000000 0x1CC03800 0x00000000 0x00000200>, /* 691CH */
+				<0x00000000 0x1C601E00 0x00000000 0x00000100>; /* 300FH */
+		MI_EXTIN_VD_COMB_BUF {
+			MI_EXTIN_VD_COMB_BUF_ADR = <0x22000000>;
+			MI_EXTIN_VD_COMB_BUF_LEN = <0x00400000>;
+			MI_EXTIN_VD_COMB_BUF_CMA_HID = <0>;
+			MI_EXTIN_VD_COMB_ALIMENT = <4>;
+			MI_EXTIN_VD_COMB_SIZE = <0x1E>;
+		};
+		mtk_capability_0: capability {
+		};
+		dv {
+			memory-region = <&MI_DV_DMA_BUF>;
+		};
+		srccap-swreg {
+			memory-region = <&MI_SRCCAP_SWREG_BUF>;
+		};
+	};
+
+	mtk_srccap1: mtk_srccap1 {
+		compatible = "mediatek,srccap1";
+		device_node_num = <0xFF>; /* 0xFF for unspecified node num */
+		iommus = <&iommu 0>;
+		clocks =
+			/* ipdma1 clk */
+			<&scip_mux_gate CLK_SCIP_XC_ID1_INT_CK>,
+			<&topgen_mux_gate CLK_TOPGEN_XTAL_24M_CK>, /* 24m */
+			<&sc_fix CLK_XC_HDMI0_CK>, /* hdmi */
+			<&sc_fix CLK_XC_HDMI1_CK>, /* hdmi2 */
+			<&sc_fix CLK_XC_HDMI2_CK>, /* hdmi3 */
+			<&sc_fix CLK_XC_HDMI3_CK>, /* hdmi4 */
+			<&topgen_mux_gate CLK_TOPGEN_VD_CK>, /* vd */
+			<&sc_fix CLK_XC_ADC_CK>, /* adc */
+			<&topgen_fix_factor CLK_TOPGEN_SYS1PLL_VCOD2_624M_CK>
+			;
+		clock-names =
+			/* ipdma1 clk */
+			"srccap_ipdma1_ck",
+			"srccap_ipdma1_ck_xtal_24m_ck", /* 24m */
+			"srccap_ipdma1_ck_hdmi_ck", /* hdmi */
+			"srccap_ipdma1_ck_hdmi2_ck", /* hdmi2 */
+			"srccap_ipdma1_ck_hdmi3_ck", /* hdmi3 */
+			"srccap_ipdma1_ck_hdmi4_ck", /* hdmi4 */
+			"srccap_ipdma1_ck_vd_ck", /* vd */
+			"srccap_ipdma1_ck_adc_ck", /* adc */
+			"srccap_ipdma1_ck_sys1pll_vcod2_624m_ck"
+			;
+		reg_count = <0x12>;
+		ioremap = <0x00000000 0x1C480000 0x00000000 0x00000200>, /* adc_atop(2400H)*/
+				<0x00000000 0x1C480200 0x00000000 0x00000200>, /* adc_dtop(2401H)*/
+				<0x00000000 0x1C480400 0x00000000 0x00000200>, /* adc_dtopb(2402H)*/
+				<0x00000000 0x1C480600 0x00000000 0x00000200>, /* adc_atopb(2403H)*/
+				<0x00000000 0x1C480800 0x00000000 0x00000200>, /* adc_pllm(2404H)*/
+				<0x00000000 0x1C4A0000 0x00000000 0x00000200>, /* afec(2500H) */
+				<0x00000000 0x1C4A0200 0x00000000 0x00000200>, /* vbi(2501H) */
+				<0x00000000 0x1C4A0400 0x00000000 0x00000200>, /* scm(2502H) */
+				<0x00000000 0x1C4A0600 0x00000000 0x00000200>, /* comb(2503H) */
+				<0x00000000 0x1C4A0800 0x00000000 0x00000200>, /* comb1(2504H) */
+				<0x00000000 0x1C4A0A00 0x00000000 0x00000200>, /* comb2(2505H) */
+				<0x00000000 0x1C4A0C00 0x00000000 0x00000200>, /* comb3(2506H) */
+				<0x00000000 0x1C4A0E00 0x00000000 0x00000200>, /* comb4(2507H) */
+				<0x00000000 0x1C4A1000 0x00000000 0x00000200>, /* comb5(2508H) */
+				<0x00000000 0x1CC02000 0x00000000 0x00000200>, /* vdmcu51(6010H) */
+				<0x00000000 0x1CC03600 0x00000000 0x00000100>, /* 601BH */
+				<0x00000000 0x1CC03800 0x00000000 0x00000200>, /* 691CH */
+				<0x00000000 0x1C601E00 0x00000000 0x00000100>; /* 300FH */
+		MI_EXTIN_VD_COMB_BUF {
+			MI_EXTIN_VD_COMB_BUF_ADR = <0x22000000>;
+			MI_EXTIN_VD_COMB_BUF_LEN = <0x00400000>;
+			MI_EXTIN_VD_COMB_BUF_CMA_HID = <0>;
+			MI_EXTIN_VD_COMB_ALIMENT = <4>;
+			MI_EXTIN_VD_COMB_SIZE = <0x1E>;
+		};
+		mtk_capability_1: capability {
+		};
+		dv {
+			memory-region = <&MI_DV_DMA_BUF>;
+		};
+		srccap-swreg {
+			memory-region = <&MI_SRCCAP_SWREG_BUF>;
+		};
+		hdmirx{
+			memory-region = <&MI_HDMIRX_MEM_SHM>;
+			banks {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				bank_hdmirx = <0x1DC00000>;
+				bank_hdmirx_end = <0x1DCD0000>;
+				bank_pm_slp = <0x1C020200>;
+				bank_ddc = <0x1C080200>;
+				bank_scdc_p0 = <0x1C082000>;
+				bank_scdc_xa8_p0 = <0x1C082200>;
+				bank_scdc_p1 = <0x1C082400>;
+				bank_scdc_xa8_p1 = <0x1C082600>;
+				bank_scdc_p2 = <0x1C088000>;
+				bank_scdc_xa8_p2 = <0x1C082A00>;
+				bank_scdc_p3 = <0x1C08C000>;
+				bank_scdc_xa8_p3 = <0x1C082E00>;
+				bank_hdmirxphy_pm_p0 = <0x1C0C0000>;
+				bank_hdmirxphy_pm_p1 = <0x1C0C0200>;
+				bank_hdmirxphy_pm_p2 = <0x1C0C0400>;
+				bank_hdmirxphy_pm_p3 = <0x1C0C0600>;
+				bank_efuse_0 = <0x1C025200>;
+				bank_pm_top = <0x1C021000>;
+				bank_pmux = <0x1C2E4000>;
+				bank_dig_mux = <0x1C601000>;
+			};
+		};
+	};
+};

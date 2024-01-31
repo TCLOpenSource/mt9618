@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2022 MediaTek Inc.
+
+ */
+
+/ {
+
+efuse: efuse{
+	compatible = "mtk,efuse";
+
+	/* write_efuse-gpios = <&gpio0 999 0>; */
+
+    /* for user space */
+	write_efuse_gpio_domain = <0>; /* 0->non-pm, 1->PM */
+	write_efuse_gpio_num = <999>;
+	write_efuse_gpio_inverse = <0>;
+};
+
+};

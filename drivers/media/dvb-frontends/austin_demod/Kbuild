@@ -1,0 +1,22 @@
+#
+# Makefile for Mediatek dummy demod drivers.
+#
+LOCAL_PATH ?= $(M)
+
+# general options
+ccflags-y      +=  -I$(LOCAL_PATH)
+
+ifeq ($(IC_SERIES),merak_20)
+ccflags-y += -DADD_MERAK20_ATSC3
+endif
+
+obj-m            := mtk-austin-demod.o
+
+mtk-austin-demod-objs    += halDMD_EXTERN_ATSC.o
+mtk-austin-demod-objs    += austin-demod.o
+
+#Workaround for -Werror
+ccflags-y += -Wno-unused-variable
+ccflags-y += -Wno-excess-initializers
+ccflags-y += -Wno-unused-function
+#End of workaround for -Werror

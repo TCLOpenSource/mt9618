@@ -1,0 +1,22 @@
+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+#ifndef _DT_BINDINGS_CLK_MT5896_SCPQ_H
+#define _DT_BINDINGS_CLK_MT5896_SCPQ_H
+
+#define CLK_SCPQ_XTAL_24M_INT_CK	1
+#define CLK_SCPQ_MCU_NONPM_INT_CK	2
+#define CLK_SCPQ_RIU_NONPM_INT_CK	3
+#define CLK_SCPQ_SMI_INT_CK	4
+#define CLK_SCPQ_MCU_XC_INT_CK	5
+#define CLK_SCPQ_RIU_XC_INT_CK	6
+#define CLK_SCPQ_XC_FN_INT_CK	7
+#define CLK_SCPQ_SCNR_HDR_SRAM_INT_CK	8
+#define CLK_SCPQ_DBK_HW_SRAM_INT_CK	9
+#define CLK_SCPQ_SPF_HDBK_SRAM_INT_CK	10
+#define CLK_SCPQ_VDBK_SRAM_INT_CK	11
+#define CLK_SCPQ_NR	12
+
+#endif

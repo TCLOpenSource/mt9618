@@ -1,0 +1,219 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+
+/ {
+	nonpm_adc_OOXX: nonpm_adc_swen {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_gate_en";
+		num = <CLK_NONPM_ADC_EN_NR>;
+
+		adc2adc {
+			id = <CLK_NONPM_ADC_EN_ADC2ADC>;
+			parent = "p_dummy";
+		};
+
+		adc2miu2adc {
+			id = <CLK_NONPM_ADC_EN_ADC2MIU2ADC>;
+			parent = "p_dummy";
+		};
+
+		adc2miusc2adc {
+			id = <CLK_NONPM_ADC_EN_ADC2MIUSC2ADC>;
+			parent = "p_dummy";
+		};
+
+		adc2sc2adc {
+			id = <CLK_NONPM_ADC_EN_ADC2SC2ADC>;
+			parent = "p_dummy";
+		};
+
+		adcpll2002adc {
+			id = <CLK_NONPM_ADC_EN_ADCPLL2002ADC>;
+			parent = "p_dummy";
+		};
+
+		adcpll4002adc {
+			id = <CLK_NONPM_ADC_EN_ADCPLL4002ADC>;
+			parent = "p_dummy";
+		};
+
+		b_adc2adc {
+			id = <CLK_NONPM_ADC_EN_B_ADC2ADC>;
+			parent = "p_dummy";
+		};
+
+		b_int2adc {
+			id = <CLK_NONPM_ADC_EN_B_INT2ADC>;
+			parent = "p_dummy";
+		};
+
+		clkpll2adc {
+			id = <CLK_NONPM_ADC_EN_CLKPLL2ADC>;
+			parent = "p_dummy";
+		};
+
+		cvbs_dac_a_digital0_mux2adc {
+			id = <CLK_NONPM_ADC_EN_CVBS_DAC_A_DIGITAL0_MUX2ADC>;
+			parent = "p_dummy";
+		};
+
+		cvbs_dac_a_digital02adc {
+			id = <CLK_NONPM_ADC_EN_CVBS_DAC_A_DIGITAL02ADC>;
+			parent = "p_dummy";
+		};
+
+		cvbs_dac_a_digital12adc {
+			id = <CLK_NONPM_ADC_EN_CVBS_DAC_A_DIGITAL12ADC>;
+			parent = "p_dummy";
+		};
+
+		dig_2162adc {
+			id = <CLK_NONPM_ADC_EN_DIG_2162ADC>;
+			parent = "p_dummy";
+		};
+
+		fblank2adc {
+			id = <CLK_NONPM_ADC_EN_FBLANK2ADC>;
+			parent = "p_dummy";
+		};
+
+		fsc_vd2adc {
+			id = <CLK_NONPM_ADC_EN_FSC_VD2ADC>;
+			parent = "p_dummy";
+		};
+
+		g_adc2adc {
+			id = <CLK_NONPM_ADC_EN_G_ADC2ADC>;
+			parent = "p_dummy";
+		};
+
+		g_int2adc {
+			id = <CLK_NONPM_ADC_EN_G_INT2ADC>;
+			parent = "p_dummy";
+		};
+
+		isog2adc {
+			id = <CLK_NONPM_ADC_EN_ISOG2ADC>;
+			parent = "p_dummy";
+		};
+
+		nco_clk2adc {
+			id = <CLK_NONPM_ADC_EN_NCO_CLK2ADC>;
+			parent = "p_dummy";
+		};
+
+		r_adc2adc {
+			id = <CLK_NONPM_ADC_EN_R_ADC2ADC>;
+			parent = "p_dummy";
+		};
+
+		r_int2adc {
+			id = <CLK_NONPM_ADC_EN_R_INT2ADC>;
+			parent = "p_dummy";
+		};
+
+		vd_iclamp2adc {
+			id = <CLK_NONPM_ADC_EN_VD_ICLAMP2ADC>;
+			parent = "p_dummy";
+		};
+
+		vd_iclamp2video_atop {
+			id = <CLK_NONPM_ADC_EN_VD_ICLAMP2VIDEO_ATOP>;
+			parent = "p_dummy";
+		};
+
+		vd_nco_clk2adc {
+			id = <CLK_NONPM_ADC_EN_VD_NCO_CLK2ADC>;
+			parent = "p_dummy";
+		};
+
+		vd2adc {
+			id = <CLK_NONPM_ADC_EN_VD2ADC>;
+			parent = "p_dummy";
+		};
+
+		vdpll4002adc {
+			id = <CLK_NONPM_ADC_EN_VDPLL4002ADC>;
+			parent = "p_dummy";
+		};
+
+		xtal12_4interrupt2adc {
+			id = <CLK_NONPM_ADC_EN_XTAL12_4INTERRUPT2ADC>;
+			parent = "p_dummy";
+		};
+
+		xtal12_4plugdet2adc {
+			id = <CLK_NONPM_ADC_EN_XTAL12_4PLUGDET2ADC>;
+			parent = "p_dummy";
+		};
+
+		xtal122adc {
+			id = <CLK_NONPM_ADC_EN_XTAL122ADC>;
+			parent = "p_dummy";
+		};
+
+		xtal242adc {
+			id = <CLK_NONPM_ADC_EN_XTAL242ADC>;
+			parent = "p_dummy";
+		};
+
+		y_adc2adc {
+			id = <CLK_NONPM_ADC_EN_Y_ADC2ADC>;
+			parent = "p_dummy";
+		};
+
+		y_int2adc {
+			id = <CLK_NONPM_ADC_EN_Y_INT2ADC>;
+			parent = "p_dummy";
+		};
+
+		yuv_adc2adc {
+			id = <CLK_NONPM_ADC_EN_YUV_ADC2ADC>;
+			parent = "p_dummy";
+		};
+
+		vd2mheg5_adc {
+			id = <CLK_NONPM_ADC_EN_VD2MHEG5_ADC>;
+			parent = "p_dummy";
+		};
+
+		vd2x2mheg5_adc {
+			id = <CLK_NONPM_ADC_EN_VD2X2MHEG5_ADC>;
+			parent = "p_dummy";
+		};
+
+		adcplb_mpll2adc {
+			id = <CLK_NONPM_ADC_EN_ADCPLB_MPLL2ADC>;
+			parent = "p_dummy";
+		};
+
+		clkd_adc2adc_top_data {
+			id = <CLK_NONPM_ADC_EN_CLKD_ADC2ADC_TOP_DATA>;
+			parent = "p_dummy";
+		};
+
+		clkd_adc2gemiu2adc_top_data {
+			id = <CLK_NONPM_ADC_EN_CLKD_ADC2GEMIU2ADC_TOP_DATA>;
+			parent = "p_dummy";
+		};
+
+		clkd_adc2sc2adc_top_data {
+			id = <CLK_NONPM_ADC_EN_CLKD_ADC2SC2ADC_TOP_DATA>;
+			parent = "p_dummy";
+		};
+
+		clkd_vd2adc_top_data {
+			id = <CLK_NONPM_ADC_EN_CLKD_VD2ADC_TOP_DATA>;
+			parent = "p_dummy";
+		};
+
+		clkfscx2_vd2adc_top_data {
+			id = <CLK_NONPM_ADC_EN_CLKFSCX2_VD2ADC_TOP_DATA>;
+			parent = "p_dummy";
+		};
+
+	};
+};

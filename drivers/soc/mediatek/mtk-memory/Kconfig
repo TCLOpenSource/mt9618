@@ -1,0 +1,13 @@
+config MTK_MEMORY
+	tristate "MediaTek Memory Support"
+	depends on MTK_MIUP
+	default y
+        help
+	  Say yes here to add support for the MediaTek Memory driver.
+
+config MTK_NULLMEMORY_32BITS_WORKAROUND
+	bool "arm 32 bits nullmemroy workaround"
+	default n
+	help
+	  Say yes if use aarch32 kernel and have null memory application.
+

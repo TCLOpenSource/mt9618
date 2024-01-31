@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mediatek_drm: mediatek-drm {
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+		compatible = "MTK-drm-tv";
+		RECOVERY_BUG_TAG = <44>;
+		iommus = <&iommu 0>;
+	};
+};

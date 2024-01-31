@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+#define	CLK_VD_ATV_CVBS_CK	1
+#define	CLK_VD_NR	2
+#define CLK_VD_CVBS_INPUT	1
+#define CLK_VD_ATV_INPUT	2
+#define	CLK_VD_FIX_N	3
+
+/{
+	vd_fix: vd_fix {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_fix";
+		num = <CLK_VD_FIX_N>;
+
+		vd_cvbs_input {
+			id = <CLK_VD_CVBS_INPUT>;
+			clock-frequency = <4294>;
+		};
+
+		vd_atv_input {
+			id = <CLK_VD_ATV_INPUT>;
+			clock-frequency = <4294>;
+		};
+
+	};
+
+	vd_mux_gate: vd {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_mux_gate";
+		num = <CLK_VD_NR>;
+
+		daca2_int_ck {
+			id = <CLK_VD_ATV_CVBS_CK>;
+			parents = "vd_cvbs_input", "vd_atv_input";
+		};
+
+	};
+
+};
+

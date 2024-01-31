@@ -1,0 +1,192 @@
+// SPDX-License-Identifier: GPL-2.0
+
+/ {
+	script_management: scriptmanagement {
+		compatible = "mediatek,scriptmgt";
+		memory-region = <&MI_MENULOAD_BUF
+		&MI_DISP_AUTO_UPLOAD &MI_DISP_AUTO_DOWNLOAD &MI_MCU_DS &MI_CMDQ_BUF
+		&MI_STR_LDR_BUF &MI_ONLY_STR_BUF>;
+		reg_size = <0x1B>;
+		reg_ioremap = <0x1D400320 0x00000014>,
+				<0x1D404000 0x00000100>,
+				<0x1D405E00 0x00000200>,
+				<0x1D406000 0x00000200>,
+				<0x1D460000 0x00040000>,
+				<0x1D500000 0x000C0000>,
+				<0x1D5C0000 0x00022100>,
+				<0x1C202200 0x00000200>,
+				<0x1C205400 0x00000200>,
+				<0x1C207E00 0x00000100>,
+				<0x1C204000 0x00002000>,
+				<0x1C206000 0x00002000>,
+				<0x1c280200 0x00000200>,
+				<0x1C281418 0x00000004>,
+				<0x1C281618 0x00000004>,
+				<0x1C282018 0x00000004>,
+				<0x1C282218 0x00000004>,
+				<0x1C282418 0x00000004>,
+				<0x1C282618 0x00000004>,
+				<0x1C283018 0x00000004>,
+				<0x1C283218 0x00000004>,
+				<0x1C640000 0x00002000>,
+				<0x1D0A0400 0x00000200>,
+				<0x1C484000 0x00001E00>,
+				<0x1C488000 0x00004000>,
+				<0x1C021000 0x00000200>,
+				<0x1C025200 0x00000200>;
+		script_ds: ds {
+		};
+		script_str_ldr: str_ldr {
+		};
+		script_adl: adl {
+		};
+		script_adl_panel_gamma_0: adl_panel_gamma_0 {
+		};
+		script_adl_pq_gamma_1: adl_pq_gamma_1 {
+		};
+		script_adl_demura_0: adl_demura_0 {
+		};
+		script_adl_gop_0: adl_gop_0 {
+		};
+		script_adl_gop_1: adl_gop_1 {
+		};
+		script_adl_gop_2: adl_gop_2 {
+		};
+		script_adl_gop_3: adl_gop_3 {
+		};
+		script_adl_ld_3: adl_ld_3 {
+		};
+		script_adl_ld_1: adl_ld_1 {
+		};
+		script_adl_ld_2: adl_ld_2 {
+		};
+		script_adl_ld_0: adl_ld_0 {
+		};
+		script_adl_film_grain_0: adl_film_grain_0 {
+		};
+		script_adl_ucd_0: adl_ucd_0 {
+		};
+		script_adl_hdr_0: adl_hdr_0 {
+		};
+		script_adl_mpeg_nr_0: adl_mpeg_nr_0 {
+		};
+		script_adl_nr_reserved_0: adl_nr_reserved_0 {
+		};
+		script_adl_mpeg_nr_1: adl_mpeg_nr_1 {
+		};
+		script_adl_dv_0: adl_dv_0 {
+		};
+		script_adl_dv_lut_c1: adl_dv_lut_c1 {
+		};
+		script_adl_dv_lut_r_v2: adl_dv_lut_r_v2 {
+		};
+		script_adl_hvsp_0: adl_hvsp_0 {
+		};
+		script_adl_vip_1: adl_vip_1 {
+		};
+		script_adl_sr_0: adl_sr_0 {
+		};
+		script_adl_ce_1: adl_ce_1 {
+		};
+		script_adl_vop_0: adl_vop_0 {
+		};
+		script_adl_vop_1: adl_vop_1 {
+		};
+		script_adl_pq_gamma_0: adl_pq_gamma_0 {
+		};
+		script_adl_ce_0: adl_ce_0 {
+		};
+		script_adl_vip_0: adl_vip_0 {
+		};
+		script_adl_ucd_2: adl_ucd_2 {
+		};
+		script_adl_ucd_3: adl_ucd_3 {
+		};
+		script_adl_ucd_1: adl_ucd_1 {
+		};
+		script_adl_lce_0: adl_lce_0 {
+		};
+		script_adl_hvsp_1: adl_hvsp_1 {
+		};
+		script_adl_dip_0: adl_dip_0 {
+			support = <0x00>;
+			fake_support = <0x01>;
+			max_depth = <290>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+			total_buf_cnt = <0x10>;
+			version = <0x00>;
+		};
+		script_adl_dip_1: adl_dip_1 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <450>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+			total_buf_cnt = <0x10>;
+			version = <0x00>;
+		};
+		script_adl_hdr_3d: adl_hdr_3d {
+		};
+		script_adl_od: adl_od {
+		};
+		script_adl_pcid: adl_pcid {
+		};
+		script_adl_vac: adl_vac {
+		};
+		script_adl_fo_hvsp: adl_fo_hvsp {
+		};
+		script_adl_dv_hw5_lut_r2: adl_dv_hw5_lut_r2 {
+		};
+		script_adl_hsy_lut2: adl_hsy_lut2 {
+		};
+		script_adl_lxs_demura: adl_lxs_demura {
+		};
+		script_adl_ld_r2: adl_ld_r2 {
+		};
+		script_aul_yhsl: aul_yhsl {
+		};
+		script_aul_obj_hist: aul_obj_hist {
+		};
+		script_aul_freq_det: aul_freq_det {
+		};
+		script_aul_ylite: aul_ylite {
+		};
+		script_aul_dv_hw5_hist_w: aul_dv_hw5_hist_w {
+		};
+		script_aul_mnc_stat: aul_mnc_stat {
+		};
+		script_aul_znr_me: aul_znr_me {
+		};
+		script_aul_znr_mi: aul_znr_mi {
+		};
+		script_aul_dbk_hw_sp: aul_dbk_hw_sp {
+		};
+		script_aul_dbk: aul_dbk {
+		};
+		script_aul_res_det: aul_res_det {
+		};
+		script_aul_lce_scl: aul_lce_scl {
+		};
+		script_aul_3d_hist: aul_3d_hist {
+		};
+		script_aul_lce_ace: aul_lce_ace {
+		};
+		script_aul_amb: aul_amb {
+		};
+		script_aul_ld_w0: aul_ld_w0 {
+		};
+		script_aul_ucd_stat_top: aul_ucd_stat_top {
+		};
+		script_aul_logo_det: aul_logo_det {
+		};
+		script_aul: aul {
+		};
+		script_ml_client: ml_client {
+		};
+		script_cmdq: cmdq {
+		};
+	};
+};

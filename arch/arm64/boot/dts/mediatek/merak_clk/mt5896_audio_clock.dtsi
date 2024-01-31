@@ -1,0 +1,951 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+
+/ {
+	audio_OOXX: audio_swen {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_gate_en";
+		num = <CLK_AUDIO_EN_NR>;
+
+		bclk_i2s_encoder22bclk_i2s_encoder2 {
+			id = <CLK_AUDIO_EN_BCLK_I2S_ENCODER22BCLK_I2S_ENCODER2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		bclk_i2s_encoder2bclk_i2s_encoder {
+			id = <CLK_AUDIO_EN_BCLK_I2S_ENCODER2BCLK_I2S_ENCODER>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ab_mac2ab_mac {
+			id = <CLK_AUDIO_EN_VIVA_AB_MAC2AB_MAC>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ab3_mac2ab3_mac {
+			id = <CLK_AUDIO_EN_VIVA_AB3_MAC2AB3_MAC>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_adc_512fs2adc_512_fs {
+			id = <CLK_AUDIO_EN_VIVA_ADC_512FS2ADC_512_FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_audma_v2_r1_256fs2audma_v2_r1_256fs {
+			id = <CLK_AUDIO_EN_VIVA_AUDMA_V2_R1_256FS2AUDMA_V2_R1_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_audma_v2_r1_256fs2audma_v2_r1_timing_gen {
+			id = <CLK_AUDIO_EN_VIVA_AUDMA_V2_R1_256FS2AUDMA_V2_R1_TIMING_GEN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_audma_v2_r1_synth_ref2audma_v2_r1_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_AUDMA_V2_R1_SYNTH_REF2AUDMA_V2_R1_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_audma_v2_r2_256fs2audma_v2_r2_256fs {
+			id = <CLK_AUDIO_EN_VIVA_AUDMA_V2_R2_256FS2AUDMA_V2_R2_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_audma_v2_r2_256fs2audma_v2_r2_timing_gen {
+			id = <CLK_AUDIO_EN_VIVA_AUDMA_V2_R2_256FS2AUDMA_V2_R2_TIMING_GEN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_audma_v2_r2_synth_ref2audma_v2_r2_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_AUDMA_V2_R2_SYNTH_REF2AUDMA_V2_R2_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_bclk_i2s_decoder22bclk_i2s_decoder2 {
+			id = <CLK_AUDIO_EN_VIVA_BCLK_I2S_DECODER22BCLK_I2S_DECODER2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_bclk_i2s_decoder2bclk_i2s_decoder {
+			id = <CLK_AUDIO_EN_VIVA_BCLK_I2S_DECODER2BCLK_I2S_DECODER>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_bi2s_synth_ref22i2s_synth_ref2 {
+			id = <CLK_AUDIO_EN_VIVA_BI2S_SYNTH_REF22I2S_SYNTH_REF2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch1_256fsi2ch1_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH1_256FSI2CH1_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch2_256fsi2ch2_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH2_256FSI2CH2_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch3_256fsi2ch3_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH3_256FSI2CH3_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch4_256fsi2ch4_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH4_256FSI2CH4_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch5_256fsi2ch5_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH5_256FSI2CH5_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch6_256fsi2ch6_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH6_256FSI2CH6_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch7_256fsi2ch7_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH7_256FSI2CH7_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch8_256fsi2ch8_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH8_256FSI2CH8_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch9_256fsi2ch9_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH9_256FSI2CH9_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_codec_sh2codec_sh {
+			id = <CLK_AUDIO_EN_VIVA_CODEC_SH2CODEC_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dac_512fs2dac_512_fs {
+			id = <CLK_AUDIO_EN_VIVA_DAC_512FS2DAC_512_FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dsp2dsp_230 {
+			id = <CLK_AUDIO_EN_VIVA_DSP2DSP_230>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dsp2dsp_230_1 {
+			id = <CLK_AUDIO_EN_VIVA_DSP2DSP_230_1>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dsp2dsp_230_2 {
+			id = <CLK_AUDIO_EN_VIVA_DSP2DSP_230_2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dsp2dsp_230_3 {
+			id = <CLK_AUDIO_EN_VIVA_DSP2DSP_230_3>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dsp2dsp_230_dfs_ref {
+			id = <CLK_AUDIO_EN_VIVA_DSP2DSP_230_DFS_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dsp2dsp_230_tm {
+			id = <CLK_AUDIO_EN_VIVA_DSP2DSP_230_TM>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb1_synth_ref2dvb1_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_DVB1_SYNTH_REF2DVB1_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb1_timing_gen_256fs2dvb1_timing_gen_256fs {
+			id = <CLK_AUDIO_EN_VIVA_DVB1_TIMING_GEN_256FS2DVB1_TIMING_GEN_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb2_synth_ref2dvb2_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_DVB2_SYNTH_REF2DVB2_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb2_timing_gen_256fs2dvb2_timing_gen_256fs {
+			id = <CLK_AUDIO_EN_VIVA_DVB2_TIMING_GEN_256FS2DVB2_TIMING_GEN_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb3_synth_ref2dvb3_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_DVB3_SYNTH_REF2DVB3_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb3_timing_gen_256fs2dvb3_timing_gen_256fs {
+			id = <CLK_AUDIO_EN_VIVA_DVB3_TIMING_GEN_256FS2DVB3_TIMING_GEN_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb4_synth_ref2dvb4_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_DVB4_SYNTH_REF2DVB4_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb4_timing_gen_256fs2dvb4_timing_gen_256fs {
+			id = <CLK_AUDIO_EN_VIVA_DVB4_TIMING_GEN_256FS2DVB4_TIMING_GEN_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb5_timing_gen_256fs2dvb5_timing_gen_256fs {
+			id = <CLK_AUDIO_EN_VIVA_DVB5_TIMING_GEN_256FS2DVB5_TIMING_GEN_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_dvb6_timing_gen_256fs2dvb6_timing_gen_256fs {
+			id = <CLK_AUDIO_EN_VIVA_DVB6_TIMING_GEN_256FS2DVB6_TIMING_GEN_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_32xchxfs2earc_tx_32xchxfs {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_32XCHXFS2EARC_TX_32XCHXFS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_32xfs2earc_tx_32xfs {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_32XFS2EARC_TX_32XFS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_64xchxfs2earc_tx_64xchxfs {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_64XCHXFS2EARC_TX_64XCHXFS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_gpa_synth_ref2earc_tx_gpa_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_GPA_SYNTH_REF2EARC_TX_GPA_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_pll2earc_tx_pll {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_PLL2EARC_TX_PLL>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_source_256fs2earc_tx_source_256fs {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_SOURCE_256FS2EARC_TX_SOURCE_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_synth_iir_ref2earc_tx_synth_iir_ref {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_SYNTH_IIR_REF2EARC_TX_SYNTH_IIR_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_earc_tx_synth_ref2earc_tx_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_EARC_TX_SYNTH_REF2EARC_TX_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_fm_demodulator2fm_demodulator {
+			id = <CLK_AUDIO_EN_VIVA_FM_DEMODULATOR2FM_DEMODULATOR>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_gpa_240fso2gpa_240fso {
+			id = <CLK_AUDIO_EN_VIVA_GPA_240FSO2GPA_240FSO>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_gpa_256fso2gpa_256fso {
+			id = <CLK_AUDIO_EN_VIVA_GPA_256FSO2GPA_256FSO>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_gpa_480fso2gpa_480fso {
+			id = <CLK_AUDIO_EN_VIVA_GPA_480FSO2GPA_480FSO>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx_mpll_4322hdmi_rx_mpll_432 {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX_MPLL_4322HDMI_RX_MPLL_432>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx_s2p_128fs2hdmi_rx_s2p_128fs {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX_S2P_128FS2HDMI_RX_S2P_128FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx_s2p_256fs2hdmi_rx_s2p_256fs {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX_S2P_256FS2HDMI_RX_S2P_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx_synth_ref2hdmi_rx_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX_SYNTH_REF2HDMI_RX_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx_v2a_time_stamp2hdmi_rx_v2a_time_stamp {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX_V2A_TIME_STAMP2HDMI_RX_V2A_TIME_STAMP>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx2_mpll_4322hdmi_rx2_mpll_432 {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX2_MPLL_4322HDMI_RX2_MPLL_432>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx2_s2p_128fs2hdmi_rx2_s2p_128fs {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX2_S2P_128FS2HDMI_RX2_S2P_128FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx2_s2p_256fs2hdmi_rx2_s2p_256fs {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX2_S2P_256FS2HDMI_RX2_S2P_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx2_synth_ref2hdmi_rx2_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX2_SYNTH_REF2HDMI_RX2_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_rx2_v2a_time_stamp2hdmi_rx2_v2a_time_stamp {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_RX2_V2A_TIME_STAMP2HDMI_RX2_V2A_TIME_STAMP>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_tx_128fs2hdmi_tx_128fs {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_TX_128FS2HDMI_TX_128FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_hdmi_tx_256fs2hdmi_tx_256fs {
+			id = <CLK_AUDIO_EN_VIVA_HDMI_TX_256FS2HDMI_TX_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_2_bclk_synth_ref2i2s_2_bclk_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_I2S_2_BCLK_SYNTH_REF2I2S_2_BCLK_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_bclk_dg22i2s_bclk_dg2 {
+			id = <CLK_AUDIO_EN_VIVA_I2S_BCLK_DG22I2S_BCLK_DG2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_bclk_dg2i2s_bclk_dg {
+			id = <CLK_AUDIO_EN_VIVA_I2S_BCLK_DG2I2S_BCLK_DG>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_bclk_synth_ref2i2s_bclk_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_I2S_BCLK_SYNTH_REF2I2S_BCLK_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_mclk_synth_ref2i2s_mclk_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_I2S_MCLK_SYNTH_REF2I2S_MCLK_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_synth_ref2i2s_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_I2S_SYNTH_REF2I2S_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_trx_bclk_timing_gen2i2s_trx_bclk_timing_gen {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TRX_BCLK_TIMING_GEN2I2S_TRX_BCLK_TIMING_GEN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_trx_synth_ref2i2s_trx_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TRX_SYNTH_REF2I2S_TRX_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_tx_fifo_256fs2i2s_tx_fifo_256fs {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TX_FIFO_256FS2I2S_TX_FIFO_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_mclk_i2s_decoder22mclk_i2s_decoder2 {
+			id = <CLK_AUDIO_EN_VIVA_MCLK_I2S_DECODER22MCLK_I2S_DECODER2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_mclk_i2s_decoder2mclk_i2s_decoder {
+			id = <CLK_AUDIO_EN_VIVA_MCLK_I2S_DECODER2MCLK_I2S_DECODER>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm_synth_ref2npcm_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_NPCM_SYNTH_REF2NPCM_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm2_synth_ref2npcm2_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_NPCM2_SYNTH_REF2NPCM2_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm3_synth_ref2npcm3_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_NPCM3_SYNTH_REF2NPCM3_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm4_256fs_timing_gen2npcm4_256fs_timing_gen {
+			id = <CLK_AUDIO_EN_VIVA_NPCM4_256FS_TIMING_GEN2NPCM4_256FS_TIMING_GEN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm4_synth_ref2npcm4_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_NPCM4_SYNTH_REF2NPCM4_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm5_256fs_timing_gen2npcm5_256fs_timing_gen {
+			id = <CLK_AUDIO_EN_VIVA_NPCM5_256FS_TIMING_GEN2NPCM5_256FS_TIMING_GEN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_npcm5_synth_ref2npcm5_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_NPCM5_SYNTH_REF2NPCM5_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_pcm_clk_2162pcm_clk_216 {
+			id = <CLK_AUDIO_EN_VIVA_PCM_CLK_2162PCM_CLK_216>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_pcm_clk_aupll2pcm_clk_aupll {
+			id = <CLK_AUDIO_EN_VIVA_PCM_CLK_AUPLL2PCM_CLK_AUPLL>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_r2_wb2r2_wb {
+			id = <CLK_AUDIO_EN_VIVA_R2_WB2R2_WB>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_riu_brg_r22r2_riu_brg {
+			id = <CLK_AUDIO_EN_VIVA_RIU_BRG_R22R2_RIU_BRG>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_riu_r22riu_r2 {
+			id = <CLK_AUDIO_EN_VIVA_RIU_R22RIU_R2>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch1_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH1_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch2_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH2_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch3_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH3_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch4_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH4_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch5_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH5_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch6_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH6_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch7_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH7_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch8_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH8_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch9_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH9_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sif_adc_cic2sif_adc_cic {
+			id = <CLK_AUDIO_EN_VIVA_SIF_ADC_CIC2SIF_ADC_CIC>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sif_adc_r2b_fifo_in2sif_adc_r2b_fifo_in {
+			id = <CLK_AUDIO_EN_VIVA_SIF_ADC_R2B_FIFO_IN2SIF_ADC_R2B_FIFO_IN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sif_adc_r2b2sif_adc_r2b {
+			id = <CLK_AUDIO_EN_VIVA_SIF_ADC_R2B2SIF_ADC_R2B>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sif_cordic2sif_cordic {
+			id = <CLK_AUDIO_EN_VIVA_SIF_CORDIC2SIF_CORDIC>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sif_synth2sif_synth {
+			id = <CLK_AUDIO_EN_VIVA_SIF_SYNTH2SIF_SYNTH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sin_gen2sin_gen {
+			id = <CLK_AUDIO_EN_VIVA_SIN_GEN2SIN_GEN>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_rx_128fs2spdif_rx_128fs {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_RX_128FS2SPDIF_RX_128FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_rx_dg2spdif_rx_dg {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_RX_DG2SPDIF_RX_DG>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_rx_synth_ref2spdif_rx_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_RX_SYNTH_REF2SPDIF_RX_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_tx_128fs2spdif_tx_128fs {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_TX_128FS2SPDIF_TX_128FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_tx_256fs2spdif_tx_256fs {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_TX_256FS2SPDIF_TX_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_tx_synth_ref2spdif_tx_synth_ref {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_TX_SYNTH_REF2SPDIF_TX_SYNTH_REF>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_tx2_128fs2spdif_tx2_128fs {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_TX2_128FS2SPDIF_TX2_128FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_spdif_tx2_256fs2spdif_tx2_256fs {
+			id = <CLK_AUDIO_EN_VIVA_SPDIF_TX2_256FS2SPDIF_TX2_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_synth_2nd_order2synth_2nd_order {
+			id = <CLK_AUDIO_EN_VIVA_SYNTH_2ND_ORDER2SYNTH_2ND_ORDER>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_synth_codec2synth_codec {
+			id = <CLK_AUDIO_EN_VIVA_SYNTH_CODEC2SYNTH_CODEC>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_test_bus2test_bus {
+			id = <CLK_AUDIO_EN_VIVA_TEST_BUS2TEST_BUS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_xtal_12m2xtal {
+			id = <CLK_AUDIO_EN_VIVA_XTAL_12M2XTAL>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_xtal_24m2xtal {
+			id = <CLK_AUDIO_EN_VIVA_XTAL_24M2XTAL>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_tx_2_fifo_256fs2i2s_tx_2_fifo_256fs {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TX_2_FIFO_256FS2I2S_TX_2_FIFO_256FS>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch10_256fsi2ch10_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH10_256FSI2CH10_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m1_256fsi2ch_m1_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M1_256FSI2CH_M1_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m2_256fsi2ch_m2_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M2_256FSI2CH_M2_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m3_256fsi2ch_m3_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M3_256FSI2CH_M3_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m4_256fsi2ch_m4_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M4_256FSI2CH_M4_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m5_256fsi2ch_m5_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M5_256FSI2CH_M5_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m6_256fsi2ch_m6_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M6_256FSI2CH_M6_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m7_256fsi2ch_m7_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M7_256FSI2CH_M7_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m8_256fsi2ch_m8_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M8_256FSI2CH_M8_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m9_256fsi2ch_m9_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M9_256FSI2CH_M9_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m10_256fsi2ch_m10_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M10_256FSI2CH_M10_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m11_256fsi2ch_m11_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M11_256FSI2CH_M11_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m12_256fsi2ch_m12_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M12_256FSI2CH_M12_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m13_256fsi2ch_m13_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M13_256FSI2CH_M13_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m14_256fsi2ch_m14_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M14_256FSI2CH_M14_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m15_256fsi2ch_m15_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M15_256FSI2CH_M15_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_ch_m16_256fsi2ch_m16_256fsi {
+			id = <CLK_AUDIO_EN_VIVA_CH_M16_256FSI2CH_M16_256FSI>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_tdm_1x16tx32b_bclk2viva_i2s_tdm_1x16tx32b_bclk {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TDM_1X16TX32B_BCLK2VIVA_I2S_TDM_1X16TX32B_BCLK>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_tdm_1x16tx32b_fifo2viva_i2s_tdm_1x16tx32b_fifo {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TDM_1X16TX32B_FIFO2VIVA_I2S_TDM_1X16TX32B_FIFO>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_tdm_6x16tx32b_bclk2i2s_tdm_6x16tx32b_bclk {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TDM_6X16TX32B_BCLK2I2S_TDM_6X16TX32B_BCLK>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_i2s_tdm_6x16tx32b_fifo2viva_i2s_tdm_6x16tx32b_fifo {
+			id = <CLK_AUDIO_EN_VIVA_I2S_TDM_6X16TX32B_FIFO2VIVA_I2S_TDM_6X16TX32B_FIFO>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch10_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH10_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m1_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M1_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m2_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M2_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m3_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M3_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m4_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M4_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m5_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M5_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m6_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M6_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m7_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M7_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m8_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M8_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m9_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M9_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m10_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M10_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m11_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M11_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m12_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M12_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m13_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M13_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m14_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M14_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m15_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M15_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_sh2ch_m16_sh {
+			id = <CLK_AUDIO_EN_VIVA_SH2CH_M16_SH>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+		viva_src_mac_bspline2src_mac_bspline {
+			id = <CLK_AUDIO_EN_VIVA_SRC_MAC_BSPLINE2SRC_MAC_BSPLINE>;
+			parent = "p_dummy";
+			ignore-unused;
+		};
+
+	};
+
+};

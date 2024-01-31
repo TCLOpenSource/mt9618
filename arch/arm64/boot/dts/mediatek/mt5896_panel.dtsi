@@ -1,0 +1,1176 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+
+ */
+
+/ {
+
+video_out: video_out{
+	compatible = "mtk,mt5896-panel";
+	status = "okay";
+	lane_duplicate = <0>;
+	#address-cells = <2>;
+	#size-cells = <2>;
+	backlight-gpios = <&gpio0 9 1>;
+	vcc-gpios = <&gpio0 69 1>;
+	oled_err_det-gpios = <&gpio0 138 1>;
+	oled_evdd_det-gpios = <&gpio0 137 1>;
+	oled_onrf-gpios = <&gpio0 136 1>;
+	oled_comp_done-gpios = <&gpio0 139 1>;
+	oled_qsm_en-gpios = <&gpio0 140 1>;
+	tcon_dlg-gpios = <&gpio0 194 1>;	/* Use TCON0 as default */
+	tcon_i2c_wp-gpios = <&gpio0 282 1>;
+	panel_info_name_list = "panel_info", "panel_info_7680x4320_50",
+	"panel_info_7680x4320_48", "panel_info_3840x2160_120",
+	"panel_info_3840x2160_100", "panel_info_3840x2160_96";
+	panel_info {
+		panel_name = "8K60_PANEL_32LANE";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <4>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <174>;
+		resolution_width = <7680>;
+		resolution_height = <4320>;
+		max_h_total = <10800>;
+		typ_h_total = <8800>;
+		min_h_total = <8000>;
+		max_v_total = <4592>;
+		typ_v_total = <4500>;
+		min_v_total = <4494>;
+		max_v_total_panelprotect = <5800>;
+		min_v_total_panelprotect = <4400>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <2376000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		vrr_en = <0>;
+		min_vrr_framerate = <30>;
+		max_vrr_framerate = <120>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		/* Support VRR hign pixel clock mode */
+		hpc_mode = <0>;
+		GameDirectFrameRateGroup = <0>; //0: 48Hz to 60Hz, 1: larger than 60Hz
+		dlg_on = <0>;
+	};
+	panel_info_7680x4320_50 {
+		panel_name = "8K50_PANEL_32LANE";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <4>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <174>;
+		resolution_width = <7680>;
+		resolution_height = <4320>;
+		max_h_total = <10800>;
+		typ_h_total = <8800>;
+		min_h_total = <8000>;
+		max_v_total = <5506>;
+		typ_v_total = <5400>;
+		min_v_total = <5296>;
+		max_v_total_panelprotect = <5800>;
+		min_v_total_panelprotect = <4400>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <2376000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		vrr_en = <0>;
+		min_vrr_framerate = <30>;
+		max_vrr_framerate = <120>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		/* Support VRR hign pixel clock mode */
+		hpc_mode = <0>;
+		GameDirectFrameRateGroup = <0>; //0: 48Hz to 60Hz, 1: larger than 60Hz
+		dlg_on = <0>;
+	};
+	panel_info_7680x4320_48 {
+		panel_name = "8K48_PANEL_32LANE";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <4>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <174>;
+		resolution_width = <7680>;
+		resolution_height = <4320>;
+		max_h_total = <10800>;
+		typ_h_total = <8800>;
+		min_h_total = <8000>;
+		max_v_total = <5744>;
+		typ_v_total = <5625>;
+		min_v_total = <5520>;
+		max_v_total_panelprotect = <5800>;
+		min_v_total_panelprotect = <4400>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <2376000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		vrr_en = <0>;
+		min_vrr_framerate = <30>;
+		max_vrr_framerate = <120>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		/* Support VRR hign pixel clock mode */
+		hpc_mode = <0>;
+		GameDirectFrameRateGroup = <0>; //0: 48Hz to 60Hz, 1: larger than 60Hz
+		dlg_on = <0>;
+	};
+	panel_info_3840x2160_120 {
+		panel_name = "4K120_PANEL_16LANE";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2304>;
+		typ_v_total = <2250>;
+		min_v_total = <2244>;
+		max_v_total_panelprotect = <2900>;
+		min_v_total_panelprotect = <2200>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <1188000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		vrr_en = <0>;
+		min_vrr_framerate = <30>;
+		max_vrr_framerate = <120>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		/* Support VRR hign pixel clock mode */
+		hpc_mode = <0>;
+		GameDirectFrameRateGroup = <1>; //0: 48Hz to 60Hz, 1: larger than 60Hz
+		dlg_on = <0>;
+	};
+	panel_info_3840x2160_100 {
+		panel_name = "4K100_PANEL_16LANE";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2768>;
+		typ_v_total = <2700>;
+		min_v_total = <2640>;
+		max_v_total_panelprotect = <2900>;
+		min_v_total_panelprotect = <2200>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <1188000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		vrr_en = <0>;
+		min_vrr_framerate = <30>;
+		max_vrr_framerate = <120>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		/* Support VRR hign pixel clock mode */
+		hpc_mode = <0>;
+		GameDirectFrameRateGroup = <1>; //0: 48Hz to 60Hz, 1: larger than 60Hz
+		dlg_on = <0>;
+	};
+	panel_info_3840x2160_96 {
+		panel_name = "4K96_PANEL_16LANE";
+
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2880>;
+		typ_v_total = <2812>;
+		min_v_total = <2752>;
+		max_v_total_panelprotect = <2900>;
+		min_v_total_panelprotect = <2200>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <1188000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		vrr_en = <0>;
+		min_vrr_framerate = <30>;
+		max_vrr_framerate = <120>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		/* Support VRR hign pixel clock mode */
+		hpc_mode = <0>;
+		GameDirectFrameRateGroup = <1>; //0: 48Hz to 60Hz, 1: larger than 60Hz
+		dlg_on = <0>;
+	};
+	panel_cus_setting:panel-cus-setting {
+		CTRL_BIT_Enable = <0>;
+		DTSIFileType = <0>;
+		DTSIFileVer = <0>;
+		PanelIndex = <0>;
+		PanelIDString = "";
+		InchSize = <47>;
+		ChassisIndex = <0>;
+		PanelGamma_Enable = <0>;
+		PanelGamme_BinPath = "";
+		TCON_Enable = <0>;
+		TCON_BinPath = "";
+		VCOM_Pattern = <0>;
+		VCOM_Type = <0>;
+		SpreadPermillage = <0>;
+		SpreadFreq = <0>;
+		Ocell_Demura_IDX = <0>;
+		Tcon_Index = <0>;
+		CURRENT_MAX = <0>;
+		BL_CUR_FREQ = <0>;
+		BL_PWM_FREQ = <0>;
+		BL_WAIT_LOGO = <0>;
+		BL_CONTROL_IF = <0>;
+		PanelMirrorMode = <0>;
+		PanelOutputFormat = <0>;
+		Framesync_Mode = <0>; //0 = vttv, 1 = vtt2fpll
+		OverDrive_Enable = <0>;
+		OverDrive_Buf_Addr = <0>;
+		OverDrive_Buf_Size = <0>;
+		VCC_BL_CusCtrl = <0>;
+		VCC_OffOn_Delay = <0>;
+		Force_FreeRun_Enable = <0>;
+		M_delta = <5>;
+		CustomerColorPrimaries = <0>;
+		SourceWx = <15635>;
+		SourceWy = <16450>;
+		VIDEO_GFX_DISPLAY_MODE = <0>;
+		OSD_Height = <2160>;
+		OSD_Width = <3840>;
+		OSD_HsyncStart = <0>;
+		OSD_HsyncEnd = <0>;
+		OSD_HDEStart = <0>;
+		OSD_HDEEnd = <0>;
+		OSD_HTotal = <0>;
+		OSD_VsyncStart = <0>;
+		OSD_VsyncEnd = <0>;
+		OSD_VDEStart = <0>;
+		OSD_VDEEnd = <0>;
+		OSD_VTotal = <0>;
+		cus_x_dpi = <155>;
+		cus_y_dpi = <155>;
+		u32PeriodPWM = <6250000>;
+		u32DutyPWM = <3175000>; /* (u32MaxPWMvalue + u32MinPWMvalue) / 2 */
+		u16DivPWM = <0>;
+		bPolPWM = <0>;
+		u32MaxPWMvalue = <6250000>;
+		u32MinPWMvalue = <100000>;
+		u16PWMPort = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+		panel_frc_table_type = <0>;
+		GameDirectFrameRateMode = <0>;
+		PanelPhysicalWidth = <630>;
+		PanelPhysicalHeight = <350>;
+		RENDER_IN_COLOR_FORMAT = <1>;
+		RENDER_IN_COLOR_RANGE = <1>;
+		RENDER_IN_COLOR_SPACE = <0>;
+		SCDISP_PATH_SEL = <0>;
+		DLG_Enable = <0>;
+		DLG_GPIO_CusCtrl = <0>;
+		DLG_I2C_CusCtrl = <0>;
+		DLG_I2C_Sec_CusCtrl = <0>;
+		DLG_ACOn_Mem_Enable = <0>;
+		Panel_Name = "MTK_TV_Panel";
+		Global_Mute_Backlight_Ignore = <0>;
+		Global_Mute_Delay = <0>;
+		Global_Unmute_Delay = <0>;
+		PWM_to_BL_delay = <0>;
+		BL_to_PWM_delay = <0>;
+	};
+
+	panel_tgen_info:panel_tgen_info {
+		panel_tgen_max_vtotal = <2840>; /*48Hz - 0.1% = 47.52Hz*/
+		panel_tgen_min_vtotal = <2238>; /*de start 78 + de height 2160*/
+	};
+
+	tconless_model_info:tconless_model_info {
+		higt_frame_rate_bin_path = "";
+		higt_pixel_clock_bin_path = "";
+		game_mode_bin_path = "";
+		higt_frame_rate_gamma_bin_path = "";
+		higt_pixel_clock_gamma_bin_path = "";
+		game_mode_gamma_bin_path = "";
+		/* Power sequence on/off bin path */
+		power_seq_on_bin_path = "";
+		power_seq_off_bin_path = "";
+	};
+
+	output_swing_info:output_swing_info {
+		swing_usr_define = <0>;
+		common_swing = <1>;
+		swing_ctrl_lane = <32>;
+		swing_level = <0xA>;
+	};
+
+	output_pre_emphasis:output_pre_emphasis {
+		pe_usr_define = <0>;
+		common_pe = <1>;
+		pe_ctrl_lane = <32>;
+		pe_level = <0x10>;
+	};
+
+	pkg_lane_order:pkg_lane_order {
+		support_lanes = <40>;
+		layout_order = < 4  5  8  0  6  1  3  2  9 11  7 10 12 13 15 14
+				25 19 16 27 28 17 18 20 29 21 22 23 26 24 30 31
+				33 32 34 35 36 39 37 38>;
+	};
+
+	spread_spectrum_info:spread_spectrum_info {
+		ssc_ctrl_en = <0>;
+		ssc_modulation = <30>;
+		ssc_deviation = <50>;
+		ssc_protect_by_user_en = <0>;
+		ssc_modulation_protect_value = <30>;
+		ssc_deviation_protect_value = <50>;
+	};
+
+	usr_lane_order:usr_lane_order {
+		usr_define = <0>;
+		ctrl_lanes = <32>;
+		laneorder = < 0 1 2 3 8 9 10 11 16 17 18 19 24 25 26 27
+			4 5 6 7 12 13 14 15 20 21 22 23 28 29 30 31>;
+	};
+
+	panel-frc-table-info {
+		FRC_TABLE =
+		<0 160 1 4>,
+		<160 210 1 3>,
+		<210 245 2 5>,
+		<245 260 1 2>,
+		<260 400 1 2>,
+		<400 510 1 1>,
+		<510 0xFFFF 1 1>;
+	};
+	panel-color-info {
+		COLOR_SPACE = <4>;
+		COLOR_FORAMT = <0>;
+		COLOR_RANGE = <3>;
+		Rx = <32000>;
+		Rx_variation = <100>;
+		Ry = <16455>;
+		Ry_variation = <100>;
+		Gx = <15000>;
+		Gx_variation = <100>;
+		Gy = <30000>;
+		Gy_variation = <100>;
+		Bx = <7500>;
+		Bx_variation = <100>;
+		By = <3000>;
+		By_variation = <100>;
+		Wx = <15635>;
+		Wx_variation = <100>;
+		Wy = <16450>;
+		Wy_variation = <100>;
+		MaxLuminance = <100>;
+		MedLuminance = <50>;
+		MinLuminance = <500>;
+		LinearRGB = <1>;
+		HDRPanelNits = <399>;
+		DynamicLuminance = <0>;
+		GOP0HDRMode = <0x13>;
+	};
+	panel-dither-info {
+		dither_out_depth = <0>;
+		dither_pattern_type = <0>;
+		dither_capability = <0>;
+	};
+	hw_info:hw-info {
+		tgen_version = <1>;
+		lpll_version = <1>;
+		mod_version = <1>;
+		rcon_enable = <1>;
+		rcon_max = <24>;
+		rcon_min = <8>;
+		rcon_value = <15>;
+		biascon_single_max = <70>;
+		biascon_single_min = <30>;
+		biascon_single_value = <48>;
+		biascon_double_max = <70>;
+		biascon_double_min = <30>;
+		biascon_double_value = <48>;
+		rint_enable =<0>;
+		rint_max = <0>;
+		rint_min = <0>;
+		rint_value = <0>;
+		pnl_lib_version = <0xff>;
+	};
+	ext_graph_combo_info:ext_graph_combo_info {
+		graph_vbo_byte_mode = <5>;
+	};
+	mod: mod{
+		compatible = "mtk,mt5896-mod";
+		reg = <0x0 0x1C484000 0x0 0x1E00>;
+	};
+	lpll: lpll{
+		compatible = "mtk,mt5896-lpll";
+		reg = <0x0 0x1C486000 0x0 0x200>;
+	};
+	pmic_info:pmic_info {
+		pmic_info_version = <0>;
+		pmic_info_length = <0>;
+		pmic_type = <1>; /* 0:none 1:pmic 2:pgamma 3:levelshift ic 4:vcom ic */
+		pmic_bin_file_path = "";
+		/* bin format type: */
+		/* "0" is bin format from vendor */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		pmic_bin_format_type = <0>;
+		pmic_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		pmic_with_nvm = <0>; /*1 means with nvm*/
+		pmic_i2c_bus = <0>;
+		pmic_i2c_mode = <0>;
+		pmic_i2c_dev_addr = <0>;
+		pmic_i2c_reg_offst = <0>;
+		pmic_pre_vcc_dly = <0>;
+		pmic_pre_gpio_num = <0>;
+		pmic_pre_gpio_ops = <0>;
+		pmic_pre_delay = <0>;
+		pmic_post_gpio_num = <0>;
+		pmic_post_gpio_ops = <0>;
+		pmic_post_delay = <0>;
+		pmic_auto_from_flash = <0>;
+		pmic_vcom_override_enable = <0>;
+		pmic_vcom_addr_start = <0>;
+		pmic_vcom_addr_length = <0>;
+		pmic_i2c_read_mode = <0>;
+		pimc_i2c_burn_cmd = <0>;
+		pimc_i2c_burn_offset = <0>;
+		pmic_i2c_ctrl_reg = <0>;
+		pmic_i2c_ctrl_reg_offset = <0>;
+		pimc_data_start = <0>;
+		pimc_data_end = <0>;
+	};
+	pgamma_info:pgamma_info {
+		pgamma_info_version = <0>;
+		pgamma_info_length = <0x00>;
+		pgamma_type = <2>; /* 0:none 1:pmic 2:pgamma 3:levelshift ic 4:vcom ic */
+		pgamma_bin_file_path = "";
+		/* bin format type: */
+		/* "0" is bin format from vendor */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		pgamma_bin_format_type = <0>;
+		pgamma_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		pgamma_with_nvm = <0>; /*1 means with nvm*/
+		pgamma_i2c_bus = <0>;
+		pgamma_i2c_mode = <0>;
+		pgamma_i2c_dev_addr = <0>;
+		pgamma_i2c_reg_offst = <0>;
+		pgamma_pre_vcc_dly = <0>;
+		pgamma_pre_gpio_num = <0>;
+		pgamma_pre_gpio_ops = <0>;
+		pgamma_pre_delay = <0>;
+		pgamma_post_gpio_num = <0>;
+		pgamma_post_gpio_ops = <0>;
+		pgamma_post_delay = <0>;
+		pgamma_auto_from_flash = <0>;
+		pgamma_i2c_read_mode = <0>;
+		pgamma_i2c_burn_cmd = <0>;
+		pgamma_i2c_burn_offset = <0>;
+		pgamma_i2c_ctrl_reg = <0>;
+		pgamma_i2c_ctrl_reg_offset = <0>;
+		pgamma_data_start = <0>;
+		pgamma_data_end = <0>;
+	};
+	levelshift_info:levelshift_info {
+		levelshift_info_version = <0>;
+		levelshift_info_length = <0>;
+		levelshift_type = <3>; /* 0:none 1:pmic 2:pgamma 3:levelshift ic 4:vcom ic */
+		levelshift_bin_file_path = "tcon/RT6966_LS.bin";
+		/* bin format type: */
+		/* "0" is bin format from vendor */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		levelshift_bin_format_type = <0>;
+		levelshift_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		levelshift_with_nvm = <0>; /*1 means with nvm*/
+		levelshift_i2c_bus = <0>;
+		levelshift_i2c_mode = <0>;
+		levelshift_i2c_dev_addr = <0>;
+		levelshift_i2c_reg_offst = <0>;
+		levelshift_pre_vcc_dly = <0>;
+		levelshift_pre_gpio_num = <0>;
+		levelshift_pre_gpio_ops = <0>;
+		levelshift_pre_delay = <0>;
+		levelshift_post_gpio_num = <0>;
+		levelshift_post_gpio_ops = <0>;
+		levelshift_post_delay = <0>;
+		levelshift_auto_from_flash = <0>;
+		levelshift_i2c_read_mode = <0>;
+		levelshift_i2c_burn_cmd = <0>;
+		levelshift_i2c_burn_offset = <0>;
+		levelshift_i2c_ctrl_reg = <0>;
+		levelshift_i2c_ctrl_reg_offset = <0>;
+		levelshift_data_start = <0>;
+		levelshift_data_end = <0>;
+	};
+	vcomic_info:vcomic_info {
+		vcomic_info_version = <0>;
+		vcomic_info_length = <0>;
+		vcomic_type = <4>; /* 0:none 1:pmic 2:pgamma 3:levelshift ic 4:vcom ic */
+		vcomic_bin_file_path = "";
+		/* bin format type: */
+		/* "0" is bin format from vendor */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		vcomic_bin_format_type = <0>;
+		vcomic_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		vcomic_with_nvm = <0>; /*1 means with nvm*/
+		vcomic_i2c_bus = <0>;
+		vcomic_i2c_mode = <0>;
+		vcomic_i2c_dev_addr = <0>;
+		vcomic_i2c_reg_offst = <0>;
+		vcomic_pre_vcc_dly = <0>;
+		vcomic_pre_gpio_num = <0>;
+		vcomic_pre_gpio_ops = <0>;
+		vcomic_pre_delay = <0>;
+		vcomic_post_gpio_num = <0>;
+		vcomic_post_gpio_ops = <0>;
+		vcomic_post_delay = <0>;
+		vcomic_auto_from_flash = <0>;
+		vcomic_i2c_read_mode = <0>;
+		vcomic_i2c_burn_cmd = <0>;
+		vcomic_i2c_burn_offset = <0>;
+		vcomic_i2c_ctrl_reg = <0>;
+		vcomic_i2c_ctrl_reg_offset = <0>;
+		vcomic_data_start = <0>;
+		vcomic_data_end = <0>;
+	};
+	pmic_sub_info:pmic_sub_info {
+		pmic_sub_info_version = <0>;
+		pmic_sub_info_length = <0>;
+		pmic_sub_type = <5>;
+		pmic_sub_bin_file_path = "";
+		/* bin format type: "0" is bin format from vendor; */
+		/* "1" is bin format with OFFSET/DATA/MASK*/
+		pmic_sub_bin_format_type = <0>;
+		pmic_sub_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		pmic_sub_with_nvm = <0>; /*1 means with nvm*/
+		pmic_sub_i2c_bus = <0>;
+		pmic_sub_i2c_mode = <0>;
+		pmic_sub_i2c_dev_addr = <0>;
+		pmic_sub_i2c_reg_offst = <0>;
+		pmic_sub_pre_gpio_num = <0>;
+		pmic_sub_pre_gpio_ops = <0>;
+		pmic_sub_pre_delay = <0>;
+		pmic_sub_post_gpio_num = <0>;
+		pmic_sub_post_gpio_ops = <0>;
+		pmic_sub_post_delay = <0>;
+		pmic_sub_auto_from_flash = <0>;
+		pmic_sub_i2c_read_mode = <0>;
+		pmic_sub_i2c_burn_cmd = <0>;
+		pmic_sub_i2c_burn_offset = <0>;
+		pmic_sub_i2c_ctrl_reg = <0>;
+		pmic_sub_i2c_ctrl_reg_offset = <0>;
+		pmic_sub_data_start = <0>;
+		pmic_sub_data_end = <0>;
+	};
+	pgamma_sub_info:pgamma_sub_info {
+		pgamma_sub_info_version = <0>;
+		pgamma_sub_info_length = <0>;
+		pgamma_sub_type = <6>;
+		pgamma_sub_bin_file_path = "";
+		/* bin format type: "0" is bin format from vendor; */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		pgamma_sub_bin_format_type = <0>;
+		pgamma_sub_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		pgamma_sub_with_nvm = <0>; /*1 means with nvm*/
+		pgamma_sub_i2c_bus = <0>;
+		pgamma_sub_i2c_mode = <0>;
+		pgamma_sub_i2c_dev_addr = <0>;
+		pgamma_sub_i2c_reg_offst = <0>;
+		pgamma_sub_pre_gpio_num = <0>;
+		pgamma_sub_pre_gpio_ops = <0>;
+		pgamma_sub_pre_delay = <0>;
+		pgamma_sub_post_gpio_num = <0>;
+		pgamma_sub_post_gpio_ops = <0>;
+		pgamma_sub_post_delay = <0>;
+		pgamma_sub_auto_from_flash = <0>;
+		pgamma_sub_i2c_read_mode = <0>;
+		pgamma_sub_i2c_burn_cmd = <0>;
+		pgamma_sub_i2c_burn_offset = <0>;
+		pgamma_sub_i2c_ctrl_reg = <0>;
+		pgamma_sub_i2c_ctrl_reg_offset = <0>;
+		pgamma_sub_data_start = <0>;
+		pgamma_sub_data_end = <0>;
+	};
+	levelshift_sub_info:levelshift_sub_info {
+		levelshift_sub_info_version = <0>;
+		levelshift_sub_info_length = <0>;
+		levelshift_sub_type = <7>;
+		levelshift_sub_bin_file_path = "";
+		/* bin format type: "0" is bin format from vendor; */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		levelshift_sub_bin_format_type = <0>;
+		levelshift_sub_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		levelshift_sub_with_nvm = <0>; /*1 means with nvm*/
+		levelshift_sub_i2c_bus = <0>;
+		levelshift_sub_i2c_mode = <0>;
+		levelshift_sub_i2c_dev_addr = <0>;
+		levelshift_sub_i2c_reg_offst = <0>;
+		levelshift_sub_pre_gpio_num = <0>;
+		levelshift_sub_pre_gpio_ops = <0>;
+		levelshift_sub_pre_delay = <0>;
+		levelshift_sub_post_gpio_num = <0>;
+		levelshift_sub_post_gpio_ops = <0>;
+		levelshift_sub_post_delay = <0>;
+		levelshift_sub_auto_from_flash = <0>;
+		levelshift_sub_i2c_read_mode = <0>;
+		levelshift_sub_i2c_burn_cmd = <0>;
+		levelshift_sub_i2c_burn_offset = <0>;
+		levelshift_sub_i2c_ctrl_reg = <0>;
+		levelshift_sub_i2c_ctrl_reg_offset = <0>;
+		levelshift_sub_data_start = <0>;
+		levelshift_sub_data_end = <0>;
+	};
+	vcomic_sub_info:vcomic_sub_info {
+		vcomic_sub_info_version = <0>;
+		vcomic_sub_info_length = <0>;
+		vcomic_sub_type = <8>;
+		vcomic_sub_bin_file_path = "";
+		/* bin format type: "0" is bin format from vendor; */
+		/* "1" is bin format with OFFSET/DATA/MASK */
+		vcomic_sub_bin_format_type = <0>;
+		vcomic_sub_force_init = <0>; /*1 means need to force write I2C when Power On*/
+		vcomic_sub_with_nvm = <0>; /*1 means with nvm*/
+		vcomic_sub_i2c_bus = <0>;
+		vcomic_sub_i2c_mode = <0>;
+		vcomic_sub_i2c_dev_addr = <0>;
+		vcomic_sub_i2c_reg_offst = <0>;
+		vcomic_sub_pre_gpio_num = <0>;
+		vcomic_sub_pre_gpio_ops = <0>;
+		vcomic_sub_pre_delay = <0>;
+		vcomic_sub_post_gpio_num = <0>;
+		vcomic_sub_post_gpio_ops = <0>;
+		vcomic_sub_post_delay = <0>;
+		vcomic_sub_auto_from_flash = <0>;
+		vcomic_sub_i2c_read_mode = <0>;
+		vcomic_sub_i2c_burn_cmd = <0>;
+		vcomic_sub_i2c_burn_offset = <0>;
+		vcomic_sub_i2c_ctrl_reg = <0>;
+		vcomic_sub_i2c_ctrl_reg_offset = <0>;
+		vcomic_sub_data_start = <0>;
+		vcomic_sub_data_end = <0>;
+	};
+	tcon: tcon{
+		compatible = "mtk,mt5876-tc";
+		reg = <0x0 0x1C488000 0x0 0x1B00>;
+	};
+	panel_tcon_i2c_info:panel_tcon_i2c_info {
+		tcon_i2c_name_list = "default_tcon_i2c";
+		default_tcon_i2c {
+			tcon_i2c_bus = <0x02>;
+			tcon_i2c_mode = <0x01>;
+			tcon_i2c_dev_addr = <0x40>;
+			tcon_i2c_reg_offst = <0>;
+			tcon_i2c_info_length = <0x1>;
+			tcon_i2c_info_row = <1>;
+			tcon_i2c_info_column_num = <1>;
+			tcon_i2c_info_data = <0x00>;
+		};
+	};
+	panel_tcon_i2c_sec_info:panel_tcon_i2c_sec_info {
+		tcon_i2c_sec_name_list = "default_tcon_i2c_sec";
+		default_tcon_i2c_sec {
+			tcon_i2c_sec_bus = <0x02>;
+			tcon_i2c_sec_mode = <0x01>;
+			tcon_i2c_sec_dev_addr = <0x40>;
+			tcon_i2c_sec_reg_offst = <0>;
+			tcon_i2c_sec_info_length = <0x1>;
+			tcon_i2c_sec_info_row = <1>;
+			tcon_i2c_sec_info_column_num = <1>;
+			tcon_i2c_sec_info_data = <0x00>;
+		};
+	};
+	panel_tcon_vrr_od_info:panel_tcon_vrr_od_info { /*VRR OD info*/
+		vrr_od_enable = <0>;
+		vrr_od_table_list = "VRR_OD_tab_0";
+		VRR_OD_tab_0 {
+			vrr_od_table_en = <0>;
+			vrr_od_table_idx = <0>;
+			vrr_od_lo_bound = <0>;
+			vrr_od_hi_bound = <60>;
+			vrr_od_file = "";
+		};
+	};
+	panel_tcon_vrr_pga_info:panel_tcon_vrr_pga_info { /*VRR PGA info*/
+		vrr_pga_enable = <0>;
+		vrr_pga_table_list = "VRR_PGA_tab_0";
+		VRR_PGA_tab_0 {
+			vrr_pga_table_en = <0>;
+			vrr_pga_table_idx = <0>;
+			vrr_pga_lo_bound = <0>;
+			vrr_pga_hi_bound = <60>;
+			vrr_pga_file = "";
+		};
+	};
+	tcon_info:tcon_info {
+		bVRR_HighFrameRateMode_Support = <0>;
+		ucVRR_HFR_ON_I2C_DATA_SIZE = <0>; /* VRR HFR on I2C cmd data max length = 10*/
+		ucVRR_HFR_ON_I2C_DATA_0 = <0x00>;
+		ucVRR_HFR_ON_I2C_DATA_1 = <0x00>;
+		ucVRR_HFR_ON_I2C_DATA_2 = <0x00>;
+		ucVRR_HFR_ON_I2C_DATA_3 = <0x00>;
+		ucVRR_HFR_ON_I2C_DATA_4 = <0x00>;
+		ucVRR_HFR_ON_I2C_DATA_5 = <0x00>;
+		ucVRR_HFR_ON_I2C_DATA_6 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_SIZE = <0>; /* VRR HFR of I2C cmd data max length = 10*/
+		ucVRR_HFR_OFF_I2C_DATA_0 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_1 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_2 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_3 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_4 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_5 = <0x00>;
+		ucVRR_HFR_OFF_I2C_DATA_6 = <0x00>;
+		ucVRR_HFR_ON_I2C_bus = <0x00>;
+		ucVRR_HFR_ON_I2C_mode = <0>;
+		ucVRR_HFR_ON_I2C_dev_addr = <0x00>;  /* TCON */
+		ucVRR_HFR_ON_I2C_offst = <0>;
+		bVRR_HighPixelClockMode_Support = <0>;
+		bGAME_Direct60HzMode_Support = <0>;
+		ucGAME_60HZ_ON_I2C_DATA_SIZE = <0>; /* GAME Direct60Hz on I2C cmd data length = 2*/
+		ucGAME_60HZ_ON_I2C_DATA_0 = <0x00>;
+		ucGAME_60HZ_ON_I2C_DATA_1 = <0x00>;
+		ucGAME_60HZ_OFF_I2C_DATA_SIZE = <0>; /* GAME Direct60Hz off I2C cmd data length = 2*/
+		ucGAME_60HZ_OFF_I2C_DATA_0 = <0x00>;
+		ucGAME_60HZ_OFF_I2C_DATA_1 = <0x00>;
+		bSupportGpioModeChange = <0>;
+		u16GPIO_NUM_MODE_CHG = <0>;
+		ucGPIO_CTRL_MODE_CHG_ON = <0>;
+		ucGPIO_CTRL_MODE_CHG_OFF = <0>;
+		u16DELAY_MODE_CHG = <0>;
+		bSupportTconI2cWP = <0>;
+		u16GPIO_NUM_TCON_I2C_WP = <0>;
+		ucGPIO_TCON_I2C_WP_ON = <0>;
+		ucGPIO_TCON_I2C_WP_OFF = <0>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_SIZE = <0>; /* VRR HFR on I2C sec cmd data max length = 10*/
+		ucVRR_HFR_ON_I2C_SEC_DATA_0 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_1 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_2 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_3 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_4 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_5 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_DATA_6 = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_bus = <0x00>;
+		ucVRR_HFR_ON_I2C_SEC_mode = <0>;
+		ucVRR_HFR_ON_I2C_SEC_dev_addr = <0x00>;  /* TCON */
+		ucVRR_HFR_ON_I2C_SEC_offst = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_SIZE = <0>; /* VRR HFR off I2C cmd data max length = 10*/
+		ucVRR_HFR_OFF_I2C_SEC_DATA_0 = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_1 = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_2 = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_3 = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_4 = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_5 = <0x00>;
+		ucVRR_HFR_OFF_I2C_SEC_DATA_6 = <0x00>;
+	};
+	oled_info:oled_info {
+		OLED_Support = <0>;
+		/* cust oled settings */
+		oled_ip_bypass_cust = <0>;
+		/* oled i2c settings */
+		slave_addr = <0xF0>;
+		channel_id = <0x02>;
+		i2c_mode = <0x01>;
+		reg_offset = <0>;
+		lumin_gain_addr = <0x16>;
+		temp_addr = <0x5E>;
+		offrs_addr = <0x01>;
+		offrs_mask = <0x10>;
+		jb_addr = <0x5D>;
+		jb_mask = <0x80>;
+		hdr_addr = <0x0B>;
+		hdr_mask = <0x08>;
+		lea_addr = <0x0B>;
+		lea_mask = <0x10>;
+		tpc_addr = <0x01>;
+		tpc_mask = <0x40>;
+		cpc_addr = <0x01>;
+		cpc_mask = <0x80>;
+		opt_p0_addr = <0x03>;
+		opt_start_addr = <0x01>;
+		opt_start_mask = <0x3FF>;
+		onrf_op = <2700>;
+		onrf_delay = <200>;
+		offrs_op = <320>;
+		jb_op = <120>;
+		jb_on_off = <10>;
+		jb_temp_max = <40>;
+		jb_temp_min = <10>;
+		jb_cooldown = <3600>;
+		qsm_on = <3000>;
+		qsm_evdd_off = <75>;
+		qsm_off = <990>;
+		qsm_evdd_on = <10>;
+		mon_delay = <200>;
+	};
+	vrr_hfr_pmic_i2c_ctrl:vrr_hfr_pmic_i2c_ctrl {
+		bSupportVrrHfrTconPmicI2cSet = <0>;
+		ucVRR_HFR_PMIC_I2C_PRE_DELAY = <0>;
+		ucVRR_HFR_PMIC_I2C_SLAVE_ADDR = <0>;
+		ucVRR_HFR_ON_PMIC_I2C_ADDR_SIZE = <0>;
+		ucVRR_HFR_ON_PMIC_I2C_ADDR_0 = <0x0>;
+		ucVRR_HFR_ON_PMIC_I2C_DATA_SIZE = <0>;
+		ucVRR_HFR_ON_PMIC_I2C_DATA_1 = <0x0>;
+		ucVRR_HFR_ON_PMIC_I2C_DATA_2 = <0x0>;
+		ucVRR_HFR_OFF_PMIC_I2C_ADDR_SIZE = <0>;
+		ucVRR_HFR_OFF_PMIC_I2C_ADDR_0 = <0x0>;
+		ucVRR_HFR_OFF_PMIC_I2C_DATA_SIZE = <0>;
+		ucVRR_HFR_OFF_PMIC_I2C_DATA_1 = <0x0>;
+		ucVRR_HFR_OFF_PMIC_I2C_DATA_2 = <0x0>;
+	};
+};
+
+ext_video_out: ext_video_out {
+	compatible = "mtk,mt5896-extdev-panel";
+	status= "disable";
+	lane_duplicate = <1>;
+	panel_info_name_list = "panel_info", "timing_info_4k50",
+	"timing_info_4k48", "timing_info_4k120",
+	"timing_info_4k100", "timing_info_4k96";
+	panel_info {
+		panel_name = "SONY BE";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2250>;
+		min_v_total = <2244>;
+		typ_clk_high = <000000000>;
+		typ_clk_low = <594000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+	timing_info_4k50 {
+		panel_name = "SONY BE 4k 50";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2700>;
+		min_v_total = <2244>;
+		typ_clk_high = <000000000>;
+		typ_clk_low = <594000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+	timing_info_4k48 {
+		panel_name = "SONY BE 4k 48";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2812>;
+		min_v_total = <2244>;
+		typ_clk_high = <000000000>;
+		typ_clk_low = <594000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+	timing_info_4k120 {
+		panel_name = "SONY BE 4k 120";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2250>;
+		min_v_total = <2244>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <1188000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+	timing_info_4k100 {
+		panel_name = "SONY BE 4k 100";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2700>;
+		min_v_total = <2244>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <1188000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+	timing_info_4k96 {
+		panel_name = "SONY BE 4k 96";
+		link_type = <1>;
+		vbo_byte_mode = <4>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2812>;
+		min_v_total = <2244>;
+		typ_clk_high = <0000000000>;
+		typ_clk_low = <1188000000>;
+		output_format = <0>;
+		content_output_format = <0>;
+		output_color_range = <1>;
+		output_color_space = <0>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+};
+
+graphic_out: graphic_out {
+	compatible = "mtk,mt5896-gfx-panel";
+	status = "disable";
+	panel_info_name_list = "panel_info";
+	panel_info {
+		panel_name = "GFX output";
+		link_type = <1>;
+		vbo_byte_mode = <5>;
+		div_section = <1>;
+		on_timing1 = <30>;
+		on_timing2 = <200>;
+		off_timing1 = <220>;
+		off_timing2 = <10>;
+		hsync_start = <0>;
+		hsync_width = <30>;
+		hsync_polarity = <1>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		vsync_polarity = <1>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2900>;
+		typ_v_total = <2250>;
+		min_v_total = <2244>;
+		typ_clk_high = <000000000>;
+		typ_clk_low = <594000000>;
+		output_format = <8>;
+		content_output_format = <4>;
+		graphic_mixer1_outmode = <0>;
+		graphic_mixer2_outmode = <1>;
+	};
+	loadfw-timing-info {
+		panel_name = "GFX output";
+		hsync_start = <0>;
+		hsync_width = <30>;
+		vsync_start = <0>;
+		vsync_width = <2>;
+		de_hstart = <112>;
+		de_vstart = <84>;
+		resolution_width = <3840>;
+		resolution_height = <2160>;
+		max_h_total = <4500>;
+		typ_h_total = <4400>;
+		min_h_total = <4300>;
+		max_v_total = <2350>;
+		typ_v_total = <2250>;
+		min_v_total = <2244>;
+		typ_clk_high = <000000000>;
+		typ_clk_low = <594000000>;
+	};
+};
+};

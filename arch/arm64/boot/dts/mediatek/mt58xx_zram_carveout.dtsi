@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+/ {
+
+	reserved_memory: reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+		zram_carveout: zram_carveout@cv1 {
+		};
+	};
+
+	zram_carveout0: zram_carveout0 {
+		compatible = "mediatek,dtv-zram-carveout";
+		memory-region = <&zram_carveout>;
+	};
+};

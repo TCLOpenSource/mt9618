@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+
+/ {
+	/* for merak clk, overlay by dto */
+	miic_mux_gate: miic_mg {
+	};
+
+	miic_nonpm_OOXX: miic_nonpm_swen {
+	};
+
+	/* mheg5 mux gate */
+	miic_mheg5_mux_gate: miic2miic_int_ck {
+	};
+
+	/* sw_en */
+	miic_enable_clock_list: miic_enable_clock_swen {
+	};
+};
+

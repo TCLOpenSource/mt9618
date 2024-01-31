@@ -1,0 +1,20 @@
+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+#define CLK_VD_EN_CMBAI2VD	1
+#define CLK_VD_EN_CMBAO2VD	2
+#define CLK_VD_EN_CMBBI2VD	3
+#define CLK_VD_EN_CMBBO2VD	4
+#define CLK_VD_EN_MCU_MAIL02VD	5
+#define CLK_VD_EN_MCU_MAIL12VD	6
+#define CLK_VD_EN_SMI2MCU_M2MCU	7
+#define CLK_VD_EN_SMI2VD	8
+#define CLK_VD_EN_VD2X2VD	9
+#define CLK_VD_EN_VD_32FSC2VD	10
+#define CLK_VD_EN_VD2VD	11
+#define CLK_VD_EN_XTAL_12M2VD	12
+#define CLK_VD_EN_XTAL_12M2MCU_M2RIU	13
+#define CLK_VD_EN_XTAL_12M2MCU_M2MCU	14
+#define CLK_VD_EN_NR	15

@@ -1,0 +1,26 @@
+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+#ifndef _DT_BINDINGS_CLK_MT5896_SCSRC_CLK_H
+#define _DT_BINDINGS_CLK_MT5896_SCSRC_CLK_H
+
+#define CLK_XC_XTAL_48M_CK	1
+#define CLK_XC_ADC_CK	2
+#define CLK_XC_HDMI0_CK	3
+#define CLK_XC_HDMI1_CK	4
+#define CLK_XC_HDMI2_CK	5
+#define CLK_XC_HDMI3_CK	6
+#define CLK_XC_XC_OD_SRC_CK	7
+#define CLK_XC_HD2MIU_M_CK	8
+#define CLK_XC_HD2MIU_S_CK	9
+#define CLK_XC_CLK_144_BUF_CK	10
+#define CLK_XC_SYS0PLL_VCOD4_528M_CK	11
+#define CLK_XC_SYS2PLL_VCOD3_480M_CK	12
+#define CLK_XC_XC_630M_CK	13
+#define CLK_XC_XC_OD_DIV2_CK	14
+#define CLK_XC_XC_OD_DIV4_CK	15
+#define CLK_SC_FIX_NR	16
+
+#endif // _DT_BINDINGS_CLK_MT5896_SCSRC_CLK_H

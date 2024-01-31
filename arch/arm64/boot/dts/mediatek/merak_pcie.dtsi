@@ -1,0 +1,98 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2022 MediaTek Inc.
+ */
+
+/{
+	pcierc0: pcierc@1C7E0000 {
+		compatible = "mediatek,mtk-dtv-pcie";
+		reg= <0 0x1C7E0000 0 0x2000>,
+		     <0 0x1C7C2000 0 0x0200>,
+		     <0 0x1C7D2000 0 0x0036>;
+		reg-names = "port0", "phy0", "phy_misc0";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		interrupt-parent = <&mtk_intc1_irq_low>;
+		interrupts = <0x0 0x2 0x4>;
+		bus-range = <0x00 0xff>;
+		ranges = <0x82000000 0x00 0x08000000 0x00 0x08000000 0x00 0x04000000>;
+		clocks =<&topgen_fix_factor CLK_TOPGEN_SYS0PLL_VCOD4_528M_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_SMI_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_PEXTP_TL_CLK_CK>,
+				<&usb_nonpm_ssusb CLK_USB_NONPM_EN_SMI2PEXTP>;
+		clock-names = "SMI_CK_SRC", "SMI_CK_MUX", "TL_CLK", "AXI_CLK250";
+		status = "disabled";
+
+		pcie0: pcie@0,0 {
+			reg = <0x0000 0 0 0 0>;
+			#address-cells = <3>;
+			#size-cells= <2>;
+			#interrupt-cells = <1>;
+			ranges;
+			num-lanes = <2>;
+			pm_support = <1>;
+			interrupt-map-mask = <0 0 0 7>;
+			interrupt-map = <0 0 0 1 &pcie_intc0 0>,
+					<0 0 0 2 &pcie_intc0 1>,
+					<0 0 0 3 &pcie_intc0 2>,
+					<0 0 0 4 &pcie_intc0 3>;
+			pcie_intc0: interrupt-controller {
+				interrupt-controller;
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+			};
+		};
+	};
+
+	pciephy0: pcie-phy@1C7C0000 {
+		compatible = "mediatek,generic-tphy-v2";
+		reg = <0x0 0x1C7C12E8 0x0 0x8>;
+		reg-names = "i2c_ctrl_reg";
+		#address-cells = <2>;
+		#size-cells = <2>;
+		mediatek,src_hw_capable;
+		ranges;
+		status = "disabled";
+
+		g3port0: pcie-phy@1C1C0700 {
+			reg = <0 0x1C7C0700 0 0x900>;
+			#phy-cells = <1>;
+			status = "disabled";
+		};
+	};
+
+	pcierc1: pciepm@1C1C0000 {
+		compatible = "mediatek,mtk-dtv-pcie";
+		reg = <0 0x1C1C0000 0 0x2000>,
+		      <0 0x1C1A0700 0 0x0900>,
+		      <0 0x1C1D0000 0 0x0100>,
+		      <0 0x1C0212E8 0 0x0004>;
+		reg-names = "port0", "phy0", "xiu2axi0", "pm_misc0";
+		#address-cells = <3>;
+		#size-cells = <2>;
+		interrupt-parent = <&mtk_intc2_irq_high>;
+		interrupts = <0x0 0x1e 0x4>;
+		bus-range = <0x00 0xff>;
+		ranges = <0x82000000 0x00 0x0C000000 0x00 0x0C000000 0x00 0x04000000>;
+		status = "disabled";
+		pcie1: pcie@0,0 {
+			reg = <0x0000 0 0 0 0>;
+			#address-cells = <3>;
+			#size-cells = <2>;
+			#interrupt-cells = <1>;
+			ranges;
+			num-lanes = <1>;
+			pm_support = <0>;
+			interrupt-map-mask = <0 0 0 7>;
+			interrupt-map =	<0 0 0 1 &pcie_intc1 0>,
+					<0 0 0 2 &pcie_intc1 1>,
+					<0 0 0 3 &pcie_intc1 2>,
+					<0 0 0 4 &pcie_intc1 3>;
+			pcie_intc1:interrupt-controller {
+				interrupt-controller;
+				#address-cells = <0>;
+				#interrupt-cells = <1>;
+			};
+		};
+	};
+};

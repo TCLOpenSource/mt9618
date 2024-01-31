@@ -1,0 +1,6 @@
+filp_.*
+vfs_.*
+^kernel_read
+kernel_write
+__close_fd
+close_fd

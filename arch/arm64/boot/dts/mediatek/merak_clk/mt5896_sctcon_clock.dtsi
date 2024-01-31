@@ -1,0 +1,164 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+/ {
+	sctcon_mux_gate: sctcon {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_mux_gate";
+		num = <CLK_SCTCON_NR>;
+
+		sctcon_xtal_12m_int_ck {
+			id = <CLK_SCTCON_XTAL_12M_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		sctcon_xtal_24m_int_ck {
+			id = <CLK_SCTCON_XTAL_24M_INT_CK>;
+			parents = "xtal_24m_ck";
+		};
+
+		sctcon_mcu_nonpm_int_ck {
+			id = <CLK_SCTCON_MCU_NONPM_INT_CK>;
+			parents = "mcu_nonpm_ck";
+		};
+
+		sctcon_smi_int_ck {
+			id = <CLK_SCTCON_SMI_INT_CK>;
+			parents = "smi_ck";
+		};
+
+		sctcon_mcu_xc_int_ck {
+			id = <CLK_SCTCON_MCU_XC_INT_CK>;
+			parents = "mcu_sc_ck";
+		};
+
+		o_odclk_int_ck {
+			id = <CLK_SCTCON_O_ODCLK_INT_CK>;
+			parents = "xtal_24m_ck","xc_od_src_ck";
+		};
+
+		sctcon_xc_fd_int_ck {
+			id = <CLK_SCTCON_XC_FD_INT_CK>;
+			parents = "xc_fd_ck";
+		};
+
+		xc_fd_abf_int_ck {
+			id = <CLK_SCTCON_XC_FD_ABF_INT_CK>;
+			parents = "xc_fd_ck";
+		};
+
+		xc_fd_gop0_int_ck {
+			id = <CLK_SCTCON_XC_FD_GOP0_INT_CK>;
+			parents = "xc_fd_ck";
+		};
+
+		xc_fd_dv_int_ck {
+			id = <CLK_SCTCON_XC_FD_DV_INT_CK>;
+			parents = "xc_fd_ck";
+		};
+
+		sctcon_xc_fn_int_ck {
+			id = <CLK_SCTCON_XC_FN_INT_CK>;
+			parents = "xc_fn_ck";
+		};
+
+		sctcon_xc_fs_int_ck {
+			id = <CLK_SCTCON_XC_FS_INT_CK>;
+			parents = "xc_fs_ck";
+		};
+
+		xc_od_delta_meta_int_ck {
+			id = <CLK_SCTCON_XC_OD_DELTA_META_INT_CK>;
+			parents = "v2_odclk_int_ck";
+			status = "disabled";
+		};
+
+		xc_od_osd_meta_int_ck {
+			id = <CLK_SCTCON_XC_OD_OSD_META_INT_CK>;
+			parents = "o_odclk_int_ck";
+		};
+
+		xc_od_div2_int_ck {
+			id = <CLK_SCTCON_XC_OD_DIV2_INT_CK>;
+			parents = "xc_od_div2_ck";
+		};
+
+		xc_od_div4_int_ck {
+			id = <CLK_SCTCON_XC_OD_DIV4_INT_CK>;
+			parents = "xc_od_div4_ck";
+		};
+
+		sctcon_xc_od_delta_int_ck {
+			id = <CLK_SCTCON_XC_OD_DELTA_INT_CK>;
+			parents = "v2_odclk_int_ck";
+			status = "disabled";
+		};
+
+		xc_od_osd_int_ck {
+			id = <CLK_SCTCON_XC_OD_OSD_INT_CK>;
+			parents = "o_odclk_int_ck";
+		};
+
+		xc_gop_int_ck {
+			id = <CLK_SCTCON_XC_GOP_INT_CK>;
+			parents = "xc_fd_ck";
+		};
+
+		xc_afbc_int_ck {
+			id = <CLK_SCTCON_XC_AFBC_INT_CK>;
+			parents = "xc_fd_ck";
+		};
+
+		xc_gop0_dst_int_ck {
+			id = <CLK_SCTCON_XC_GOP0_DST_INT_CK>;
+			parents = "xc_fd_ck","xc_fn_ck";
+		};
+
+		xc_gopc_dst_int_ck {
+			id = <CLK_SCTCON_XC_GOPC_DST_INT_CK>;
+			parents = "xc_fd_ck","v1_odclk_int_ck";
+		};
+
+		xc_gopg_dst_int_ck {
+			id = <CLK_SCTCON_XC_GOPG_DST_INT_CK>;
+			parents = "v1_odclk_int_ck","o_odclk_int_ck";
+		};
+
+		xc_gop_scl_int_ck {
+			id = <CLK_SCTCON_XC_GOP_SCL_INT_CK>;
+			parents = "xc_fd_ck","v1_odclk_int_ck";
+		};
+
+		demura_sram_int_ck {
+			id = <CLK_SCTCON_DEMURA_SRAM_INT_CK>;
+			parents = "v1_odclk_int_ck","smi_ck";
+		};
+
+		gop0_sram_int_ck {
+			id = <CLK_SCTCON_GOP0_SRAM_INT_CK>;
+			parents = "xc_fd_ck","smi_ck";
+		};
+
+		gop1_sram_int_ck {
+			id = <CLK_SCTCON_GOP1_SRAM_INT_CK>;
+			parents = "xc_fd_ck","smi_ck";
+		};
+
+		gop2_sram_int_ck {
+			id = <CLK_SCTCON_GOP2_SRAM_INT_CK>;
+			parents = "xc_fd_ck","smi_ck";
+		};
+
+		gop3_sram_int_ck {
+			id = <CLK_SCTCON_GOP3_SRAM_INT_CK>;
+			parents = "xc_fd_ck","smi_ck";
+		};
+
+		osd_dv_hw5_sram_int_ck {
+			id = <CLK_SCTCON_OSD_DV_HW5_SRAM_INT_CK>;
+			parents = "xc_fd_ck","smi_ck";
+		};
+
+		};
+};

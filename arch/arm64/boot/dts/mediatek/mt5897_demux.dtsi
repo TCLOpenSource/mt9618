@@ -1,0 +1,93 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2021 MediaTek Inc.
+ */
+
+/ {
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	mtk_demux2:mtk-demux2 {
+		compatible = "mediatek,demux2";
+		interrupt-parent = <&mtk_intc0_irq>;
+		interrupts = <0x0 0x9 0x4>,
+		<0x0 0x0 0x4>,
+		<0x0 0x12 0x4>,
+		<0x0 0x13 0x4>,
+		<0x0 0x14 0x4>,
+		<0x0 0x15 0x4>,
+		<0x0 0x16 0x4>;
+		cmas = <4>;
+		iommus = <&iommu 0>;
+		memory-region =
+		<&MI_TSP_FW_BUF &MI_TSP_VQ_BUF &MI_TSP_SECT_BUF &MI_TSP_SVQ_BUF>,
+		<&MI_TSO_FILEIN_BUF &cma_23>;
+		reg = <0x0 0x1C444000 0x0 0x200>, /* tsp banks */
+			<0x0 0x1C444200 0x0 0x200>,
+			<0x0 0x1C444400 0x0 0x200>,
+			<0x0 0x1C444600 0x0 0x200>,
+			<0x0 0x1C444800 0x0 0x200>,
+			<0x0 0x1C444a00 0x0 0x200>,
+			<0x0 0x1C444c00 0x0 0x200>,
+			<0x0 0x1C444e00 0x0 0x200>,
+			<0x0 0x1C445000 0x0 0x200>,
+			<0x0 0x1C446000 0x0 0x200>, /* tso banks */
+			<0x0 0x1C446200 0x0 0x200>,
+			<0x0 0x1C446400 0x0 0x200>,
+			<0x0 0x1C466000 0x0 0x200>, /* video parser banks */
+			<0x0 0x1C445800 0x0 0x200>, /* tlv banks */
+			<0x0 0x1C445400 0x0 0x200>,
+			<0x0 0x1C445C00 0x0 0x200>, /* ts_sample */
+			<0x0 0x1C462000 0x0 0x200>, /* cilink_soc_if */
+			<0x0 0x1C445600 0x0 0x200>, /* alp banks */
+			<0x0 0x1C445200 0x0 0x200>,
+			<0x0 0x1D2A1600 0x0 0x200>, /* MAD: 950B00 */
+			<0x0 0x1D2A1800 0x0 0x200>, /* MAD: 950C00 */
+			<0x0 0x1D2A2400 0x0 0x200>, /* MAD: 951200 */
+			<0x0 0x1D2A1400 0x0 0x200>; /* MAD: 950A00 */
+		clocks = <&topgen_mux_gate CLK_TOPGEN_TSP_CK>,
+				 <&topgen_mux_gate CLK_TOPGEN_PARSER_CK>,
+				 <&topgen_mux_gate CLK_TOPGEN_SMI_CK>,
+				 <&tsp_mux_gate CLK_TSP_SMI_TSP_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_STAMP_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYN_STC0_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYN_STC1_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYN_STC2_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYN_STC3_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYS_TIME0_27M_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYS_TIME1_27M_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYS_TIME2_27M_INT_CK>,
+				 <&tsp_mux_gate CLK_TSP_SYS_TIME3_27M_INT_CK>;
+		clock-names = "clk_tsp",
+					  "clk_parser",
+					  "clk_top_mg_smi_ck",
+					  "clk_smi_tsp",
+					  "clk_stamp",
+					  "clk_sync_stc0",
+					  "clk_sync_stc1",
+					  "clk_sync_stc2",
+					  "clk_sync_stc3",
+					  "clk_stc0",
+					  "clk_stc1",
+					  "clk_stc2",
+					  "clk_stc3";
+		banks {
+			tsp_bank_num = <9>;
+			tso_bank_num = <3>;
+			video_parser_bank_num = <1>;
+			tlv_bank_num = <2>;
+			ts_sample_bank_num = <1>;
+			cilink_bank_num = <1>;
+			alp_bank_num = <2>;
+			mad_parser_bank_num = <4>;
+		};
+		hwcaps {
+		};
+		swcaps {
+			rpm_en = <1>;
+		};
+		swen {
+		};
+	};
+};
+

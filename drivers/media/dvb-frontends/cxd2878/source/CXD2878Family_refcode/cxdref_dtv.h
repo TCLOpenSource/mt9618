@@ -1,0 +1,44 @@
+/*
+ *  CXD Demodulator driver
+ *
+ *  Copyright 2022 Sony Semiconductor Solutions Corporation
+ */
+
+#ifndef CXDREF_DTV_H
+#define CXDREF_DTV_H
+
+typedef enum {
+    CXDREF_DTV_SYSTEM_UNKNOWN,
+    CXDREF_DTV_SYSTEM_DVBT,
+    CXDREF_DTV_SYSTEM_DVBT2,
+    CXDREF_DTV_SYSTEM_DVBC,
+    CXDREF_DTV_SYSTEM_DVBC2,
+    CXDREF_DTV_SYSTEM_ATSC,
+    CXDREF_DTV_SYSTEM_ATSC3,
+    CXDREF_DTV_SYSTEM_ISDBT,
+    CXDREF_DTV_SYSTEM_ISDBC,
+    CXDREF_DTV_SYSTEM_J83B,
+    CXDREF_DTV_SYSTEM_DVBS,
+    CXDREF_DTV_SYSTEM_DVBS2,
+    CXDREF_DTV_SYSTEM_ISDBS,
+    CXDREF_DTV_SYSTEM_ISDBS3,
+    CXDREF_DTV_SYSTEM_ANY
+} cxdref_dtv_system_t;
+
+#define CXDREF_DTV_SYSTEM_IS_TERR_CABLE(dtvSystem) (((dtvSystem) >= CXDREF_DTV_SYSTEM_DVBT) && ((dtvSystem) <= CXDREF_DTV_SYSTEM_J83B))
+
+#define CXDREF_DTV_SYSTEM_IS_SAT(dtvSystem) (((dtvSystem) >= CXDREF_DTV_SYSTEM_DVBS) && ((dtvSystem) <= CXDREF_DTV_SYSTEM_ISDBS3))
+
+typedef enum {
+    CXDREF_DTV_BW_UNKNOWN = 0,
+    CXDREF_DTV_BW_1_7_MHZ = 1,
+    CXDREF_DTV_BW_5_MHZ = 5,
+    CXDREF_DTV_BW_6_MHZ = 6,
+    CXDREF_DTV_BW_7_MHZ = 7,
+    CXDREF_DTV_BW_8_MHZ = 8,
+
+    CXDREF_DTV_BW_J83B_5_06_5_36_MSPS = 50,
+    CXDREF_DTV_BW_J83B_5_60_MSPS = 51
+} cxdref_dtv_bandwidth_t;
+
+#endif

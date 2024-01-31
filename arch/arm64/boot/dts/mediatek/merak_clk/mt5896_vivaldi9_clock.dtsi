@@ -1,0 +1,1951 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	VIVALDI_DUMMY: VIVALDI_DUMMY {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <123456789>;
+		clock-output-names = "VIVALDI_DUMMY";
+	};
+
+	vivaldi9_fix_factor: vivaldi9_fix_factor {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_fix_factor";
+		num = <1>;
+
+		viva_dsp_int_ck {
+			viva_dsp_int_div2_ck {
+				id = <0>;
+				div_factor = <1 2>;
+			};
+		};
+	};
+
+	vivaldi9_mux_gate: vivaldi9 {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_mux_gate";
+		num = <AU_NR>;
+
+		viva_xtal_12m_int_ck {
+			id = <AU_VIVA_XTAL_12M_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		viva_xtal_24m_int_ck {
+			id = <AU_VIVA_XTAL_24M_INT_CK>;
+			parents = "xtal_24m_ck";
+		};
+
+		viva_mcu_nonpm_int_ck {
+			id = <AU_MCU_NONPM_INT_CK>;
+			parents = "mcu_nonpm_ck";
+		};
+
+		au_uart0_int_ck {
+			id = <AU_AU_UART0_INT_CK>;
+			parents = "au_uart0_ck";
+		};
+
+		viva_smi_int_ck {
+			id = <AU_VIVA_SMI_INT_CK>;
+			parents = "smi_ck";
+		};
+
+		viva_riu_int_ck {
+			id = <AU_VIVA_RIU_INT_CK>;
+			parents = "riu_nonpm_ck";
+		};
+
+		viva_riu_brg_r2_int_ck {
+			id = <AU_VIVA_RIU_BRG_R2_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_riu_r2_int_ck {
+			id = <AU_VIVA_RIU_R2_INT_CK>;
+			parents = "xtal_24m_ck","riu_au_src_ck","riu_r2_wr_ck","VIVALDI_DUMMY";
+		};
+
+		viva_au_riu_int_ck {
+			id = <AU_VIVA_AU_RIU_INT_CK>;
+			parents = "riu_au_src_ck";
+		};
+
+		viva_au_mcu_int_ck {
+			id = <AU_VIVA_AU_MCU_INT_CK>;
+			parents = "xtal_24m_ck","mcu_au_ck";
+		};
+
+		au_mcu_bus_int_ck {
+			id = <AU_AU_MCU_BUS_INT_CK>;
+			parents = "xtal_24m_ck","mcu_bus_ck";
+		};
+
+		viva_synth_codec_int_ck {
+			id = <AU_VIVA_SYNTH_CODEC_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_synth_2nd_order_int_ck {
+			id = <AU_VIVA_SYNTH_2ND_ORDER_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_aupll_in_int_ck {
+			id = <AU_VIVA_AUPLL_IN_INT_CK>;
+			parents = "xtal_24m_ck","synth_codec_out_ck",
+			"synth_2nd_order_out_ck","VIVALDI_DUMMY";
+		};
+
+		viva_dsp_int_ck {
+			id = <AU_VIVA_DSP_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck",
+			"mpll_345m_ck","mpll_288m_ck","mpll_216m_ck",
+			"aupll_kf0_ck","utmi_480m_ck","aur2pll_ck";
+		};
+
+		viva_sif_adc_r2b_fifo_in_int_ck {
+			id = <AU_VIVA_SIF_ADC_R2B_FIFO_IN_INT_CK>;
+			parents = "xtal_24m_ck","dmd_mpll_div8_ck",
+			"dmd_mpll_div10_ck","VIVALDI_DUMMY";
+		};
+
+		viva_sif_adc_r2b_int_ck {
+			id = <AU_VIVA_SIF_ADC_R2B_INT_CK>;
+			parents = "xtal_24m_ck","dmd_mpll_div8_ck","dmd_mpll_div10_ck",
+			"VIVALDI_DUMMY";
+		};
+
+		viva_sif_adc_cic_int_ck {
+			id = <AU_VIVA_SIF_ADC_CIC_INT_CK>;
+			parents = "xtal_24m_ck","dmd_mpll_div4_ck",
+			"dmd_mpll_div5_ck","VIVALDI_DUMMY";
+		};
+
+		viva_fm_demodulator_int_ck {
+			id = <AU_VIVA_FM_DEMODULATOR_INT_CK>;
+			parents = "xtal_24m_ck","dmd_mpll_div8_ck","dmd_mpll_div4_ck",
+			"dmd_mpll_div10_ck","dmd_mpll_div5_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_sif_synth_int_ck {
+			id = <AU_VIVA_SIF_SYNTH_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		viva_sif_cordic_int_ck {
+			id = <AU_VIVA_SIF_CORDIC_INT_CK>;
+			parents = "xtal_24m_ck","dmd_mpll_div4_ck",
+			"dmd_mpll_div5_ck","mpll_144m_ck","viva_dsp_int_div2_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_gpa_480fso_int_ck {
+			id = <AU_VIVA_GPA_480FSO_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kp1_ck";
+		};
+
+		viva_gpa_240fso_int_ck {
+			id = <AU_VIVA_GPA_240FSO_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kp1_div2_ck";
+		};
+
+		viva_gpa_256fso_int_ck {
+			id = <AU_VIVA_GPA_256FSO_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_div2_ck";
+		};
+
+		viva_adc_512fs_int_ck {
+			id = <AU_VIVA_ADC_512FS_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_ck","pad_test_in_ck",
+			"aupll_kpdiv_div2_ck";
+		};
+
+		viva_dac_512fs_int_ck {
+			id = <AU_VIVA_DAC_512FS_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_ck","pad_test_in_ck",
+			"aupll_kpdiv_div2_ck";
+		};
+
+		viva_ab_mac_int_ck {
+			id = <AU_VIVA_AB_MAC_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ab3_mac_int_ck {
+			id = <AU_VIVA_AB3_MAC_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_div2_ck",
+			"mpll_144m_ck","mpll_172m_ck","mpll_216m_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_sh_int_ck {
+			id = <AU_VIVA_SH_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_codec_sh_int_ck {
+			id = <AU_VIVA_CODEC_SH_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		pcm_i2s_256fs_mux_int_ck {
+			id = <AU_PCM_I2S_256FS_MUX_INT_CK>;
+			parents = "synth_i2s_fs_256fs_out_ck","synth_pcm_trx_256fs_out_ck";
+		};
+
+		ch_m1_256fsi_mux1_int_ck {
+			id = <AU_CH_M1_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck",
+			"synth_dvb6_256fs_out_ck","synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m1_256fsi_mux0_int_ck {
+			id = <AU_CH_M1_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m1_256fsi_mux_int_ck {
+			id = <AU_CH_M1_256FSI_MUX_INT_CK>;
+			parents = "ch_m1_256fsi_mux0_int_ck","ch_m1_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m1_256fsi_int_ck {
+			id = <AU_VIVA_CH_M1_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m1_256fsi_mux_int_ck";
+		};
+
+		ch_m2_256fsi_mux1_int_ck {
+			id = <AU_CH_M2_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck",
+			"synth_dvb6_256fs_out_ck","synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m2_256fsi_mux0_int_ck {
+			id = <AU_CH_M2_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m2_256fsi_mux_int_ck {
+			id = <AU_CH_M2_256FSI_MUX_INT_CK>;
+			parents = "ch_m2_256fsi_mux0_int_ck","ch_m2_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m2_256fsi_int_ck {
+			id = <AU_VIVA_CH_M2_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m2_256fsi_mux_int_ck";
+		};
+
+		ch_m3_256fsi_mux1_int_ck {
+			id = <AU_CH_M3_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck",
+			"synth_dvb6_256fs_out_ck","synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m3_256fsi_mux0_int_ck {
+			id = <AU_CH_M3_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m3_256fsi_mux_int_ck {
+			id = <AU_CH_M3_256FSI_MUX_INT_CK>;
+			parents = "ch_m3_256fsi_mux0_int_ck","ch_m3_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m3_256fsi_int_ck {
+			id = <AU_VIVA_CH_M3_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m3_256fsi_mux_int_ck";
+		};
+
+		ch_m4_256fsi_mux1_int_ck {
+			id = <AU_CH_M4_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck",
+			"synth_dvb6_256fs_out_ck","synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m4_256fsi_mux0_int_ck {
+			id = <AU_CH_M4_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m4_256fsi_mux_int_ck {
+			id = <AU_CH_M4_256FSI_MUX_INT_CK>;
+			parents = "ch_m4_256fsi_mux0_int_ck","ch_m4_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m4_256fsi_int_ck {
+			id = <AU_VIVA_CH_M4_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m4_256fsi_mux_int_ck";
+		};
+
+		ch_m5_256fsi_mux1_int_ck {
+			id = <AU_CH_M5_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck",
+			"synth_dvb6_256fs_out_ck","synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m5_256fsi_mux0_int_ck {
+			id = <AU_CH_M5_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m5_256fsi_mux_int_ck {
+			id = <AU_CH_M5_256FSI_MUX_INT_CK>;
+			parents = "ch_m5_256fsi_mux0_int_ck","ch_m5_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m5_256fsi_int_ck {
+			id = <AU_VIVA_CH_M5_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m5_256fsi_mux_int_ck";
+		};
+
+		ch_m6_256fsi_mux1_int_ck {
+			id = <AU_CH_M6_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m6_256fsi_mux0_int_ck {
+			id = <AU_CH_M6_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m6_256fsi_mux_int_ck {
+			id = <AU_CH_M6_256FSI_MUX_INT_CK>;
+			parents = "ch_m6_256fsi_mux0_int_ck","ch_m6_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m6_256fsi_int_ck {
+			id = <AU_VIVA_CH_M6_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m6_256fsi_mux_int_ck";
+		};
+
+		ch_m7_256fsi_mux1_int_ck {
+			id = <AU_CH_M7_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m7_256fsi_mux0_int_ck {
+			id = <AU_CH_M7_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m7_256fsi_mux_int_ck {
+			id = <AU_CH_M7_256FSI_MUX_INT_CK>;
+			parents = "ch_m7_256fsi_mux0_int_ck","ch_m7_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m7_256fsi_int_ck {
+			id = <AU_VIVA_CH_M7_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m7_256fsi_mux_int_ck";
+		};
+
+		ch_m8_256fsi_mux1_int_ck {
+			id = <AU_CH_M8_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m8_256fsi_mux0_int_ck {
+			id = <AU_CH_M8_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m8_256fsi_mux_int_ck {
+			id = <AU_CH_M8_256FSI_MUX_INT_CK>;
+			parents = "ch_m8_256fsi_mux0_int_ck","ch_m8_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m8_256fsi_int_ck {
+			id = <AU_VIVA_CH_M8_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m8_256fsi_mux_int_ck";
+		};
+
+		ch_m9_256fsi_mux1_int_ck {
+			id = <AU_CH_M9_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m9_256fsi_mux0_int_ck {
+			id = <AU_CH_M9_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m9_256fsi_mux_int_ck {
+			id = <AU_CH_M9_256FSI_MUX_INT_CK>;
+			parents = "ch_m9_256fsi_mux0_int_ck","ch_m9_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m9_256fsi_int_ck {
+			id = <AU_VIVA_CH_M9_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m9_256fsi_mux_int_ck";
+		};
+
+		ch_m10_256fsi_mux1_int_ck {
+			id = <AU_CH_M10_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m10_256fsi_mux0_int_ck {
+			id = <AU_CH_M10_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m10_256fsi_mux_int_ck {
+			id = <AU_CH_M10_256FSI_MUX_INT_CK>;
+			parents = "ch_m10_256fsi_mux0_int_ck","ch_m10_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m10_256fsi_int_ck {
+			id = <AU_VIVA_CH_M10_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m10_256fsi_mux_int_ck";
+		};
+
+		ch_m11_256fsi_mux1_int_ck {
+			id = <AU_CH_M11_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m11_256fsi_mux0_int_ck {
+			id = <AU_CH_M11_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m11_256fsi_mux_int_ck {
+			id = <AU_CH_M11_256FSI_MUX_INT_CK>;
+			parents = "ch_m11_256fsi_mux0_int_ck","ch_m11_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m11_256fsi_int_ck {
+			id = <AU_VIVA_CH_M11_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m11_256fsi_mux_int_ck";
+		};
+
+		ch_m12_256fsi_mux1_int_ck {
+			id = <AU_CH_M12_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m12_256fsi_mux0_int_ck {
+			id = <AU_CH_M12_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m12_256fsi_mux_int_ck {
+			id = <AU_CH_M12_256FSI_MUX_INT_CK>;
+			parents = "ch_m12_256fsi_mux0_int_ck","ch_m12_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m12_256fsi_int_ck {
+			id = <AU_VIVA_CH_M12_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m12_256fsi_mux_int_ck";
+		};
+
+		ch_m13_256fsi_mux1_int_ck {
+			id = <AU_CH_M13_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m13_256fsi_mux0_int_ck {
+			id = <AU_CH_M13_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m13_256fsi_mux_int_ck {
+			id = <AU_CH_M13_256FSI_MUX_INT_CK>;
+			parents = "ch_m13_256fsi_mux0_int_ck","ch_m13_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m13_256fsi_int_ck {
+			id = <AU_VIVA_CH_M13_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m13_256fsi_mux_int_ck";
+		};
+
+		ch_m14_256fsi_mux1_int_ck {
+			id = <AU_CH_M14_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m14_256fsi_mux0_int_ck {
+			id = <AU_CH_M14_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m14_256fsi_mux_int_ck {
+			id = <AU_CH_M14_256FSI_MUX_INT_CK>;
+			parents = "ch_m14_256fsi_mux0_int_ck","ch_m14_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m14_256fsi_int_ck {
+			id = <AU_VIVA_CH_M14_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m14_256fsi_mux_int_ck";
+		};
+
+		ch_m15_256fsi_mux1_int_ck {
+			id = <AU_CH_M15_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m15_256fsi_mux0_int_ck {
+			id = <AU_CH_M15_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m15_256fsi_mux_int_ck {
+			id = <AU_CH_M15_256FSI_MUX_INT_CK>;
+			parents = "ch_m15_256fsi_mux0_int_ck","ch_m15_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m15_256fsi_int_ck {
+			id = <AU_VIVA_CH_M15_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m15_256fsi_mux_int_ck";
+		};
+
+		ch_m16_256fsi_mux1_int_ck {
+			id = <AU_CH_M16_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch_m16_256fsi_mux0_int_ck {
+			id = <AU_CH_M16_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch_m16_256fsi_mux_int_ck {
+			id = <AU_CH_M16_256FSI_MUX_INT_CK>;
+			parents = "ch_m16_256fsi_mux0_int_ck","ch_m16_256fsi_mux1_int_ck";
+		};
+
+		viva_ch_m16_256fsi_int_ck {
+			id = <AU_VIVA_CH_M16_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch_m16_256fsi_mux_int_ck";
+		};
+
+		ch5_256fsi_mux2_int_ck {
+			id = <AU_CH5_256FSI_MUX2_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck",
+			"synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		ch5_256fsi_mux1_int_ck {
+			id = <AU_CH5_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch5_256fsi_mux0_int_ck {
+			id = <AU_CH5_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch5_256fsi_mux_int_ck {
+			id = <AU_CH5_256FSI_MUX_INT_CK>;
+			parents = "ch5_256fsi_mux0_int_ck","ch5_256fsi_mux1_int_ck",
+			"ch5_256fsi_mux2_int_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ch5_256fsi_int_ck {
+			id = <AU_VIVA_CH5_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch5_256fsi_mux_int_ck";
+		};
+
+		ch6_256fsi_mux2_int_ck {
+			id = <AU_CH6_256FSI_MUX2_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck",
+			"synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		ch6_256fsi_mux1_int_ck {
+			id = <AU_CH6_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch6_256fsi_mux0_int_ck {
+			id = <AU_CH6_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch6_256fsi_mux_int_ck {
+			id = <AU_CH6_256FSI_MUX_INT_CK>;
+			parents = "ch6_256fsi_mux0_int_ck","ch6_256fsi_mux1_int_ck",
+			"ch6_256fsi_mux2_int_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ch6_256fsi_int_ck {
+			id = <AU_VIVA_CH6_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch6_256fsi_mux_int_ck";
+		};
+
+		ch7_256fsi_mux2_int_ck {
+			id = <AU_CH7_256FSI_MUX2_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck",
+			"synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		ch7_256fsi_mux1_int_ck {
+			id = <AU_CH7_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch7_256fsi_mux0_int_ck {
+			id = <AU_CH7_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch7_256fsi_mux_int_ck {
+			id = <AU_CH7_256FSI_MUX_INT_CK>;
+			parents = "ch7_256fsi_mux0_int_ck","ch7_256fsi_mux1_int_ck",
+			"ch7_256fsi_mux2_int_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ch7_256fsi_int_ck {
+			id = <AU_VIVA_CH7_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch7_256fsi_mux_int_ck";
+		};
+
+		ch8_256fsi_mux2_int_ck {
+			id = <AU_CH8_256FSI_MUX2_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck",
+			"synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		ch8_256fsi_mux1_int_ck {
+			id = <AU_CH8_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch8_256fsi_mux0_int_ck {
+			id = <AU_CH8_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch8_256fsi_mux_int_ck {
+			id = <AU_CH8_256FSI_MUX_INT_CK>;
+			parents = "ch8_256fsi_mux0_int_ck","ch8_256fsi_mux1_int_ck",
+			"ch8_256fsi_mux2_int_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ch8_256fsi_int_ck {
+			id = <AU_VIVA_CH8_256FSI_INT_CK>;
+			parents = "xtal_12m_ck","ch8_256fsi_mux_int_ck";
+		};
+
+		ch9_256fsi_mux2_int_ck {
+			id = <AU_CH9_256FSI_MUX2_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck",
+			"synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		ch9_256fsi_mux1_int_ck {
+			id = <AU_CH9_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch9_256fsi_mux0_int_ck {
+			id = <AU_CH9_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch9_256fsi_mux_int_ck {
+			id = <AU_CH9_256FSI_MUX_INT_CK>;
+			parents = "ch9_256fsi_mux0_int_ck","ch9_256fsi_mux1_int_ck",
+			"ch9_256fsi_mux2_int_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ch9_256fsi_int_ck {
+			id = <AU_VIVA_CH9_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch9_256fsi_mux_int_ck";
+		};
+
+		ch10_256fsi_mux2_int_ck {
+			id = <AU_CH10_256FSI_MUX2_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck",
+			"synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		ch10_256fsi_mux1_int_ck {
+			id = <AU_CH10_256FSI_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_div2_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_dvb5_256fs_out_ck","synth_dvb6_256fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_i2s_2_fs_256fs_out_ck";
+		};
+
+		ch10_256fsi_mux0_int_ck {
+			id = <AU_CH10_256FSI_MUX0_INT_CK>;
+			parents = "decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck","pcm_i2s_256fs_mux_int_ck",
+			"synth_spdif_cdr_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		ch10_256fsi_mux_int_ck {
+			id = <AU_CH10_256FSI_MUX_INT_CK>;
+			parents = "ch10_256fsi_mux0_int_ck","ch10_256fsi_mux1_int_ck",
+			"ch10_256fsi_mux2_int_ck","VIVALDI_DUMMY";
+		};
+
+		viva_ch10_256fsi_int_ck {
+			id = <AU_VIVA_CH10_256FSI_INT_CK>;
+			parents = "xtal_24m_ck","ch10_256fsi_mux_int_ck";
+		};
+
+		viva_dvb1_synth_ref_int_ck {
+			id = <AU_VIVA_DVB1_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		decoder1_synth_hdmi_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER1_SYNTH_HDMI_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_256fs_out_ck","synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck","synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY";
+		};
+
+		decoder1_synth_hdmi_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER1_SYNTH_HDMI_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"synth_hdmi_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_synth_hdmi2_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER1_SYNTH_HDMI2_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_hdmi2_ctsn_128fs_out_ck","synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_synth_hdmi2_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER1_SYNTH_HDMI2_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"synth_hdmi2_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_synth_spdif_cdr_256fs_div_mux_int_ck {
+			id = <AU_DECODER1_SYNTH_SPDIF_CDR_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_ck",
+			"synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_synth_spdif_cdr_128fs_div_mux_int_ck {
+			id = <AU_DECODER1_SYNTH_SPDIF_CDR_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"synth_spdif_cdr_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_256fs_mux0_int_ck {
+			id = <AU_DECODER1_256FS_MUX0_INT_CK>;
+			parents = "synth_dvb1_256fs_out_ck",
+			"synth_dvb2_256fs_out_ck",
+			"decoder1_synth_spdif_cdr_256fs_div_mux_int_ck",
+			"synth_dvb3_256fs_out_ck",
+			"decoder1_synth_hdmi_ctsn_256fs_div_mux_int_ck",
+			"synth_dvb4_256fs_out_ck","VIVALDI_DUMMY","synth_sif_out_ck";
+		};
+
+		decoder1_256fs_mux1_int_ck {
+			id = <AU_DECODER1_256FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"decoder1_synth_hdmi2_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_256fs_mux_int_ck {
+			id = <AU_DECODER1_256FS_MUX_INT_CK>;
+			parents = "decoder1_256fs_mux0_int_ck","decoder1_256fs_mux1_int_ck";
+		};
+
+		viva_dvb1_timing_gen_256fs_int_ck {
+			id = <AU_VIVA_DVB1_TIMING_GEN_256FS_INT_CK>;
+			parents = "xtal_24m_ck","decoder1_256fs_mux_int_ck";
+		};
+
+		decoder1_128fs_mux0_int_ck {
+			id = <AU_DECODER1_128FS_MUX0_INT_CK>;
+			parents = "synth_dvb1_256fs_out_div2_ck","synth_dvb2_256fs_out_div2_ck",
+			"decoder1_synth_spdif_cdr_128fs_div_mux_int_ck",
+			"synth_dvb3_256fs_out_div2_ck",
+			"decoder1_synth_hdmi_ctsn_128fs_div_mux_int_ck",
+			"synth_dvb4_256fs_out_div2_ck","VIVALDI_DUMMY","synth_sif_out_div2_ck";
+		};
+
+		decoder1_128fs_mux1_int_ck {
+			id = <AU_DECODER1_128FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"decoder1_synth_hdmi2_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder1_128fs_mux_int_ck {
+			id = <AU_DECODER1_128FS_MUX_INT_CK>;
+			parents = "decoder1_128fs_mux0_int_ck","decoder1_128fs_mux1_int_ck";
+		};
+
+		viva_dvb2_synth_ref_int_ck {
+			id = <AU_VIVA_DVB2_SYNTH_REF_INT_CK>;
+			parents = "xtal_12m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		decoder2_synth_hdmi_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER2_SYNTH_HDMI_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_256fs_out_ck",
+			"synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_synth_hdmi_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER2_SYNTH_HDMI_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"synth_hdmi_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_synth_hdmi2_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER2_SYNTH_HDMI2_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_synth_hdmi2_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER2_SYNTH_HDMI2_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"synth_hdmi2_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_synth_spdif_cdr_256fs_div_mux_int_ck {
+			id = <AU_DECODER2_SYNTH_SPDIF_CDR_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_ck",
+			"synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_synth_spdif_cdr_128fs_div_mux_int_ck {
+			id = <AU_DECODER2_SYNTH_SPDIF_CDR_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"synth_spdif_cdr_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_256fs_mux0_int_ck {
+			id = <AU_DECODER2_256FS_MUX0_INT_CK>;
+			parents = "synth_dvb2_256fs_out_ck","synth_dvb4_256fs_out_ck",
+			"decoder2_synth_spdif_cdr_256fs_div_mux_int_ck",
+			"synth_dvb3_256fs_out_ck",
+			"decoder2_synth_hdmi_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","synth_sif_out_ck";
+		};
+
+		decoder2_256fs_mux1_int_ck {
+			id = <AU_DECODER2_256FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"decoder2_synth_hdmi2_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_256fs_mux_int_ck {
+			id = <AU_DECODER2_256FS_MUX_INT_CK>;
+			parents = "decoder2_256fs_mux0_int_ck","decoder2_256fs_mux1_int_ck";
+		};
+
+		viva_dvb2_timing_gen_256fs_int_ck {
+			id = <AU_VIVA_DVB2_TIMING_GEN_256FS_INT_CK>;
+			parents = "xtal_24m_ck","decoder2_256fs_mux_int_ck";
+		};
+
+		decoder2_128fs_mux0_int_ck {
+			id = <AU_DECODER2_128FS_MUX0_INT_CK>;
+			parents = "synth_dvb2_256fs_out_div2_ck",
+			"synth_dvb4_256fs_out_div2_ck",
+			"decoder2_synth_spdif_cdr_128fs_div_mux_int_ck",
+			"synth_dvb3_256fs_out_div2_ck",
+			"decoder2_synth_hdmi_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","synth_sif_out_div2_ck";
+		};
+
+		decoder2_128fs_mux1_int_ck {
+			id = <AU_DECODER2_128FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"decoder2_synth_hdmi2_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder2_128fs_mux_int_ck {
+			id = <AU_DECODER2_128FS_MUX_INT_CK>;
+			parents = "decoder2_128fs_mux0_int_ck","decoder2_128fs_mux1_int_ck";
+		};
+
+		viva_dvb3_synth_ref_int_ck {
+			id = <AU_VIVA_DVB3_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		decoder3_synth_hdmi_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER3_SYNTH_HDMI_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_256fs_out_ck",
+			"synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_synth_hdmi_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER3_SYNTH_HDMI_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"synth_hdmi_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_synth_hdmi2_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER3_SYNTH_HDMI2_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_synth_hdmi2_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER3_SYNTH_HDMI2_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"synth_hdmi2_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_synth_spdif_cdr_256fs_div_mux_int_ck {
+			id = <AU_DECODER3_SYNTH_SPDIF_CDR_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_ck",
+			"synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_synth_spdif_cdr_128fs_div_mux_int_ck {
+			id = <AU_DECODER3_SYNTH_SPDIF_CDR_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"synth_spdif_cdr_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_256fs_mux0_int_ck {
+			id = <AU_DECODER3_256FS_MUX0_INT_CK>;
+			parents = "synth_dvb3_256fs_out_ck","synth_dvb4_256fs_out_ck",
+			"decoder3_synth_spdif_cdr_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","decoder3_synth_hdmi_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","synth_sif_out_ck";
+		};
+
+		decoder3_256fs_mux1_int_ck {
+			id = <AU_DECODER3_256FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","decoder3_synth_hdmi2_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_256fs_mux_int_ck {
+			id = <AU_DECODER3_256FS_MUX_INT_CK>;
+			parents = "decoder3_256fs_mux0_int_ck","decoder3_256fs_mux1_int_ck";
+		};
+
+		viva_dvb3_timing_gen_256fs_int_ck {
+			id = <AU_VIVA_DVB3_TIMING_GEN_256FS_INT_CK>;
+			parents = "xtal_24m_ck","decoder3_256fs_mux_int_ck";
+		};
+
+		decoder3_128fs_mux0_int_ck {
+			id = <AU_DECODER3_128FS_MUX0_INT_CK>;
+			parents = "synth_dvb3_256fs_out_div2_ck",
+			"synth_dvb4_256fs_out_div2_ck",
+			"decoder3_synth_spdif_cdr_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","decoder3_synth_hdmi_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","synth_sif_out_div2_ck";
+		};
+
+		decoder3_128fs_mux1_int_ck {
+			id = <AU_DECODER3_128FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","decoder3_synth_hdmi2_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder3_128fs_mux_int_ck {
+			id = <AU_DECODER3_128FS_MUX_INT_CK>;
+			parents = "decoder3_128fs_mux0_int_ck","decoder3_128fs_mux1_int_ck";
+		};
+
+		viva_dvb4_synth_ref_int_ck {
+			id = <AU_VIVA_DVB4_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck","VIVALDI_DUMMY";
+		};
+
+		decoder4_synth_hdmi_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER4_SYNTH_HDMI_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_256fs_out_ck",
+			"synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_synth_hdmi_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER4_SYNTH_HDMI_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck",
+			"synth_hdmi_ctsn_256fs_out_div16_ck",
+			"synth_hdmi_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_synth_hdmi2_ctsn_256fs_div_mux_int_ck {
+			id = <AU_DECODER4_SYNTH_HDMI2_CTSN_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_synth_hdmi2_ctsn_128fs_div_mux_int_ck {
+			id = <AU_DECODER4_SYNTH_HDMI2_CTSN_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_ctsn_256fs_out_div4_ck",
+			"synth_hdmi2_ctsn_256fs_out_div8_ck",
+			"synth_hdmi2_ctsn_256fs_out_div16_ck",
+			"synth_hdmi2_ctsn_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_synth_spdif_cdr_256fs_div_mux_int_ck {
+			id = <AU_DECODER4_SYNTH_SPDIF_CDR_256FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_ck",
+			"synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_synth_spdif_cdr_128fs_div_mux_int_ck {
+			id = <AU_DECODER4_SYNTH_SPDIF_CDR_128FS_DIV_MUX_INT_CK>;
+			parents = "synth_spdif_cdr_256fs_out_div2_ck",
+			"synth_spdif_cdr_256fs_out_div4_ck",
+			"synth_spdif_cdr_256fs_out_div8_ck",
+			"synth_spdif_cdr_256fs_out_div16_ck",
+			"synth_spdif_cdr_256fs_out_div32_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_256fs_mux0_int_ck {
+			id = <AU_DECODER4_256FS_MUX0_INT_CK>;
+			parents = "synth_dvb4_256fs_out_ck","synth_dvb2_256fs_out_ck",
+			"decoder4_synth_spdif_cdr_256fs_div_mux_int_ck",
+			"synth_dvb3_256fs_out_ck",
+			"decoder4_synth_hdmi_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","synth_sif_out_ck";
+		};
+
+		decoder4_256fs_mux1_int_ck {
+			id = <AU_DECODER4_256FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","decoder4_synth_hdmi2_ctsn_256fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_256fs_mux_int_ck {
+			id = <AU_DECODER4_256FS_MUX_INT_CK>;
+			parents = "decoder4_256fs_mux0_int_ck","decoder4_256fs_mux1_int_ck";
+		};
+
+		viva_dvb4_timing_gen_256fs_int_ck {
+			id = <AU_VIVA_DVB4_TIMING_GEN_256FS_INT_CK>;
+			parents = "xtal_24m_ck","decoder4_256fs_mux_int_ck";
+		};
+
+		decoder4_128fs_mux0_int_ck {
+			id = <AU_DECODER4_128FS_MUX0_INT_CK>;
+			parents = "synth_dvb4_256fs_out_div2_ck","synth_dvb2_256fs_out_div2_ck",
+			"decoder4_synth_spdif_cdr_128fs_div_mux_int_ck",
+			"synth_dvb3_256fs_out_div2_ck",
+			"decoder4_synth_hdmi_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","synth_sif_out_div2_ck";
+		};
+
+		decoder4_128fs_mux1_int_ck {
+			id = <AU_DECODER4_128FS_MUX1_INT_CK>;
+			parents = "VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","decoder4_synth_hdmi2_ctsn_128fs_div_mux_int_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		decoder4_128fs_mux_int_ck {
+			id = <AU_DECODER4_128FS_MUX_INT_CK>;
+			parents = "decoder4_128fs_mux0_int_ck","decoder4_128fs_mux1_int_ck";
+		};
+
+		viva_dvb5_timing_gen_256fs_int_ck {
+			id = <AU_VIVA_DVB5_TIMING_GEN_256FS_INT_CK>;
+			parents = "xtal_24m_ck","synth_dvb5_256fs_out_ck";
+		};
+
+		viva_dvb6_timing_gen_256fs_int_ck {
+			id = <AU_VIVA_DVB6_TIMING_GEN_256FS_INT_CK>;
+			parents = "xtal_24m_ck","synth_dvb6_256fs_out_ck";
+		};
+
+		viva_audma_v2_r1_synth_ref_int_ck {
+			id = <AU_VIVA_AUDMA_V2_R1_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck",
+			"mpll_216m_div4_ck","mpll_216m_div8_ck","VIVALDI_DUMMY",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_audma_v2_r1_256fs_mux_int_ck {
+			id = <AU_VIVA_AUDMA_V2_R1_256FS_MUX_INT_CK>;
+			parents = "synth_audma_v2_r1_256fs_out_ck","aupll_kpdiv_div2_ck";
+		};
+
+		viva_audma_v2_r1_256fs_int_ck {
+			id = <AU_VIVA_AUDMA_V2_R1_256FS_INT_CK>;
+			parents = "xtal_24m_ck","viva_audma_v2_r1_256fs_mux_int_ck";
+		};
+
+		viva_audma_v2_r2_synth_ref_int_ck {
+			id = <AU_VIVA_AUDMA_V2_R2_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck",
+			"mpll_216m_div4_ck","mpll_216m_div8_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_audma_v2_r2_256fs_int_ck {
+			id = <AU_VIVA_AUDMA_V2_R2_256FS_INT_CK>;
+			parents = "xtal_24m_ck","synth_audma_v2_r2_256fs_out_ck";
+		};
+
+		viva_spdif_rx_128fs_int_ck {
+			id = <AU_VIVA_SPDIF_RX_128FS_INT_CK>;
+			parents = "xtal_24m_ck","synth_spdif_cdr_128fs_out_ck";
+		};
+
+		viva_spdif_rx_dg_int_ck {
+			id = <AU_VIVA_SPDIF_RX_DG_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_spdif_rx_synth_ref_int_ck {
+			id = <AU_VIVA_SPDIF_RX_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_216m_div2_ck",
+			"mpll_432m_ck";
+		};
+
+		viva_hdmi_rx_synth_ref_int_ck {
+			id = <AU_VIVA_HDMI_RX_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		hdmi_rx_s2p_256fs_mux_int_ck {
+			id = <AU_HDMI_RX_S2P_256FS_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_256fs_out_ck",
+			"synth_hdmi_patgen_256fs_out_ck";
+		};
+
+		viva_hdmi_rx_s2p_256fs_int_ck {
+			id = <AU_VIVA_HDMI_RX_S2P_256FS_INT_CK>;
+			parents = "xtal_24m_ck","hdmi_rx_s2p_256fs_mux_int_ck";
+		};
+
+		hdmi_rx_s2p_128fs_mux_int_ck {
+			id = <AU_HDMI_RX_S2P_128FS_MUX_INT_CK>;
+			parents = "synth_hdmi_ctsn_128fs_out_ck",
+			"synth_hdmi_patgen_256fs_out_div2_ck";
+		};
+
+		viva_hdmi_rx_s2p_128fs_int_ck {
+			id = <AU_VIVA_HDMI_RX_S2P_128FS_INT_CK>;
+			parents = "xtal_24m_ck","hdmi_rx_s2p_128fs_mux_int_ck";
+		};
+
+		viva_hdmi_rx_v2a_time_stamp_int_ck {
+			id = <AU_VIVA_HDMI_RX_V2A_TIME_STAMP_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		viva_hdmi_rx_mpll_432_int_ck {
+			id = <AU_VIVA_HDMI_RX_MPLL_432_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck";
+		};
+
+		viva_hdmi_rx2_synth_ref_int_ck {
+			id = <AU_VIVA_HDMI_RX2_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		hdmi_rx2_s2p_256fs_mux_int_ck {
+			id = <AU_HDMI_RX2_S2P_256FS_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_hdmi2_patgen_256fs_out_ck";
+		};
+
+		viva_hdmi_rx2_s2p_256fs_int_ck {
+			id = <AU_VIVA_HDMI_RX2_S2P_256FS_INT_CK>;
+			parents = "xtal_24m_ck","hdmi_rx2_s2p_256fs_mux_int_ck";
+		};
+
+		hdmi_rx2_s2p_128fs_mux_int_ck {
+			id = <AU_HDMI_RX2_S2P_128FS_MUX_INT_CK>;
+			parents = "synth_hdmi2_ctsn_128fs_out_ck",
+			"synth_hdmi2_patgen_256fs_out_div2_ck";
+		};
+
+		viva_hdmi_rx2_s2p_128fs_int_ck {
+			id = <AU_VIVA_HDMI_RX2_S2P_128FS_INT_CK>;
+			parents = "xtal_24m_ck","hdmi_rx2_s2p_128fs_mux_int_ck";
+		};
+
+		viva_hdmi_rx2_v2a_time_stamp_int_ck {
+			id = <AU_VIVA_HDMI_RX2_V2A_TIME_STAMP_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		viva_hdmi_rx2_mpll_432_int_ck {
+			id = <AU_VIVA_HDMI_RX2_MPLL_432_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck";
+		};
+
+		viva_bclk_i2s_decoder_int_ck {
+			id = <AU_VIVA_BCLK_I2S_DECODER_INT_CK>;
+			parents = "xtal_24m_ck","pad_i2s_rx_bclk_ck",
+			"bclk_i2s_decoder_time_gen_ck","VIVALDI_DUMMY";
+		};
+
+		viva_mclk_i2s_decoder_int_ck {
+			id = <AU_VIVA_MCLK_I2S_DECODER_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_div8_ck","aupll_kpdiv_div4_ck",
+			"aupll_kpdiv_div2_ck","aupll_kp0_div10_ck","aupll_kpdiv_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_i2s_bclk_dg_int_ck {
+			id = <AU_VIVA_I2S_BCLK_DG_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_i2s_synth_ref_int_ck {
+			id = <AU_VIVA_I2S_SYNTH_REF_INT_CK>;
+			parents = "aupll_kpdiv_ck","mpll_216m_ck","mpll_216m_div4_ck",
+			"mpll_432m_ck","mpll_216m_div16_ck","mpll_216m_div2_ck",
+			"aupll_kpdiv_div2_ck","aupll_kp0_div10_ck";
+		};
+
+		viva_bclk_i2s_decoder2_int_ck {
+			id = <AU_VIVA_BCLK_I2S_DECODER2_INT_CK>;
+			parents = "xtal_24m_ck","pad_i2s_rx2_bclk_ck",
+			"bclk_i2s_decoder2_time_gen_ck","VIVALDI_DUMMY";
+		};
+
+		viva_mclk_i2s_decoder2_int_ck {
+			id = <AU_VIVA_MCLK_I2S_DECODER2_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_div8_ck","aupll_kpdiv_div4_ck",
+			"aupll_kpdiv_div2_ck","aupll_kp0_div10_ck","aupll_kpdiv_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_i2s_bclk_dg2_int_ck {
+			id = <AU_VIVA_I2S_BCLK_DG2_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_bi2s_synth_ref2_int_ck {
+			id = <AU_VIVA_BI2S_SYNTH_REF2_INT_CK>;
+			parents = "aupll_kpdiv_ck","mpll_216m_ck","mpll_216m_div4_ck",
+			"mpll_432m_ck","mpll_216m_div16_ck","mpll_216m_div2_ck",
+			"aupll_kpdiv_div2_ck","aupll_kp0_div10_ck";
+		};
+
+		hdmi_tx_to_i2s_tx_256fs_mux_int_ck {
+			id = <AU_HDMI_TX_TO_I2S_TX_256FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","synth_spdif_npcm3_256fs_out_ck";
+		};
+
+		hdmi_tx_to_i2s_tx_128fs_mux_int_ck {
+			id = <AU_HDMI_TX_TO_I2S_TX_128FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div4_ck","synth_spdif_npcm3_256fs_out_div2_ck";
+		};
+
+		hdmi_tx_to_i2s_tx_64fs_mux_int_ck {
+			id = <AU_HDMI_TX_TO_I2S_TX_64FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div8_ck","synth_spdif_npcm3_256fs_out_div4_ck";
+		};
+
+		hdmi_tx_to_i2s_tx_32fs_mux_int_ck {
+			id = <AU_HDMI_TX_TO_I2S_TX_32FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div16_ck","synth_spdif_npcm3_256fs_out_div8_ck";
+		};
+
+		hdmi_rx_to_i2s_tx_256fs_mux_int_ck {
+			id = <AU_HDMI_RX_TO_I2S_TX_256FS_MUX_INT_CK>;
+			parents = "hdmi_tx_to_i2s_tx_256fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_ck";
+		};
+
+		hdmi_rx_to_i2s_tx_128fs_mux_int_ck {
+			id = <AU_HDMI_RX_TO_I2S_TX_128FS_MUX_INT_CK>;
+			parents = "hdmi_tx_to_i2s_tx_128fs_mux_int_ck",
+			"synth_hdmi_ctsn_128fs_out_ck";
+		};
+
+		hdmi_rx_to_i2s_tx_64fs_mux_int_ck {
+			id = <AU_HDMI_RX_TO_I2S_TX_64FS_MUX_INT_CK>;
+			parents = "hdmi_tx_to_i2s_tx_64fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_div4_ck";
+		};
+
+		hdmi_rx_to_i2s_tx_32fs_mux_int_ck {
+			id = <AU_HDMI_RX_TO_I2S_TX_32FS_MUX_INT_CK>;
+			parents = "hdmi_tx_to_i2s_tx_32fs_mux_int_ck",
+			"synth_hdmi_ctsn_256fs_out_div8_ck";
+		};
+
+		viva_i2s_tx_fifo_256fs_int_ck {
+			id = <AU_VIVA_I2S_TX_FIFO_256FS_INT_CK>;
+			parents = "xtal_24m_ck","hdmi_rx_to_i2s_tx_256fs_mux_int_ck";
+		};
+
+		viva_i2s_mclk_synth_ref_int_ck {
+			id = <AU_VIVA_I2S_MCLK_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kf0_ck";
+		};
+
+		viva_mclk_i2s_encoder_int_ck {
+			id = <AU_VIVA_MCLK_I2S_ENCODER_INT_CK>;
+			parents = "synth_mclk_i2s_encoder_out_ck",
+			"hdmi_rx_to_i2s_tx_64fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_128fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_256fs_mux_int_ck","aupll_kpdiv_div2_ck",
+			"aupll_kp0_div10_ck","aupll_kpdiv_ck","aupll_kf0_div_10_ck";
+		};
+
+		i2s_bclk_synth_ref_mux_int_ck {
+			id = <AU_I2S_BCLK_SYNTH_REF_MUX_INT_CK>;
+			parents = "synth_mclk_i2s_encoder_out_ck",
+			"synth_ssc_2nd_order_out_div4_ck";
+		};
+
+		viva_i2s_bclk_synth_ref_int_ck {
+			id = <AU_VIVA_I2S_BCLK_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","i2s_bclk_synth_ref_mux_int_ck",
+			"aupll_kpdiv_ck","VIVALDI_DUMMY";
+		};
+
+		bclk_i2s_encoder_128fs_ssc_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER_128FS_SSC_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div4_ck","synth_ssc_2nd_order_out_div4_ck";
+		};
+
+		bclk_i2s_encoder_64fs_ssc_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER_64FS_SSC_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div8_ck","synth_ssc_2nd_order_out_div8_ck";
+		};
+
+		bclk_i2s_encoder_32fs_ssc_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER_32FS_SSC_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div16_ck","synth_ssc_2nd_order_out_div16_ck";
+		};
+
+		bclk_i2s_encoder_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER_MUX_INT_CK>;
+			parents = "hdmi_rx_to_i2s_tx_32fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_64fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_128fs_mux_int_ck",
+			"bclk_i2s_encoder_32fs_ssc_mux_int_ck",
+			"bclk_i2s_encoder_64fs_ssc_mux_int_ck",
+			"bclk_i2s_encoder_128fs_ssc_mux_int_ck",
+			"aupll_kp1_div10_ck","synth_bclk_i2s_encoder_out_ck";
+		};
+
+		bclk_i2s_encoder_int_ck {
+			id = <AU_BCLK_I2S_ENCODER_INT_CK>;
+			parents = "xtal_24m_ck","bclk_i2s_encoder_mux_int_ck";
+		};
+
+		bclk_i2s_encoder_to_pad_int_ck {
+			id = <AU_BCLK_I2S_ENCODER_TO_PAD_INT_CK>;
+			parents = "bclk_i2s_encoder_int_ck";
+		};
+
+		viva_i2s_tx_2_fifo_256fs_int_ck {
+			id = <AU_VIVA_I2S_TX_2_FIFO_256FS_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_div2_ck",
+			"synth_spdif_npcm3_256fs_out_ck","VIVALDI_DUMMY";
+		};
+
+		viva_mclk_i2s_encoder2_int_ck {
+			id = <AU_VIVA_MCLK_I2S_ENCODER2_INT_CK>;
+			parents = "synth_mclk_i2s_encoder2_out_ck",
+			"hdmi_rx_to_i2s_tx_64fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_128fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_256fs_mux_int_ck",
+			"aupll_kpdiv_div2_ck","aupll_kp0_div10_ck",
+			"aupll_kpdiv_ck","aupll_kf0_div_10_ck";
+		};
+
+		i2s_2_bclk_synth_ref_mux_int_ck {
+			id = <AU_I2S_2_BCLK_SYNTH_REF_MUX_INT_CK>;
+			parents = "synth_mclk_i2s_encoder2_out_ck",
+			"synth_ssc_2nd_order_out_div4_ck";
+		};
+
+		viva_i2s_2_bclk_synth_ref_int_ck {
+			id = <AU_VIVA_I2S_2_BCLK_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","i2s_2_bclk_synth_ref_mux_int_ck",
+			"aupll_kpdiv_ck","VIVALDI_DUMMY";
+		};
+
+		bclk_i2s_encoder2_128fs_ssc_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER2_128FS_SSC_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div4_ck","synth_ssc_2nd_order_out_div4_ck";
+		};
+
+		bclk_i2s_encoder2_64fs_ssc_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER2_64FS_SSC_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div8_ck","synth_ssc_2nd_order_out_div8_ck";
+		};
+
+		bclk_i2s_encoder2_32fs_ssc_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER2_32FS_SSC_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div16_ck","synth_ssc_2nd_order_out_div16_ck";
+		};
+
+		bclk_i2s_encoder2_mux_int_ck {
+			id = <AU_BCLK_I2S_ENCODER2_MUX_INT_CK>;
+			parents = "hdmi_rx_to_i2s_tx_32fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_64fs_mux_int_ck",
+			"hdmi_rx_to_i2s_tx_128fs_mux_int_ck",
+			"bclk_i2s_encoder2_32fs_ssc_mux_int_ck",
+			"bclk_i2s_encoder2_64fs_ssc_mux_int_ck",
+			"bclk_i2s_encoder2_128fs_ssc_mux_int_ck",
+			"aupll_kp1_div10_ck","synth_bclk_i2s_encoder2_out_ck";
+		};
+
+		bclk_i2s_encoder2_int_ck {
+			id = <AU_BCLK_I2S_ENCODER2_INT_CK>;
+			parents = "xtal_24m_ck","bclk_i2s_encoder2_mux_int_ck";
+		};
+
+		bclk_i2s_encoder2_to_pad_int_ck {
+			id = <AU_BCLK_I2S_ENCODER2_TO_PAD_INT_CK>;
+			parents = "bclk_i2s_encoder2_int_ck";
+		};
+
+		viva_i2s_trx_synth_ref_int_ck {
+			id = <AU_VIVA_I2S_TRX_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_div4_ck",
+			"mpll_216m_ck","mpll_216m_div16_ck","mpll_216m_div2_ck",
+			"aupll_kpdiv_div2_ck","aupll_kp0_div10_ck";
+		};
+
+		viva_i2s_trx_bclk_timing_gen_int_ck {
+			id = <AU_VIVA_I2S_TRX_BCLK_TIMING_GEN_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kf0_ck",
+			"synth_clk_i2s_bclk_decoder_ck","VIVALDI_DUMMY";
+		};
+
+		viva_pcm_clk_216_int_ck {
+			id = <AU_VIVA_PCM_CLK_216_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_pcm_clk_aupll_int_ck {
+			id = <AU_VIVA_PCM_CLK_AUPLL_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kf0_ck";
+		};
+
+		spdif_tx_gpa_synth_256fs_mux_int_ck {
+			id = <AU_SPDIF_TX_GPA_SYNTH_256FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_ck",
+			"synth_spdif_tx_1024fs_out_div2_ck","synth_spdif_tx_1024fs_out_ck";
+		};
+
+		spdif_tx_256fs_mux_int_ck {
+			id = <AU_SPDIF_TX_256FS_MUX_INT_CK>;
+			parents = "spdif_tx_gpa_synth_256fs_mux_int_ck",
+			"ch9_256fsi_mux_int_ck","synth_spdif_npcm_256fs_out_ck",
+			"synth_hdmi_ctsn_128fs_out_ck","decoder1_256fs_mux_int_ck",
+			"decoder2_256fs_mux_int_ck","decoder3_256fs_mux_int_ck",
+			"decoder4_256fs_mux_int_ck";
+		};
+
+		viva_spdif_tx_256fs_int_ck {
+			id = <AU_VIVA_SPDIF_TX_256FS_INT_CK>;
+			parents = "xtal_24m_ck","spdif_tx_256fs_mux_int_ck";
+		};
+
+		spdif_tx_gpa_128fs_mux_int_ck {
+			id = <AU_SPDIF_TX_GPA_128FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div4_ck","aupll_kpdiv_div2_ck",
+			"VIVALDI_DUMMY","aupll_kpdiv_ck";
+		};
+
+		spdif_tx_128fs_mux_int_ck {
+			id = <AU_SPDIF_TX_128FS_MUX_INT_CK>;
+			parents = "spdif_tx_gpa_128fs_mux_int_ck","VIVALDI_DUMMY",
+			"synth_spdif_npcm_256fs_out_div2_ck","synth_hdmi_ctsn_128fs_out_ck",
+			"decoder1_128fs_mux_int_ck","decoder2_128fs_mux_int_ck",
+			"decoder3_128fs_mux_int_ck","decoder4_128fs_mux_int_ck";
+		};
+
+		viva_spdif_tx_128fs_int_ck {
+			id = <AU_VIVA_SPDIF_TX_128FS_INT_CK>;
+			parents = "xtal_24m_ck","spdif_tx_128fs_mux_int_ck";
+		};
+
+		viva_spdif_tx_synth_ref_int_ck {
+			id = <AU_VIVA_SPDIF_TX_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kf0_ck";
+		};
+
+		spdif_tx2_gpa_synth_256fs_mux_int_ck {
+			id = <AU_SPDIF_TX2_GPA_SYNTH_256FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_ck",
+			"synth_spdif_tx_1024fs_out_div2_ck","synth_spdif_tx_1024fs_out_ck";
+		};
+
+		spdif_tx2_256fs_mux_int_ck {
+			id = <AU_SPDIF_TX2_256FS_MUX_INT_CK>;
+			parents = "spdif_tx2_gpa_synth_256fs_mux_int_ck",
+			"ch9_256fsi_mux_int_ck","synth_spdif_npcm2_256fs_out_ck",
+			"synth_hdmi_ctsn_128fs_out_ck","decoder1_256fs_mux_int_ck",
+			"decoder2_256fs_mux_int_ck","decoder3_256fs_mux_int_ck",
+			"decoder4_256fs_mux_int_ck";
+		};
+
+		viva_spdif_tx2_256fs_int_ck {
+			id = <AU_VIVA_SPDIF_TX2_256FS_INT_CK>;
+			parents = "xtal_24m_ck","spdif_tx2_256fs_mux_int_ck";
+		};
+
+		spdif_tx2_gpa_128fs_mux_int_ck {
+			id = <AU_SPDIF_TX2_GPA_128FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div4_ck","aupll_kpdiv_div2_ck",
+			"VIVALDI_DUMMY","aupll_kpdiv_ck";
+		};
+
+		spdif_tx2_128fs_mux_int_ck {
+			id = <AU_SPDIF_TX2_128FS_MUX_INT_CK>;
+			parents = "spdif_tx2_gpa_128fs_mux_int_ck","VIVALDI_DUMMY",
+			"synth_spdif_npcm2_256fs_out_div2_ck",
+			"synth_hdmi_ctsn_128fs_out_ck","decoder1_128fs_mux_int_ck",
+			"decoder2_128fs_mux_int_ck","decoder3_128fs_mux_int_ck",
+			"decoder4_128fs_mux_int_ck";
+		};
+
+		viva_spdif_tx2_128fs_int_ck {
+			id = <AU_VIVA_SPDIF_TX2_128FS_INT_CK>;
+			parents = "xtal_24m_ck","spdif_tx2_128fs_mux_int_ck";
+		};
+
+		viva_npcm_synth_ref_int_ck {
+			id = <AU_VIVA_NPCM_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_npcm2_synth_ref_int_ck {
+			id = <AU_VIVA_NPCM2_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_npcm3_synth_ref_int_ck {
+			id = <AU_VIVA_NPCM3_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_npcm4_synth_ref_int_ck {
+			id = <AU_VIVA_NPCM4_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_npcm4_256fs_timing_gen_int_ck {
+			id = <AU_VIVA_NPCM4_256FS_TIMING_GEN_INT_CK>;
+			parents = "xtal_24m_ck","synth_npcm4_256fs_out_ck";
+		};
+
+		viva_npcm5_synth_ref_int_ck {
+			id = <AU_VIVA_NPCM5_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_npcm5_256fs_timing_gen_int_ck {
+			id = <AU_VIVA_NPCM5_256FS_TIMING_GEN_INT_CK>;
+			parents = "xtal_24m_ck","synth_npcm5_256fs_out_ck";
+		};
+
+		hdmi_tx_256fs_mux1_int_ck {
+			id = <AU_HDMI_TX_256FS_MUX1_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","synth_spdif_npcm3_256fs_out_ck";
+		};
+
+		hdmi_tx_256fs_mux0_int_ck {
+			id = <AU_HDMI_TX_256FS_MUX0_INT_CK>;
+			parents = "hdmi_tx_256fs_mux1_int_ck","synth_pcm_trx_256fs_out_ck";
+		};
+
+		hdmi_tx_256fs_mux_int_ck {
+			id = <AU_HDMI_TX_256FS_MUX_INT_CK>;
+			parents = "hdmi_tx_256fs_mux0_int_ck","hdmi_rx_s2p_256fs_mux_int_ck";
+		};
+
+		viva_hdmi_tx_256fs_int_ck {
+			id = <AU_VIVA_HDMI_TX_256FS_INT_CK>;
+			parents = "xtal_24m_ck","hdmi_tx_256fs_mux_int_ck";
+		};
+
+		viva_hdmi_tx_128fs_int_ck {
+			id = <AU_VIVA_HDMI_TX_128FS_INT_CK>;
+			parents = "xtal_24m_ck","VIVALDI_DUMMY";
+		};
+
+		spdif_extearc_256fs_mux_int_ck {
+			id = <AU_SPDIF_EXTEARC_256FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","VIVALDI_DUMMY",
+			"synth_spdif_npcm_256fs_out_ck","synth_hdmi_ctsn_128fs_out_ck",
+			"decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck";
+		};
+
+		spdif_extearc_128fs_mux_int_ck {
+			id = <AU_SPDIF_EXTEARC_128FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div4_ck","VIVALDI_DUMMY",
+			"synth_spdif_npcm_256fs_out_div2_ck",
+			"synth_hdmi_ctsn_128fs_out_ck","decoder1_128fs_mux_int_ck",
+			"decoder2_128fs_mux_int_ck","decoder3_128fs_mux_int_ck",
+			"decoder4_128fs_mux_int_ck";
+		};
+
+		spdif_extearc_mux0_int_ck {
+			id = <AU_SPDIF_EXTEARC_MUX0_INT_CK>;
+			parents = "spdif_extearc_128fs_mux_int_ck",
+			"spdif_extearc_256fs_mux_int_ck";
+		};
+
+		spdif_extearc_mux_int_ck {
+			id = <AU_SPDIF_EXTEARC_MUX_INT_CK>;
+			parents = "spdif_extearc_mux0_int_ck","viva_mclk_i2s_encoder_int_ck";
+		};
+
+		viva_spdif_extearc_int_ck {
+			id = <AU_VIVA_SPDIF_EXTEARC_INT_CK>;
+			parents = "xtal_24m_ck","spdif_extearc_mux_int_ck";
+		};
+
+		viva_earc_tx_synth_ref_int_ck {
+			id = <AU_VIVA_EARC_TX_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck","mpll_432m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_earc_tx_gpa_synth_ref_int_ck {
+			id = <AU_VIVA_EARC_TX_GPA_SYNTH_REF_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kf0_ck";
+		};
+
+		viva_earc_tx_synth_iir_ref_int_ck {
+			id = <AU_VIVA_EARC_TX_SYNTH_IIR_REF_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck";
+		};
+
+		earc_tx_gpa_256fs_mux_int_ck {
+			id = <AU_EARC_TX_GPA_256FS_MUX_INT_CK>;
+			parents = "aupll_kpdiv_div2_ck","aupll_kpdiv_ck",
+			"VIVALDI_DUMMY","synth_earc_tx_gpa_1024fs_out_ck";
+		};
+
+		earc_tx_pll_256fs_ref_mux_int_ck {
+			id = <AU_EARC_TX_PLL_256FS_REF_MUX_INT_CK>;
+			parents = "earc_tx_gpa_256fs_mux_int_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck","synth_earc_tx_256fs_out_ck",
+			"synth_earc_tx_iir_hdmi_rx_256fs_out_ck",
+			"decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck";
+		};
+
+		earc_tx_pll_256fs_ref_int_ck {
+			id = <AU_EARC_TX_PLL_256FS_REF_INT_CK>;
+			parents = "xtal_24m_ck","earc_tx_pll_256fs_ref_mux_int_ck";
+		};
+
+		viva_earc_tx_pll_int_ck {
+			id = <AU_VIVA_EARC_TX_PLL_INT_CK>;
+			parents = "xtal_24m_ck","earc_tx_pll_ck";
+		};
+
+		viva_earc_tx_64xchxfs_int_ck {
+			id = <AU_VIVA_EARC_TX_64XCHXFS_INT_CK>;
+			parents = "xtal_24m_ck","earc_tx_pll_ck";
+		};
+
+		viva_earc_tx_32xchxfs_int_ck {
+			id = <AU_VIVA_EARC_TX_32XCHXFS_INT_CK>;
+			parents = "xtal_24m_ck","viva_earc_tx_64xchxfs_int_ck";
+		};
+
+		viva_earc_tx_32xfs_int_ck {
+			id = <AU_VIVA_EARC_TX_32XFS_INT_CK>;
+			parents = "xtal_24m_ck","viva_earc_tx_32xchxfs_int_ck";
+		};
+
+		earc_tx_source_256fs_mux_int_ck {
+			id = <AU_EARC_TX_SOURCE_256FS_MUX_INT_CK>;
+			parents = "spdif_tx2_gpa_synth_256fs_mux_int_ck",
+			"synth_hdmi2_ctsn_256fs_out_ck",
+			"synth_spdif_npcm2_256fs_out_ck",
+			"synth_hdmi_ctsn_256fs_out_ck",
+			"decoder1_256fs_mux_int_ck","decoder2_256fs_mux_int_ck",
+			"decoder3_256fs_mux_int_ck","decoder4_256fs_mux_int_ck";
+		};
+
+		viva_earc_tx_source_256fs_int_ck {
+			id = <AU_VIVA_EARC_TX_SOURCE_256FS_INT_CK>;
+			parents = "xtal_24m_ck","earc_tx_source_256fs_mux_int_ck";
+		};
+
+		viva_sin_gen_int_ck {
+			id = <AU_VIVA_SIN_GEN_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_test_bus_int_ck {
+			id = <AU_VIVA_TEST_BUS_INT_CK>;
+			parents = "xtal_24m_ck","mpll_216m_ck";
+		};
+
+		viva_src_mac_bspline_int_ck {
+			id = <AU_VIVA_SRC_MAC_BSPLINE_INT_CK>;
+			parents = "xtal_24m_ck","mpll_432m_ck","mpll_216m_ck","VIVALDI_DUMMY";
+		};
+
+		viva_i2s_tdm_6x16tx32b_bclk_int_ck {
+			id = <AU_VIVA_I2S_TDM_6X16TX32B_BCLK_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_ck",
+			"aupll_kpdiv_div2_ck","aupll_kpdiv_div4_ck",
+			"aupll_kpdiv_div8_ck","aupll_kpdiv_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_i2s_tdm_6x16tx32b_fifo_int_ck {
+			id = <AU_VIVA_I2S_TDM_6X16TX32B_FIFO_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_ck";
+		};
+
+		inverse_of_viva_i2s_tdm_6x16tx32b_bclk_int_ck {
+			id = <AU_INVERSE_OF_VIVA_I2S_TDM_6X16TX32B_BCLK_INT_CK>;
+			parents = "viva_i2s_tdm_6x16tx32b_bclk_int_ck";
+		};
+
+		viva_i2s_tdm_6x16tx32b_bclk_to_pad_int_ck {
+			id = <AU_VIVA_I2S_TDM_6X16TX32B_BCLK_TO_PAD_INT_CK>;
+			parents = "xtal_24m_ck","inverse_of_viva_i2s_tdm_6x16tx32b_bclk_int_ck";
+		};
+
+		viva_i2s_tdm_1x16tx32b_bclk_int_ck {
+			id = <AU_VIVA_I2S_TDM_1X16TX32B_BCLK_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_ck",
+			"aupll_kpdiv_div2_ck","aupll_kpdiv_div4_ck",
+			"aupll_kpdiv_div8_ck","aupll_kpdiv_div16_ck",
+			"VIVALDI_DUMMY","VIVALDI_DUMMY";
+		};
+
+		viva_i2s_tdm_1x16tx32b_fifo_int_ck {
+			id = <AU_VIVA_I2S_TDM_1X16TX32B_FIFO_INT_CK>;
+			parents = "xtal_24m_ck","aupll_kpdiv_ck";
+		};
+
+		inverse_of_viva_i2s_tdm_1x16tx32b_bclk_int_ck {
+			id = <AU_INVERSE_OF_VIVA_I2S_TDM_1X16TX32B_BCLK_INT_CK>;
+			parents = "viva_i2s_tdm_1x16tx32b_bclk_int_ck";
+		};
+
+		viva_i2s_tdm_1x16tx32b_bclk_to_pad_int_ck {
+			id = <AU_VIVA_I2S_TDM_1X16TX32B_BCLK_TO_PAD_INT_CK>;
+			parents = "xtal_24m_ck","inverse_of_viva_i2s_tdm_1x16tx32b_bclk_int_ck";
+		};
+
+		r2_int_ck {
+			id = <AU_R2_INT_CK>;
+			parents = "aur2pll_ck";
+		};
+
+		dap_int_ck {
+			id = <AU_DAP_INT_CK>;
+			parents = "mpll_216m_ck";
+		};
+
+		dap_tck_int_ck {
+			id = <AU_DAP_TCK_INT_CK>;
+			parents = "dap_tck_ck";
+		};
+	};
+
+};

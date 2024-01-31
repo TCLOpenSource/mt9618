@@ -1,0 +1,8 @@
+config MTK_IRQ_ASYNC
+	tristate "mtk irq async probe enhance"
+	help
+	  GKI have data racing issue when the
+	  irq probe asynchronously, this driver
+	  add a mutex to protect the race code
+	  via kprobe. Remove this driver after
+	  upstream fix it.

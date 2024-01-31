@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mediatek_drm_tv_kms:mediatek-drm-tv-kms {
+		compatible = "MTK-drm-tv-kms";
+		interrupt-parent = <&mtk_intc0_irq>;
+		interrupts = <0x0 0x23 0x4>,
+				<0x0 0x1E 0x4>,
+				<0x0 0x27 0x4>;
+		PRIMARY_PLANE_INDEX_START = <0>;
+		PRIMARY_PLANE_NUM = <1>;
+		VIDEO_PLANE_NUM = <16>; /*overlay video plane */
+		VIDEO_PLANE_INDEX_START = <1>;
+		VIDEO_MEMC_NUM = <0x01>; /*number of HW MEMC */
+		VIDEO_PANEL_GAMMA_BIT_NUM = <0x01>; /*1: 12bit , 0:11bit*/
+		VIDEO_OD = <0x0>; /*1: support 0:not support */
+		VIDEO_OLED_DEMURA_IN = <0x01>; /*1: support 0:not support */
+		VIDEO_OLED_BOOSTING = <0x01>; /*1: support 0:not support */
+		VIDEO_OLED_PIXELSHIFT_H_RANGE_MAX = <0x20>; /*  32 */
+		VIDEO_OLED_PIXELSHIFT_H_RANGE_MIN = <0xE0>; /* -32 */
+		VIDEO_OLED_PIXELSHIFT_V_RANGE_MAX = <0x10>; /*  16 */
+		VIDEO_OLED_PIXELSHIFT_V_RANGE_MIN = <0xF0>; /* -16 */
+		GRAPHIC_PLANE_INDEX_START = <17>;
+		GRAPHIC_HMIRROR = <0 0 0 0 0>;
+		GRAPHIC_VMIRROR = <0 0 0 0 0>;
+		GRAPHIC_HSTRETCH_INIT_MODE = <2 2 2 2 0>;
+		GRAPHIC_VSTRETCH_INIT_MODE = <2 2 2 2 0>;
+		byte_per_word = <32>;
+		reg_num = <30>;
+		cvbso_status = <1>;
+		BUF_IOMMU_OFFSET = <24>;
+		VIDEO_IOMMU_IDX_MEMC_PQ = <7>;  /*BUF_TAG*/
+		memory-region = <&MI_GOP_RPMSG
+				&MI_DISPOUT_DEMURA
+				&MI_RENDER_METADATA
+				&MI_DISP_PQ_DF_MEMORY_LAYER>;
+			/* The order same as @MMAP_INDEX_xxx in @mtk_tv_drm_metabuf.c */
+		drm_clock_target: drm-clock-target {
+		};
+		drm_clock_max: drm-clock-max {
+		};
+		drm_clock_rate: drm-clock-rate {
+		};
+	};
+};

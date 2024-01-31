@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: GPL-2.0
+//
+// Copyright (c) 2020 MediaTek Inc.
+//
+
+/ {
+
+	dish_rt5047: dish-rt5047 {
+/*property are in overlay_dish.dtsi*/
+	};
+
+
+	dish_rt5047_bf: dish-rt5047_bf {
+/*property are in overlay_dish.dtsi*/
+	};
+
+	dish_SGM41286: dish-SGM41286 {
+/*property are in overlay_dish.dtsi*/
+	};
+};

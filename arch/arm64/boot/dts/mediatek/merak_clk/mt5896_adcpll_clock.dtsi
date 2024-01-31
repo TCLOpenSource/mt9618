@@ -1,0 +1,226 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+
+/ {
+	adcpll_mux_gate: adcpll {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_mux_gate";
+		num = <CLK_ADCPLL_NR>;
+
+		clkd_adc_p_int_ck {
+			id = <CLK_ADCPLL_CLKD_ADC_P_INT_CK>;
+			parents = "clkd_r_atop_ck","clkd_g_atop_ck",
+						"clkd_b_atop_ck","clkd_vd_atop_ck";
+		};
+
+		clkd_atop_int_ck {
+			id = <CLK_ADCPLL_CLKD_ATOP_INT_CK>;
+			parents = "xtal_12m_ck","clkd_r_atop_ck","clkd_g_atop_ck","clkd_b_atop_ck";
+		};
+
+		clkd_atop_internal_int_ck {
+			id = <CLK_ADCPLL_CLKD_ATOP_INTERNAL_INT_CK>;
+			parents = "xtal_12m_ck","clkd_r_atop_int_ck",
+						"clkd_g_atop_int_ck","clkd_b_atop_int_ck";
+		};
+
+		r_int_int_ck {
+			id = <CLK_ADCPLL_R_INT_INT_CK>;
+			parents = "clkd_atop_internal_int_ck","clkd_vd_atop_int_ck",
+						"clkd_r_atop_int_ck","DUMMY_MIMI";
+		};
+
+		g_int_int_ck {
+			id = <CLK_ADCPLL_G_INT_INT_CK>;
+			parents = "clkd_atop_internal_int_ck","clkd_vd_atop_int_ck",
+						"clkd_g_atop_int_ck","DUMMY_MIMI";
+		};
+
+		b_int_int_ck {
+			id = <CLK_ADCPLL_B_INT_INT_CK>;
+			parents = "clkd_atop_internal_int_ck","clkd_vd_atop_int_ck",
+						"clkd_b_atop_int_ck","DUMMY_MIMI";
+		};
+
+		y_int_int_ck {
+			id = <CLK_ADCPLL_Y_INT_INT_CK>;
+			parents = "clkd_atop_internal_int_ck","clkd_vd_atop_int_ck";
+		};
+
+		isog_int_ck {
+			id = <CLK_ADCPLL_ISOG_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		xtal12_int_ck {
+			id = <CLK_ADCPLL_XTAL12_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		xtal12_4interrupt_int_ck {
+			id = <CLK_ADCPLL_XTAL12_4INTERRUPT_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		xtal12_4plugdet_int_ck {
+			id = <CLK_ADCPLL_XTAL12_4PLUGDET_INT_CK>;
+			parents = "xtal_12m_ck";
+		};
+
+		xtal24_int_ck {
+			id = <CLK_ADCPLL_XTAL24_INT_CK>;
+			parents = "xtal_24m_ck";
+		};
+
+		adcpll200_int_ck {
+			id = <CLK_ADCPLL_ADCPLL200_INT_CK>;
+			parents = "clk_dig_216_ck";
+		};
+
+		adcpll400_int_ck {
+			id = <CLK_ADCPLL_ADCPLL400_INT_CK>;
+			parents = "adcplla_mpll_clk432_p_ck";
+		};
+
+		vdpll400_int_ck {
+			id = <CLK_ADCPLL_VDPLL400_INT_CK>;
+			parents = "adcpllb_mpll_clk432_p_ck";
+		};
+
+		clkpll_int_ck {
+			id = <CLK_ADCPLL_CLKPLL_INT_CK>;
+			parents = "clkpll_atop_ck";
+		};
+
+		r_adc_int_ck {
+			id = <CLK_ADCPLL_R_ADC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clkd_r_atop_ck","DUMMY_MIMI";
+		};
+
+		g_adc_int_ck {
+			id = <CLK_ADCPLL_G_ADC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clkd_g_atop_ck","DUMMY_MIMI";
+		};
+
+		b_adc_int_ck {
+			id = <CLK_ADCPLL_B_ADC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clkd_b_atop_ck","DUMMY_MIMI";
+		};
+
+		y_adc_int_ck {
+			id = <CLK_ADCPLL_Y_ADC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck";
+		};
+
+		yuv_adc_int_ck {
+			id = <CLK_ADCPLL_YUV_ADC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck";
+		};
+
+		iclamp_rgb_int_ck {
+			id = <CLK_ADCPLL_ICLAMP_RGB_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clkd_2iclamp_s_ck","DUMMY_MIMI";
+		};
+
+		adc_int_ck {
+			id = <CLK_ADCPLL_ADC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck";
+		};
+
+		vd_int_ck {
+			id = <CLK_ADCPLL_VD_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck";
+		};
+
+		adc2sc_int_ck {
+			id = <CLK_ADCPLL_ADC2SC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clk_dig_108_ck","DUMMY_MIMI";
+		};
+
+		fblank_int_ck {
+			id = <CLK_ADCPLL_FBLANK_INT_CK>;
+			parents = "clkd_adc_p_int_ck","vd_div2_en_to_local_ck";
+		};
+
+		fscx2_fb2atop_int_ck {
+			id = <CLK_ADCPLL_FSCX2_FB2ATOP_INT_CK>;
+			parents = "clkd_adc_p_int_ck","vd_div2_en_to_local_ck";
+		};
+
+		nco_clk_int_ck {
+			id = <CLK_ADCPLL_NCO_CLK_INT_CK>;
+			parents = "nco_clk_ck";
+		};
+
+		vd_nco_clk_int_ck {
+			id = <CLK_ADCPLL_VD_NCO_CLK_INT_CK>;
+			parents = "vd_nco_clk_ck";
+		};
+
+		adc2miu_int_ck {
+			id = <CLK_ADCPLL_ADC2MIU_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clk_dig_108_ck","DUMMY_MIMI";
+		};
+
+		adc2miusc_int_ck {
+			id = <CLK_ADCPLL_ADC2MIUSC_INT_CK>;
+			parents = "clkd_atop_int_ck","clkd_vd_atop_ck",
+						"clk_dig_108_ck","DUMMY_MIMI";
+		};
+
+		clk_tstbus_div_int_ck {
+			id = <CLK_ADCPLL_CLK_TSTBUS_DIV_INT_CK>;
+			parents = "clk_tstbus_div_ck";
+		};
+
+		cvbs_dac_a_digital0_int_ck {
+			id = <CLK_ADCPLL_CVBS_DAC_A_DIGITAL0_INT_CK>;
+			parents = "ck_cvbs_dac_a_digital_p_buf_ck","clk_adcy_top_balance_ck";
+		};
+
+		cvbs_dac_a_digital1_int_ck {
+			id = <CLK_ADCPLL_CVBS_DAC_A_DIGITAL1_INT_CK>;
+			parents = "ck_cvbs_dac_a_digital_p_buf_ck","clk_adcy_top_balance_ck";
+		};
+
+		cvbs_dac_a_digital0_mux_int_ck {
+			id = <CLK_ADCPLL_CVBS_DAC_A_DIGITAL0_MUX_INT_CK>;
+			parents = "ck_cvbs_dac_a_digital_p_buf_ck","clk_adcy_top_balance_ck";
+		};
+
+		fsc_vd_int_ck {
+			id = <CLK_ADCPLL_FSC_VD_INT_CK>;
+			parents = "vd_ck";
+		};
+
+		vd_iclamp_int_ck {
+			id = <CLK_ADCPLL_VD_ICLAMP_INT_CK>;
+			parents = "vd_ck";
+		};
+
+		adcpllb_mpll_216m_int_ck {
+			id = <CLK_ADCPLL_ADCPLLB_MPLL_216M_INT_CK>;
+			parents = "adcpllb_mpll_216m_ck";
+		};
+
+		dig_216_int_ck {
+			id = <CLK_ADCPLL_DIG_216_INT_CK>;
+			parents = "clk_dig_216_ck";
+		};
+
+		dig_108_int_ck {
+			id = <CLK_ADCPLL_DIG_108_INT_CK>;
+			parents = "clk_dig_108_ck";
+		};
+
+	};
+};

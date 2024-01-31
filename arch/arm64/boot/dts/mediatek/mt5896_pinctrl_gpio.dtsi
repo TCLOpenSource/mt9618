@@ -1,0 +1,1344 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	pinctrl: pinctrl@1c2e4000 {
+		compatible = "mediatek,mt5896-pinctrl";
+		reg = <0x0 0x1c2e4000 0x0 0x200>;
+		#pinctrl-cells = <2>;
+		#gpio-range-cells = <0x3>;
+		pinctrl-mt5896,bit-per-mux;
+		pinctrl-mt5896,register-width = <8>;
+		pinctrl-mt5896,function-mask = <0xf>;
+		pinctrl-mt5896,npins = <139>;
+		/* pin base, nr pins & gpio function */
+		pinctrl-mt5896,gpio-range = <
+			&range 0 139 0
+		>;
+		range: gpio-range {
+			#pinctrl-mt5896,gpio-range-cells = <3>;
+		};
+
+		frc_fuart_pmux: frc_fuart_pmux {
+		};
+
+		vb1_pmux: vb1_pmux {
+		};
+
+		/* i2c */
+		i2c0_pmux: i2c0_pmux {
+		};
+
+		i2c1_pmux: i2c1_pmux {
+		};
+
+		i2c2_pmux: i2c2_pmux {
+		};
+
+		i2c3_pmux: i2c3_pmux {
+		};
+
+		i2c4_pmux: i2c4_pmux {
+		};
+		/* end of i2c */
+
+		/* ts */
+		ext_ts_demod_pmux: ext_ts_demod_pmux {
+		};
+
+		ext1_ts_demod_pmux: ext1_ts_demod_pmux {
+		};
+
+		ext2_ts_demod_pmux: ext2_ts_demod_pmux {
+		};
+
+		ext4_ts_demod_pmux: ext4_ts_demod_pmux {
+		};
+
+		ts_cilink_tx_rx_demod0_pmux: ts_cilink_tx_rx_demod0_pmux {
+		};
+
+		ts_cilink_tx_rx_demod1_pmux: ts_cilink_tx_rx_demod1_pmux {
+		};
+
+		ts_cilink_tx_rx_clk_pmux: ts_cilink_tx_rx_clk_pmux {
+		};
+
+		ext_ts_para_demod_pmux: ext_ts_para_demod_pmux {
+		};
+
+		ext1_ts_para_demod_pmux: ext1_ts_para_demod_pmux {
+		};
+
+		ext2_ts_para_demod_pmux: ext2_ts_para_demod_pmux {
+		};
+
+		ext3_ts_para_demod_pmux: ext3_ts_para_demod_pmux {
+		};
+
+		ts1_para_out_pmux: ts1_para_out_pmux {
+		};
+		/* end of ts */
+
+		/* smart card */
+		smart_card1_pmux: smart_card1_pmux {
+		};
+
+		smart_card1_ext_pmux: smart_card1_ext_pmux {
+		};
+
+		smart_card2_pmux: smart_card2_pmux {
+		};
+		/* end of smart card */
+
+		/* spi */
+		mspi_cilink_pmux: mspi_cilink_pmux {
+		};
+
+		mspi_frc_pmux: mspi_frc_pmux {
+		};
+
+		mspi_serflash_pmux: mspi_serflash_pmux {
+		};
+
+		mspi_demod_pmux:mspi_demod_pmux {
+		};
+		/* end of spi */
+
+		/* pwm */
+		panel_bri4_pmux: panel_bri4_pmux {
+		};
+		panel_bri3_pmux: panel_bri3_pmux {
+		};
+		scan_pwm0_pmux: scan_pwm0_pmux {
+		};
+		scan_pwm1_pmux: scan_pwm1_pmux {
+		};
+		scan_pwm2_pmux: scan_pwm2_pmux {
+		};
+		scan_pwm3_pmux: scan_pwm3_pmux {
+		};
+		scan_pwm4_pmux: scan_pwm4_pmux {
+		};
+		/* end of pwm */
+
+		/* i2s */
+		i2s_out_pmux: i2s_out_pmux {
+		};
+
+		i2s_out2_pmux: i2s_out2_pmux {
+		};
+
+		i2s_in_pmux: i2s_in_pmux {
+		};
+
+		i2s_in2_pmux: i2s_in2_pmux {
+		};
+		/* end of i2s */
+
+		/* diseqc */
+		diseqc_out_pmux: diseqc_out_pmux {
+		};
+
+		diseqc_in_pmux: diseqc_in_pmux {
+		};
+		/* end of diseqc */
+
+		/* spdif */
+		spdif_out_pmux: spdif_out_pmux {
+		};
+
+		spdif_in_pmux: spdif_in_pmux {
+		};
+		/* end of spdif */
+
+		/* uart */
+		fuart0_pmux: fuart0_pmux {
+		};
+
+		uart0_pmux: uart0_pmux {
+		};
+
+		uart1_pmux: uart1_pmux {
+		};
+
+		uart2_pmux: uart2_pmux {
+		};
+
+		digmux_uart4_pmux: digmux_uart4_pmux {
+		};
+		/* end of uart */
+
+		/* ldc_in_out */
+		ldc_in_out_pmux: ldc_in_out_pmux {
+		};
+		/* end of ldc_in_out */
+
+		/* ldc_tmon_gpio */
+		ldc_tmon_gpio_pmux: ldc_tmon_gpio_pmux {
+		};
+		/* end of ldc_tmon_gpio */
+
+		/* ldc_tmon */
+		ldc_tmon_pmux: ldc_tmon_pmux {
+		};
+		/* end of ldc_tmon */
+
+		/* ld spi */
+		ld0_spi_pmux: ld0_spi_pmux {
+		};
+
+		ld1_spi_pmux: ld1_spi_pmux {
+		};
+
+		ld2_spi_pmux: ld2_spi_pmux {
+		};
+
+		ld3_spi_pmux: ld3_spi_pmux {
+		};
+
+		ld4_spi_pmux: ld4_spi_pmux {
+		};
+
+		ld5_spi_pmux: ld5_spi_pmux {
+		};
+
+		ld6_spi_pmux: ld6_spi_pmux {
+		};
+
+		ld7_spi_pmux: ld7_spi_pmux {
+		};
+
+		vsync_like1_pmux: vsync_like1_pmux {
+		};
+
+		vsync_like2_pmux: vsync_like2_pmux {
+		};
+
+		vsync_like3_pmux: vsync_like3_pmux {
+		};
+
+		vsync_like4_pmux: vsync_like4_pmux {
+		};
+
+		vsync_like5_pmux: vsync_like5_pmux {
+		};
+
+		vsync_like6_pmux: vsync_like6_pmux {
+		};
+
+		hsync_like1_pmux: hsync_like1_pmux {
+		};
+
+		hsync_like2_pmux: hsync_like2_pmux {
+		};
+
+		hsync_like3_pmux: hsync_like3_pmux {
+		};
+
+		hsync_like4_pmux: hsync_like4_pmux {
+		};
+
+		hsync_like5_pmux: hsync_like5_pmux {
+		};
+		/* end of ld spi */
+
+		/* pcie */
+		pcie_p0_pmux: pcie_p0_pmux {
+		};
+		/* end of pcie */
+
+		/* pcm */
+		pcm_pmux: pcm_pmux {
+		};
+		/* end of pcm */
+
+		/* nand */
+		nand_pmux: nand_pmux {
+		};
+		/* end of nand */
+
+		/* irs */
+		irs_pmux: irs_pmux {
+		};
+
+		ir_tx_nonpm_pmux: ir_tx_nonpm_pmux {
+		};
+
+		ir_tx_1_nonpm_pmux: ir_tx_1_nonpm_pmux {
+		};
+		/* end of irs */
+
+		/* gpio ktf */
+		gpio_func0_pmux: gpio_func0_pmux {
+		};
+		gpio_func1_pmux: gpio_func1_pmux {
+		};
+		/* end of gpio ktf */
+		/* ci */
+		ci_pmux: ci_pmux {
+		};
+		/* end of ci */
+	};
+
+	pm_pinctrl: pinctrl@1c022000 {
+		compatible = "mediatek,mt5896-pinctrl";
+		reg = <0x0 0x1c022000 0x0 0x200>;
+		skip-str-restore;
+		#pinctrl-cells = <2>;
+		#gpio-range-cells = <0x3>;
+		pinctrl-mt5896,bit-per-mux;
+		pinctrl-mt5896,register-width = <8>;
+		pinctrl-mt5896,function-mask = <0xf>;
+		pinctrl-mt5896,npins = <97>;
+		/* pin base, nr pins & gpio function */
+		pinctrl-mt5896,gpio-range = <
+			&pm_range 0 97 0
+		>;
+		pm_range: gpio-range {
+			#pinctrl-mt5896,gpio-range-cells = <3>;
+		};
+
+		pm_uart_pmux: pm_uart_pmux {
+		};
+
+		pm_led_pwm_pmux: pm_led_pwm_pmux {
+		};
+
+		/* dmic record */
+		dmic_record_pmux: dmic_record_pmux {
+		};
+
+		dmic_record_i2s_in_pmux: dmic_record_i2s_in_pmux {
+		};
+		/* end of dmic record */
+
+		/* i2c */
+		pm_i2c0_pmux: pm_i2c0_pmux {
+		};
+
+		pm_i2c1_pmux: pm_i2c1_pmux {
+		};
+		/* end of i2c */
+
+		/* spi */
+		pm_spi_pmux: pm_spi_pmux {
+		};
+		/* end of spi */
+
+		/* uart */
+		pm_uart0_pmux: pm_uart0_pmux {
+		};
+
+		pm_uart1_pmux: pm_uart1_pmux {
+		};
+
+		pm_fuart0_pmux: pm_fuart0_pmux {
+		};
+
+		hdmib_pm_uart0_pmux: hdmib_pm_uart0_pmux {
+		};
+		hdmic_pm_uart0_pmux: hdmic_pm_uart0_pmux {
+		};
+		/* end of uart */
+
+		/* ir */
+		ir_tx_pmux: ir_tx_pmux {
+		};
+		ir_tx_1_pmux: ir_tx_1_pmux {
+		};
+		pm_ir_pmux: pm_ir_pmux {
+		};
+		pm_irs_pmux: pm_irs_pmux {
+		};
+		/* end of ir */
+
+		/* pwm */
+		fan_pwm_pmux: fan_pwm_pmux {
+		};
+		/* end of pwm */
+
+		/* dmic */
+		dmic_google_led_pmux: dmic_google_led_pmux {
+		};
+		/* end of dmic */
+
+		/* rgmii */
+		rgmii_pmux: rgmii_pmux {
+		};
+
+		/* for fpga haps */
+		rgmii_fpga_haps_pmux: rgmii_fpga_haps_pmux {
+		};
+		/* end of rgmii */
+
+		/* pcie_pm */
+		pcie_p1_pmux: pcie_p1_pmux {
+		};
+		/* end of pcie_pm*/
+
+		/* irs_haps */
+		irs_haps_pmux: irs_haps_pmux {
+		};
+		/* end of irs_haps */
+
+		/* shared pad mux */
+		ts_cilink_tx_rx_demod0_pmux_shared: ts_cilink_tx_rx_demod0_pmux_shared {
+		};
+		ts_cilink_tx_rx_demod1_pmux_shared: ts_cilink_tx_rx_demod1_pmux_shared {
+		};
+		ts_cilink_tx_rx_clk_pmux_shared: ts_cilink_tx_rx_clk_pmux_shared {
+		};
+		smart_card1_pmux_shared: smart_card1_pmux_shared {
+		};
+		smart_card2_pmux_shared: smart_card2_pmux_shared {
+		};
+		mspi_cilink_pmux_shared: mspi_cilink_pmux_shared {
+		};
+		ts1_para_out_pmux_shared: ts1_para_out_pmux_shared {
+		};
+		ci_pmux_shared: ci_pmux_shared {
+		};
+		/* end of shared pad mux */
+	};
+
+	pinconf: pinconf@1c2e6200 {
+		compatible = "mediatek,mt5896-pinconf";
+		reg = <0x0 0x1c2e6200 0x0 0x600>;
+		#pinctrl-cells = <1>;
+		pinctrl-mt5896,register-width = <64>;
+		pinctrl-mt5896,npins = <139>;
+
+		/* i2c */
+		i2c0_sda0_pcfg: i2c0_sda0_pcfg {
+		};
+
+		i2c0_scl0_pcfg: i2c0_scl0_pcfg {
+		};
+		/* end of i2c */
+
+		/* ts */
+		ts_cilink_tx_demod0_pcfg: ts_cilink_tx_demod0_pcfg {
+		};
+
+		ts_cilink_tx_clk_pcfg: ts_cilink_tx_clk_pcfg {
+		};
+		/* end of ts */
+
+		/* mspi */
+		mspi_cilink_pcfg: mspi_cilink_pcfg {
+		};
+		/* end of mspi */
+
+		/* ld spi */
+		ld0_spi_pcfg: ld0_spi_pcfg {
+		};
+
+		ld1_spi_pcfg: ld1_spi_pcfg {
+		};
+
+		ld2_spi_pcfg: ld2_spi_pcfg {
+		};
+
+		ld3_spi_pcfg: ld3_spi_pcfg {
+		};
+
+		ld4_spi_pcfg: ld4_spi_pcfg {
+		};
+
+		ld5_spi_pcfg: ld5_spi_pcfg {
+		};
+
+		ld6_spi_pcfg: ld6_spi_pcfg {
+		};
+
+		ld7_spi_pcfg: ld7_spi_pcfg {
+		};
+		/* end of ld spi */
+
+		/* gpio ktf */
+		gpio_func0_pcfg: gpio_func0_pcfg {
+		};
+		gpio_func1_pcfg: gpio_func1_pcfg {
+		};
+		/* end of gpio ktf */
+
+		gpio0_pcfg: gpio0_pcfg {
+		};
+		gpio1_pcfg: gpio1_pcfg {
+		};
+		gpio2_pcfg: gpio2_pcfg {
+		};
+		gpio3_pcfg: gpio3_pcfg {
+		};
+		gpio4_pcfg: gpio4_pcfg {
+		};
+		gpio5_pcfg: gpio5_pcfg {
+		};
+		gpio6_pcfg: gpio6_pcfg {
+		};
+		gpio7_pcfg: gpio7_pcfg {
+		};
+		gpio8_pcfg: gpio8_pcfg {
+		};
+		gpio9_pcfg: gpio9_pcfg {
+		};
+		gpio10_pcfg: gpio10_pcfg {
+		};
+		i2sout_mclk_a_pcfg: i2sout_mclk_a_pcfg {
+		};
+		i2sout_ws_a_pcfg: i2sout_ws_a_pcfg {
+		};
+		i2sout_bck_a_pcfg: i2sout_bck_a_pcfg {
+		};
+		i2sout_sd0_a_pcfg: i2sout_sd0_a_pcfg {
+		};
+		i2sout_sd1_a_pcfg: i2sout_sd1_a_pcfg {
+		};
+		i2sout_sd2_a_pcfg: i2sout_sd2_a_pcfg {
+		};
+		i2sout_sd3_a_pcfg: i2sout_sd3_a_pcfg {
+		};
+		i2sout_sd4_a_pcfg: i2sout_sd4_a_pcfg {
+		};
+		i2sin_ws_a_pcfg: i2sin_ws_a_pcfg {
+		};
+		i2sout_sd5_a_pcfg: i2sout_sd5_a_pcfg {
+		};
+		i2sout_mclk_b_pcfg: i2sout_mclk_b_pcfg {
+		};
+		i2sout_ws_b_pcfg: i2sout_ws_b_pcfg {
+		};
+		i2sout_bck_b_pcfg: i2sout_bck_b_pcfg {
+		};
+		i2sout_sd0_b_pcfg: i2sout_sd0_b_pcfg {
+		};
+		i2sin_bck_a_pcfg: i2sin_bck_a_pcfg {
+		};
+		i2sin_sd0_a_pcfg: i2sin_sd0_a_pcfg {
+		};
+		i2sin_mclk_a_pcfg: i2sin_mclk_a_pcfg {
+		};
+		i2sin_sd1_a_pcfg: i2sin_sd1_a_pcfg {
+		};
+		i2sin_sd2_a_pcfg: i2sin_sd2_a_pcfg {
+		};
+		i2sin_sd3_a_pcfg: i2sin_sd3_a_pcfg {
+		};
+		i2sin_mclk_b_pcfg: i2sin_mclk_b_pcfg {
+		};
+		i2sin_bck_b_pcfg: i2sin_bck_b_pcfg {
+		};
+		i2sin_ws_b_pcfg: i2sin_ws_b_pcfg {
+		};
+		i2sin_sd0_b_pcfg: i2sin_sd0_b_pcfg {
+		};
+		au_spi_ck_pcfg: au_spi_ck_pcfg {
+		};
+		au_spi_mosi_pcfg: au_spi_mosi_pcfg {
+		};
+		au_spi_miso_pcfg: au_spi_miso_pcfg {
+		};
+		au_spi_cs0_pcfg: au_spi_cs0_pcfg {
+		};
+		au_spi_cs1_pcfg: au_spi_cs1_pcfg {
+		};
+		au_spi_cs2_pcfg: au_spi_cs2_pcfg {
+		};
+		au_spi_cs3_pcfg: au_spi_cs3_pcfg {
+		};
+		gpio42_pcfg: gpio42_pcfg {
+		};
+		gpio43_pcfg: gpio43_pcfg {
+		};
+		gpio44_pcfg: gpio44_pcfg {
+		};
+		gpio45_pcfg: gpio45_pcfg {
+		};
+		gpio46_pcfg: gpio46_pcfg {
+		};
+		gpio47_pcfg: gpio47_pcfg {
+		};
+		gpio48_pcfg: gpio48_pcfg {
+		};
+		vb1_htpdn_v1_pcfg: vb1_htpdn_v1_pcfg {
+		};
+		vb1_lockn_v1_pcfg: vb1_lockn_v1_pcfg {
+		};
+		vb1_htpdn_v2_pcfg: vb1_htpdn_v2_pcfg {
+		};
+		vb1_lockn_v2_pcfg: vb1_lockn_v2_pcfg {
+		};
+		vb1_lockn_osd_pcfg: vb1_lockn_osd_pcfg {
+		};
+		vb1_htpdn_osd_pcfg: vb1_htpdn_osd_pcfg {
+		};
+		gpio55_pcfg: gpio55_pcfg {
+		};
+		gpio56_pcfg: gpio56_pcfg {
+		};
+		gpio57_pcfg: gpio57_pcfg {
+		};
+		gpio58_pcfg: gpio58_pcfg {
+		};
+		gpio59_pcfg: gpio59_pcfg {
+		};
+		gpio60_pcfg: gpio60_pcfg {
+		};
+		gpio61_pcfg: gpio61_pcfg {
+		};
+		gpio62_pcfg: gpio62_pcfg {
+		};
+		gpio63_pcfg: gpio63_pcfg {
+		};
+		gpio64_pcfg: gpio64_pcfg {
+		};
+		gpio65_pcfg: gpio65_pcfg {
+		};
+		tuner_freeze_seq_pcfg: tuner_freeze_seq_pcfg {
+		};
+		gpio67_pcfg: gpio67_pcfg {
+		};
+		gpio68_pcfg: gpio68_pcfg {
+		};
+		gpio69_pcfg: gpio69_pcfg {
+		};
+		gpio70_pcfg: gpio70_pcfg {
+		};
+		gpio71_pcfg: gpio71_pcfg {
+		};
+		gpio72_pcfg: gpio72_pcfg {
+		};
+		i2c0_osda0_pcfg: i2c0_osda0_pcfg {
+		};
+		i2c0_oscl0_pcfg: i2c0_oscl0_pcfg {
+		};
+		i2c1_osda1_pcfg: i2c1_osda1_pcfg {
+		};
+		i2c1_oscl1_pcfg: i2c1_oscl1_pcfg {
+		};
+		i2c3_oscl3_pcfg: i2c3_oscl3_pcfg {
+		};
+		i2c3_osda3_pcfg: i2c3_osda3_pcfg {
+		};
+		spi_clk_pcfg: spi_clk_pcfg {
+		};
+		spi_mosi_pcfg: spi_mosi_pcfg {
+		};
+		spi_miso_pcfg: spi_miso_pcfg {
+		};
+		spi_cs_pcfg: spi_cs_pcfg {
+		};
+		int_pcfg: int_pcfg {
+		};
+		cil_demod0_clk_pcfg: cil_demod0_clk_pcfg {
+		};
+		cil_tx_clk_pcfg: cil_tx_clk_pcfg {
+		};
+		cil_tx0_d0_pcfg: cil_tx0_d0_pcfg {
+		};
+		cil_tx0_d1_pcfg: cil_tx0_d1_pcfg {
+		};
+		cil_rx_clk_pcfg: cil_rx_clk_pcfg {
+		};
+		cil_rx0_d0_pcfg: cil_rx0_d0_pcfg {
+		};
+		cil_rx0_d1_pcfg: cil_rx0_d1_pcfg {
+		};
+		cil_demod1_clk_pcfg: cil_demod1_clk_pcfg {
+		};
+		cil_tx1_d0_pcfg: cil_tx1_d0_pcfg {
+		};
+		cil_tx1_d1_pcfg: cil_tx1_d1_pcfg {
+		};
+		cil_rx1_d0_pcfg: cil_rx1_d0_pcfg {
+		};
+		cil_rx1_d1_pcfg: cil_rx1_d1_pcfg {
+		};
+		ci_reset_pcfg: ci_reset_pcfg {
+		};
+		demod_rst_pcfg: demod_rst_pcfg {
+		};
+		demod_tsclk_pcfg: demod_tsclk_pcfg {
+		};
+		demod_tsval_pcfg: demod_tsval_pcfg {
+		};
+		demod_tssync_pcfg: demod_tssync_pcfg {
+		};
+		demod_tsdata0_pcfg: demod_tsdata0_pcfg {
+		};
+		demod_tsdata1_pcfg: demod_tsdata1_pcfg {
+		};
+		demod_tsdata2_pcfg: demod_tsdata2_pcfg {
+		};
+		demod_tsdata3_pcfg: demod_tsdata3_pcfg {
+		};
+		demod_tsdata4_pcfg: demod_tsdata4_pcfg {
+		};
+		demod_tsdata5_pcfg: demod_tsdata5_pcfg {
+		};
+		demod_tsdata6_pcfg: demod_tsdata6_pcfg {
+		};
+		demod_tsdata7_pcfg: demod_tsdata7_pcfg {
+		};
+		demod_ts2_val_pcfg: demod_ts2_val_pcfg {
+		};
+		demod_ts2_sync_pcfg: demod_ts2_sync_pcfg {
+		};
+		demod_ts2_d0_pcfg: demod_ts2_d0_pcfg {
+		};
+		demod_ts2_clk_pcfg: demod_ts2_clk_pcfg {
+		};
+		aspdifi_pcfg: aspdifi_pcfg {
+		};
+		aspdifo0_pcfg: aspdifo0_pcfg {
+		};
+		u1rx_pcfg: u1rx_pcfg {
+		};
+		u1tx_pcfg: u1tx_pcfg {
+		};
+		i2c2_osda2_pcfg: i2c2_osda2_pcfg {
+		};
+		i2c2_oscl2_pcfg: i2c2_oscl2_pcfg {
+		};
+		diseqc_out_dig_pcfg: diseqc_out_dig_pcfg {
+		};
+		diseqc_in_dig_pcfg: diseqc_in_dig_pcfg {
+		};
+	};
+
+	pm_pinconf: pinconf@1c022a00 {
+		compatible = "mediatek,mt5896-pinconf";
+		reg = <0x0 0x1c022a00 0x0 0x400>;
+		skip-str-restore;
+		#pinctrl-cells = <1>;
+		pinctrl-mt5896,register-width = <64>;
+		pinctrl-mt5896,npins = <97>;
+
+		/* rgmii */
+		rgmii_tx_pcfg: rgmii_tx_pcfg {
+		};
+		/* rgmii extend node */
+		rgmii_tx_ext1_pcfg: rgmii_tx_ext1_pcfg {
+		};
+		/* end of rgmii */
+
+		/* pm ts */
+		ts_cilink_tx_demod0_pcfg_shared: ts_cilink_tx_demod0_pcfg_shared {
+		};
+
+		ts_cilink_tx_clk_pcfg_shared: ts_cilink_tx_clk_pcfg_shared {
+		};
+		/* end of pm ts */
+
+		opctrl0_pcfg: opctrl0_pcfg {
+		};
+		opctrl1_pcfg: opctrl1_pcfg {
+		};
+		opctrl2_pcfg: opctrl2_pcfg {
+		};
+		opctrl3_pcfg: opctrl3_pcfg {
+		};
+		opctrl4_pcfg: opctrl4_pcfg {
+		};
+		opctrl5_pcfg: opctrl5_pcfg {
+		};
+		opctrl6_pcfg: opctrl6_pcfg {
+		};
+		opctrl7_pcfg: opctrl7_pcfg {
+		};
+		opctrl8_pcfg: opctrl8_pcfg {
+		};
+		opctrl9_pcfg: opctrl9_pcfg {
+		};
+		opctrl10_pcfg: opctrl10_pcfg {
+		};
+		opctrl11_pcfg: opctrl11_pcfg {
+		};
+		opctrl12_pcfg: opctrl12_pcfg {
+		};
+		opctrl13_pcfg: opctrl13_pcfg {
+		};
+		opctrl14_pcfg: opctrl14_pcfg {
+		};
+		opctrl15_pcfg: opctrl15_pcfg {
+		};
+		opctrl16_pcfg: opctrl16_pcfg {
+		};
+		opctrl17_pcfg: opctrl17_pcfg {
+		};
+		opctrl18_pcfg: opctrl18_pcfg {
+		};
+		opctrl19_pcfg: opctrl19_pcfg {
+		};
+		opctrl20_pcfg: opctrl20_pcfg {
+		};
+		opctrl21_pcfg: opctrl21_pcfg {
+		};
+		opctrl22_pcfg: opctrl22_pcfg {
+		};
+		u2tx_pcfg: u2tx_pcfg {
+		};
+		u2rx_pcfg: u2rx_pcfg {
+		};
+		ddca_da_pcfg: ddca_da_pcfg {
+		};
+		ddca_ck_pcfg: ddca_ck_pcfg {
+		};
+		pwr_ctrl_pcfg: pwr_ctrl_pcfg {
+		};
+		irin_pcfg: irin_pcfg {
+		};
+		led_pwm0_pcfg: led_pwm0_pcfg {
+		};
+		led_pwm1_pcfg: led_pwm1_pcfg {
+		};
+		led_pwm2_pcfg: led_pwm2_pcfg {
+		};
+		led_pwm3_pcfg: led_pwm3_pcfg {
+		};
+		phyled0_pcfg: phyled0_pcfg {
+		};
+		phyled1_pcfg: phyled1_pcfg {
+		};
+		hdmi_cec_pcfg: hdmi_cec_pcfg {
+		};
+		hdmi_a_hpd_pcfg: hdmi_a_hpd_pcfg {
+		};
+		hdmi_a_pwr5v_pcfg: hdmi_a_pwr5v_pcfg {
+		};
+		hdmi_a_sda_pcfg: hdmi_a_sda_pcfg {
+		};
+		hdmi_a_scl_pcfg: hdmi_a_scl_pcfg {
+		};
+		hdmi_b_hpd_pcfg: hdmi_b_hpd_pcfg {
+		};
+		hdmi_b_pwr5v_pcfg: hdmi_b_pwr5v_pcfg {
+		};
+		hdmi_b_sda_pcfg: hdmi_b_sda_pcfg {
+		};
+		hdmi_b_scl_pcfg: hdmi_b_scl_pcfg {
+		};
+		hdmi_c_hpd_pcfg: hdmi_c_hpd_pcfg {
+		};
+		hdmi_c_pwr5v_pcfg: hdmi_c_pwr5v_pcfg {
+		};
+		hdmi_c_sda_pcfg: hdmi_c_sda_pcfg {
+		};
+		hdmi_c_scl_pcfg: hdmi_c_scl_pcfg {
+		};
+		hdmi_d_hpd_pcfg: hdmi_d_hpd_pcfg {
+		};
+		hdmi_d_pwr5v_pcfg: hdmi_d_pwr5v_pcfg {
+		};
+		hdmi_d_sda_pcfg: hdmi_d_sda_pcfg {
+		};
+		hdmi_d_scl_pcfg: hdmi_d_scl_pcfg {
+		};
+		i2c_tu_sda_pcfg: i2c_tu_sda_pcfg {
+		};
+		i2c_tu_scl_pcfg: i2c_tu_scl_pcfg {
+		};
+		dmic_bck_pcfg: dmic_bck_pcfg {
+		};
+		dmic_sd0_pcfg: dmic_sd0_pcfg {
+		};
+		dmic_sd1_pcfg: dmic_sd1_pcfg {
+		};
+		pmu_rstctl_pcfg: pmu_rstctl_pcfg {
+		};
+		pmu_bl_on_pcfg: pmu_bl_on_pcfg {
+		};
+		pmu_p_hl_pcfg: pmu_p_hl_pcfg {
+		};
+		pmu_p_on1_pcfg: pmu_p_on1_pcfg {
+		};
+		pmu_p_on2_pcfg: pmu_p_on2_pcfg {
+		};
+		rgmii_txctl_pcfg: rgmii_txctl_pcfg {
+		};
+		rgmii_txc_pcfg: rgmii_txc_pcfg {
+		};
+		rgmii_txd0_pcfg: rgmii_txd0_pcfg {
+		};
+		rgmii_txd1_pcfg: rgmii_txd1_pcfg {
+		};
+		rgmii_txd2_pcfg: rgmii_txd2_pcfg {
+		};
+		rgmii_txd3_pcfg: rgmii_txd3_pcfg {
+		};
+		rgmii_rxc_pcfg: rgmii_rxc_pcfg {
+		};
+		rgmii_rxctl_pcfg: rgmii_rxctl_pcfg {
+		};
+		rgmii_rxd0_pcfg: rgmii_rxd0_pcfg {
+		};
+		rgmii_rxd1_pcfg: rgmii_rxd1_pcfg {
+		};
+		rgmii_rxd2_pcfg: rgmii_rxd2_pcfg {
+		};
+		rgmii_rxd3_pcfg: rgmii_rxd3_pcfg {
+		};
+		rgmii_mdc_pcfg: rgmii_mdc_pcfg {
+		};
+		rgmii_mdio_pcfg: rgmii_mdio_pcfg {
+		};
+		rgmii_reset_pcfg: rgmii_reset_pcfg {
+		};
+		rgmii_pmeb_pcfg: rgmii_pmeb_pcfg {
+		};
+		pcie2_waken_pcfg: pcie2_waken_pcfg {
+		};
+		pcie2_perstb_pcfg: pcie2_perstb_pcfg {
+		};
+		pcie2_pwr_ctl_pcfg: pcie2_pwr_ctl_pcfg {
+		};
+		pcie2_clkreqn_pcfg: pcie2_clkreqn_pcfg {
+		};
+		cil_rx0_d0_pcfg_shared: cil_rx0_d0_pcfg_shared {
+		};
+		cil_demod0_clk_pcfg_shared: cil_demod0_clk_pcfg_shared {
+		};
+		cil_tx_clk_pcfg_shared: cil_tx_clk_pcfg_shared {
+		};
+		cil_tx0_d0_pcfg_shared: cil_tx0_d0_pcfg_shared {
+		};
+		cil_tx0_d1_pcfg_shared: cil_tx0_d1_pcfg_shared {
+		};
+		cil_rx_clk_pcfg_shared: cil_rx_clk_pcfg_shared {
+		};
+		cil_rx0_d1_pcfg_shared: cil_rx0_d1_pcfg_shared {
+		};
+		cil_rx1_d1_pcfg_shared: cil_rx1_d1_pcfg_shared {
+		};
+		cil_rx1_d0_pcfg_shared: cil_rx1_d0_pcfg_shared {
+		};
+		cil_tx1_d1_pcfg_shared: cil_tx1_d1_pcfg_shared {
+		};
+		cil_tx1_d0_pcfg_shared: cil_tx1_d0_pcfg_shared {
+		};
+		cil_demod1_clk_pcfg_shared: cil_demod1_clk_pcfg_shared {
+		};
+		spi_clk_pcfg_shared: spi_clk_pcfg_shared {
+		};
+		spi_mosi_pcfg_shared: spi_mosi_pcfg_shared {
+		};
+		spi_miso_pcfg_shared: spi_miso_pcfg_shared {
+		};
+		spi_cs_pcfg_shared: spi_cs_pcfg_shared {
+		};
+		bootup_note_pcfg: bootup_note_pcfg {
+		};
+		u3rx_pcfg: u3rx_pcfg {
+		};
+		u3tx_pcfg: u3tx_pcfg {
+		};
+		smart_card2_pcfg_shared: smart_card2_pcfg_shared {
+		};
+		ci_reset_pcfg_shared: ci_reset_pcfg_shared {
+		};
+		int_pcfg_shared: int_pcfg_shared {
+		};
+		vid0_pcfg: vid0_pcfg {
+		};
+	};
+
+	gpio0: gpio@1c2e6000 {
+		compatible = "mediatek,mt5896-gpio";
+		reg = <0x0 0x1c2e6000 0x0 0x200>, /* gpio */
+		      <0x0 0x1c2e6a00 0x0 0x200>; /* gpio intr */
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&mtk_intc0_fiq>;
+		/* <gpio irq>, <gpio fiq> */
+		interrupts = <0x0 0x3e 0x4>,
+			     <0x0 0x3f 0x4>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-ranges = <&pinctrl 0 0 139>;
+		ngpios = <139>;
+		base = <0>;
+	};
+
+	pm_gpio0: gpio@1c023000 {
+		compatible = "mediatek,mt5896-gpio";
+		reg = <0x0 0x1c023000 0x0 0x200>, /* gpio */
+		      <0x0 0x1c022e00 0x0 0x200>; /* gpio intr */
+		skip-str-restore;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		interrupt-parent = <&mtk_intc2_fiq_high>;
+		/* <gpio irq>, <gpio fiq> */
+		interrupts = <0x0 0x18 0x4>,
+			     <0x0 0x19 0x4>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-ranges = <&pm_pinctrl 0 0 97>;
+		ngpios = <97>;
+		base = <200>;
+		status = "okay";
+	};
+	gpio_front_led: front_leds {
+		compatible = "gpio-leds";
+	};
+	gpio_breath_led: breath_led_0 {
+		compatible = "breath-leds";
+		//mboxes = <&mailbox_to_cm4 MBOX_CHAN_ID_LED>;
+		mboxes = <&mailbox_to_pm51 MBOX_CHAN_ID_LED>;
+	};
+};
+
+/omit-if-no-ref/ &frc_fuart_pmux;
+/omit-if-no-ref/ &vb1_pmux;
+/omit-if-no-ref/ &i2c0_pmux;
+/omit-if-no-ref/ &i2c1_pmux;
+/omit-if-no-ref/ &i2c2_pmux;
+/omit-if-no-ref/ &i2c3_pmux;
+/omit-if-no-ref/ &i2c4_pmux;
+/omit-if-no-ref/ &ext_ts_demod_pmux;
+/omit-if-no-ref/ &ext1_ts_demod_pmux;
+/omit-if-no-ref/ &ext2_ts_demod_pmux;
+/omit-if-no-ref/ &ext4_ts_demod_pmux;
+/omit-if-no-ref/ &ts_cilink_tx_rx_demod0_pmux;
+/omit-if-no-ref/ &ts_cilink_tx_rx_demod1_pmux;
+/omit-if-no-ref/ &ts_cilink_tx_rx_clk_pmux;
+/omit-if-no-ref/ &ext_ts_para_demod_pmux;
+/omit-if-no-ref/ &ext1_ts_para_demod_pmux;
+/omit-if-no-ref/ &ext2_ts_para_demod_pmux;
+/omit-if-no-ref/ &ext3_ts_para_demod_pmux;
+/omit-if-no-ref/ &ts1_para_out_pmux;
+/omit-if-no-ref/ &smart_card1_pmux;
+/omit-if-no-ref/ &smart_card1_ext_pmux;
+/omit-if-no-ref/ &smart_card2_pmux;
+/omit-if-no-ref/ &mspi_cilink_pmux;
+/omit-if-no-ref/ &mspi_frc_pmux;
+/omit-if-no-ref/ &mspi_serflash_pmux;
+/omit-if-no-ref/ &panel_bri4_pmux;
+/omit-if-no-ref/ &panel_bri3_pmux;
+/omit-if-no-ref/ &scan_pwm0_pmux;
+/omit-if-no-ref/ &scan_pwm1_pmux;
+/omit-if-no-ref/ &scan_pwm2_pmux;
+/omit-if-no-ref/ &scan_pwm3_pmux;
+/omit-if-no-ref/ &scan_pwm4_pmux;
+/omit-if-no-ref/ &i2s_out_pmux;
+/omit-if-no-ref/ &i2s_out2_pmux;
+/omit-if-no-ref/ &i2s_in_pmux;
+/omit-if-no-ref/ &i2s_in2_pmux;
+/omit-if-no-ref/ &diseqc_out_pmux;
+/omit-if-no-ref/ &diseqc_in_pmux;
+/omit-if-no-ref/ &spdif_out_pmux;
+/omit-if-no-ref/ &spdif_in_pmux;
+/omit-if-no-ref/ &fuart0_pmux;
+/omit-if-no-ref/ &uart0_pmux;
+/omit-if-no-ref/ &uart1_pmux;
+/omit-if-no-ref/ &uart2_pmux;
+/omit-if-no-ref/ &digmux_uart4_pmux;
+/omit-if-no-ref/ &ldc_in_out_pmux;
+/omit-if-no-ref/ &ldc_tmon_gpio_pmux;
+/omit-if-no-ref/ &ldc_tmon_pmux;
+/omit-if-no-ref/ &ld0_spi_pmux;
+/omit-if-no-ref/ &ld1_spi_pmux;
+/omit-if-no-ref/ &ld2_spi_pmux;
+/omit-if-no-ref/ &ld3_spi_pmux;
+/omit-if-no-ref/ &ld4_spi_pmux;
+/omit-if-no-ref/ &ld5_spi_pmux;
+/omit-if-no-ref/ &ld6_spi_pmux;
+/omit-if-no-ref/ &ld7_spi_pmux;
+/omit-if-no-ref/ &vsync_like1_pmux;
+/omit-if-no-ref/ &vsync_like2_pmux;
+/omit-if-no-ref/ &vsync_like3_pmux;
+/omit-if-no-ref/ &vsync_like4_pmux;
+/omit-if-no-ref/ &vsync_like5_pmux;
+/omit-if-no-ref/ &vsync_like6_pmux;
+/omit-if-no-ref/ &hsync_like1_pmux;
+/omit-if-no-ref/ &hsync_like2_pmux;
+/omit-if-no-ref/ &hsync_like3_pmux;
+/omit-if-no-ref/ &hsync_like4_pmux;
+/omit-if-no-ref/ &hsync_like5_pmux;
+/omit-if-no-ref/ &pcie_p0_pmux;
+/omit-if-no-ref/ &pcm_pmux;
+/omit-if-no-ref/ &nand_pmux;
+/omit-if-no-ref/ &irs_pmux;
+/omit-if-no-ref/ &ir_tx_nonpm_pmux;
+/omit-if-no-ref/ &ir_tx_1_nonpm_pmux;
+/omit-if-no-ref/ &gpio_func0_pmux;
+/omit-if-no-ref/ &gpio_func1_pmux;
+/omit-if-no-ref/ &ci_pmux;
+/omit-if-no-ref/ &pm_uart_pmux;
+/omit-if-no-ref/ &pm_led_pwm_pmux;
+/omit-if-no-ref/ &dmic_record_pmux;
+/omit-if-no-ref/ &dmic_record_i2s_in_pmux;
+/omit-if-no-ref/ &pm_i2c0_pmux;
+/omit-if-no-ref/ &pm_i2c1_pmux;
+/omit-if-no-ref/ &pm_spi_pmux;
+/omit-if-no-ref/ &pm_uart0_pmux;
+/omit-if-no-ref/ &pm_uart1_pmux;
+/omit-if-no-ref/ &pm_fuart0_pmux;
+/omit-if-no-ref/ &hdmib_pm_uart0_pmux;
+/omit-if-no-ref/ &hdmic_pm_uart0_pmux;
+/omit-if-no-ref/ &ir_tx_pmux;
+/omit-if-no-ref/ &pm_ir_pmux;
+/omit-if-no-ref/ &pm_irs_pmux;
+/omit-if-no-ref/ &ir_tx_1_pmux;
+/omit-if-no-ref/ &fan_pwm_pmux;
+/omit-if-no-ref/ &dmic_google_led_pmux;
+/omit-if-no-ref/ &rgmii_pmux;
+/omit-if-no-ref/ &rgmii_fpga_haps_pmux;
+/omit-if-no-ref/ &pcie_p1_pmux;
+/omit-if-no-ref/ &irs_haps_pmux;
+/omit-if-no-ref/ &ts_cilink_tx_rx_demod0_pmux_shared;
+/omit-if-no-ref/ &ts_cilink_tx_rx_demod1_pmux_shared;
+/omit-if-no-ref/ &ts_cilink_tx_rx_clk_pmux_shared;
+/omit-if-no-ref/ &smart_card1_pmux_shared;
+/omit-if-no-ref/ &smart_card2_pmux_shared;
+/omit-if-no-ref/ &mspi_cilink_pmux_shared;
+/omit-if-no-ref/ &ts1_para_out_pmux_shared;
+/omit-if-no-ref/ &ci_pmux_shared;
+
+/omit-if-no-ref/ &i2c0_sda0_pcfg;
+/omit-if-no-ref/ &i2c0_scl0_pcfg;
+/omit-if-no-ref/ &ts_cilink_tx_demod0_pcfg;
+/omit-if-no-ref/ &ts_cilink_tx_clk_pcfg;
+/omit-if-no-ref/ &mspi_cilink_pcfg;
+/omit-if-no-ref/ &ld0_spi_pcfg;
+/omit-if-no-ref/ &ld1_spi_pcfg;
+/omit-if-no-ref/ &ld2_spi_pcfg;
+/omit-if-no-ref/ &ld3_spi_pcfg;
+/omit-if-no-ref/ &ld4_spi_pcfg;
+/omit-if-no-ref/ &ld5_spi_pcfg;
+/omit-if-no-ref/ &ld6_spi_pcfg;
+/omit-if-no-ref/ &ld7_spi_pcfg;
+/omit-if-no-ref/ &gpio_func0_pcfg;
+/omit-if-no-ref/ &gpio_func1_pcfg;
+/omit-if-no-ref/ &gpio0_pcfg;
+/omit-if-no-ref/ &gpio1_pcfg;
+/omit-if-no-ref/ &gpio2_pcfg;
+/omit-if-no-ref/ &gpio3_pcfg;
+/omit-if-no-ref/ &gpio4_pcfg;
+/omit-if-no-ref/ &gpio5_pcfg;
+/omit-if-no-ref/ &gpio6_pcfg;
+/omit-if-no-ref/ &gpio7_pcfg;
+/omit-if-no-ref/ &gpio8_pcfg;
+/omit-if-no-ref/ &gpio9_pcfg;
+/omit-if-no-ref/ &gpio10_pcfg;
+/omit-if-no-ref/ &i2sout_mclk_a_pcfg;
+/omit-if-no-ref/ &i2sout_ws_a_pcfg;
+/omit-if-no-ref/ &i2sout_bck_a_pcfg;
+/omit-if-no-ref/ &i2sout_sd0_a_pcfg;
+/omit-if-no-ref/ &i2sout_sd1_a_pcfg;
+/omit-if-no-ref/ &i2sout_sd2_a_pcfg;
+/omit-if-no-ref/ &i2sout_sd3_a_pcfg;
+/omit-if-no-ref/ &i2sout_sd4_a_pcfg;
+/omit-if-no-ref/ &i2sin_ws_a_pcfg;
+/omit-if-no-ref/ &i2sout_sd5_a_pcfg;
+/omit-if-no-ref/ &i2sout_mclk_b_pcfg;
+/omit-if-no-ref/ &i2sout_ws_b_pcfg;
+/omit-if-no-ref/ &i2sout_bck_b_pcfg;
+/omit-if-no-ref/ &i2sout_sd0_b_pcfg;
+/omit-if-no-ref/ &i2sin_bck_a_pcfg;
+/omit-if-no-ref/ &i2sin_sd0_a_pcfg;
+/omit-if-no-ref/ &i2sin_mclk_a_pcfg;
+/omit-if-no-ref/ &i2sin_sd1_a_pcfg;
+/omit-if-no-ref/ &i2sin_sd2_a_pcfg;
+/omit-if-no-ref/ &i2sin_sd3_a_pcfg;
+/omit-if-no-ref/ &i2sin_mclk_b_pcfg;
+/omit-if-no-ref/ &i2sin_bck_b_pcfg;
+/omit-if-no-ref/ &i2sin_ws_b_pcfg;
+/omit-if-no-ref/ &i2sin_sd0_b_pcfg;
+/omit-if-no-ref/ &au_spi_ck_pcfg;
+/omit-if-no-ref/ &au_spi_mosi_pcfg;
+/omit-if-no-ref/ &au_spi_miso_pcfg;
+/omit-if-no-ref/ &au_spi_cs0_pcfg;
+/omit-if-no-ref/ &au_spi_cs1_pcfg;
+/omit-if-no-ref/ &au_spi_cs2_pcfg;
+/omit-if-no-ref/ &au_spi_cs3_pcfg;
+/omit-if-no-ref/ &gpio42_pcfg;
+/omit-if-no-ref/ &gpio43_pcfg;
+/omit-if-no-ref/ &gpio44_pcfg;
+/omit-if-no-ref/ &gpio45_pcfg;
+/omit-if-no-ref/ &gpio46_pcfg;
+/omit-if-no-ref/ &gpio47_pcfg;
+/omit-if-no-ref/ &gpio48_pcfg;
+/omit-if-no-ref/ &vb1_htpdn_v1_pcfg;
+/omit-if-no-ref/ &vb1_lockn_v1_pcfg;
+/omit-if-no-ref/ &vb1_htpdn_v2_pcfg;
+/omit-if-no-ref/ &vb1_lockn_v2_pcfg;
+/omit-if-no-ref/ &vb1_lockn_osd_pcfg;
+/omit-if-no-ref/ &vb1_htpdn_osd_pcfg;
+/omit-if-no-ref/ &gpio55_pcfg;
+/omit-if-no-ref/ &gpio56_pcfg;
+/omit-if-no-ref/ &gpio57_pcfg;
+/omit-if-no-ref/ &gpio58_pcfg;
+/omit-if-no-ref/ &gpio59_pcfg;
+/omit-if-no-ref/ &gpio60_pcfg;
+/omit-if-no-ref/ &gpio61_pcfg;
+/omit-if-no-ref/ &gpio62_pcfg;
+/omit-if-no-ref/ &gpio63_pcfg;
+/omit-if-no-ref/ &gpio64_pcfg;
+/omit-if-no-ref/ &gpio65_pcfg;
+/omit-if-no-ref/ &tuner_freeze_seq_pcfg;
+/omit-if-no-ref/ &gpio67_pcfg;
+/omit-if-no-ref/ &gpio68_pcfg;
+/omit-if-no-ref/ &gpio69_pcfg;
+/omit-if-no-ref/ &gpio70_pcfg;
+/omit-if-no-ref/ &gpio71_pcfg;
+/omit-if-no-ref/ &gpio72_pcfg;
+/omit-if-no-ref/ &i2c0_osda0_pcfg;
+/omit-if-no-ref/ &i2c0_oscl0_pcfg;
+/omit-if-no-ref/ &i2c1_osda1_pcfg;
+/omit-if-no-ref/ &i2c1_oscl1_pcfg;
+/omit-if-no-ref/ &i2c3_oscl3_pcfg;
+/omit-if-no-ref/ &i2c3_osda3_pcfg;
+/omit-if-no-ref/ &spi_clk_pcfg;
+/omit-if-no-ref/ &spi_mosi_pcfg;
+/omit-if-no-ref/ &spi_miso_pcfg;
+/omit-if-no-ref/ &spi_cs_pcfg;
+/omit-if-no-ref/ &int_pcfg;
+/omit-if-no-ref/ &cil_demod0_clk_pcfg;
+/omit-if-no-ref/ &cil_tx_clk_pcfg;
+/omit-if-no-ref/ &cil_tx0_d0_pcfg;
+/omit-if-no-ref/ &cil_tx0_d1_pcfg;
+/omit-if-no-ref/ &cil_rx_clk_pcfg;
+/omit-if-no-ref/ &cil_rx0_d0_pcfg;
+/omit-if-no-ref/ &cil_rx0_d1_pcfg;
+/omit-if-no-ref/ &cil_demod1_clk_pcfg;
+/omit-if-no-ref/ &cil_tx1_d0_pcfg;
+/omit-if-no-ref/ &cil_tx1_d1_pcfg;
+/omit-if-no-ref/ &cil_rx1_d0_pcfg;
+/omit-if-no-ref/ &cil_rx1_d1_pcfg;
+/omit-if-no-ref/ &ci_reset_pcfg;
+/omit-if-no-ref/ &demod_rst_pcfg;
+/omit-if-no-ref/ &demod_tsclk_pcfg;
+/omit-if-no-ref/ &demod_tsval_pcfg;
+/omit-if-no-ref/ &demod_tssync_pcfg;
+/omit-if-no-ref/ &demod_tsdata0_pcfg;
+/omit-if-no-ref/ &demod_tsdata1_pcfg;
+/omit-if-no-ref/ &demod_tsdata2_pcfg;
+/omit-if-no-ref/ &demod_tsdata3_pcfg;
+/omit-if-no-ref/ &demod_tsdata4_pcfg;
+/omit-if-no-ref/ &demod_tsdata5_pcfg;
+/omit-if-no-ref/ &demod_tsdata6_pcfg;
+/omit-if-no-ref/ &demod_tsdata7_pcfg;
+/omit-if-no-ref/ &demod_ts2_val_pcfg;
+/omit-if-no-ref/ &demod_ts2_sync_pcfg;
+/omit-if-no-ref/ &demod_ts2_d0_pcfg;
+/omit-if-no-ref/ &demod_ts2_clk_pcfg;
+/omit-if-no-ref/ &aspdifi_pcfg;
+/omit-if-no-ref/ &aspdifo0_pcfg;
+/omit-if-no-ref/ &u1rx_pcfg;
+/omit-if-no-ref/ &u1tx_pcfg;
+/omit-if-no-ref/ &i2c2_osda2_pcfg;
+/omit-if-no-ref/ &i2c2_oscl2_pcfg;
+/omit-if-no-ref/ &diseqc_out_dig_pcfg;
+/omit-if-no-ref/ &diseqc_in_dig_pcfg;
+/omit-if-no-ref/ &rgmii_tx_pcfg;
+/omit-if-no-ref/ &rgmii_tx_ext1_pcfg;
+/omit-if-no-ref/ &ts_cilink_tx_demod0_pcfg_shared;
+/omit-if-no-ref/ &ts_cilink_tx_clk_pcfg_shared;
+/omit-if-no-ref/ &opctrl0_pcfg;
+/omit-if-no-ref/ &opctrl1_pcfg;
+/omit-if-no-ref/ &opctrl2_pcfg;
+/omit-if-no-ref/ &opctrl3_pcfg;
+/omit-if-no-ref/ &opctrl4_pcfg;
+/omit-if-no-ref/ &opctrl5_pcfg;
+/omit-if-no-ref/ &opctrl6_pcfg;
+/omit-if-no-ref/ &opctrl7_pcfg;
+/omit-if-no-ref/ &opctrl8_pcfg;
+/omit-if-no-ref/ &opctrl9_pcfg;
+/omit-if-no-ref/ &opctrl10_pcfg;
+/omit-if-no-ref/ &opctrl11_pcfg;
+/omit-if-no-ref/ &opctrl12_pcfg;
+/omit-if-no-ref/ &opctrl13_pcfg;
+/omit-if-no-ref/ &opctrl14_pcfg;
+/omit-if-no-ref/ &opctrl15_pcfg;
+/omit-if-no-ref/ &opctrl16_pcfg;
+/omit-if-no-ref/ &opctrl17_pcfg;
+/omit-if-no-ref/ &opctrl18_pcfg;
+/omit-if-no-ref/ &opctrl19_pcfg;
+/omit-if-no-ref/ &opctrl20_pcfg;
+/omit-if-no-ref/ &opctrl21_pcfg;
+/omit-if-no-ref/ &opctrl22_pcfg;
+/omit-if-no-ref/ &u2tx_pcfg;
+/omit-if-no-ref/ &u2rx_pcfg;
+/omit-if-no-ref/ &ddca_da_pcfg;
+/omit-if-no-ref/ &ddca_ck_pcfg;
+/omit-if-no-ref/ &pwr_ctrl_pcfg;
+/omit-if-no-ref/ &irin_pcfg;
+/omit-if-no-ref/ &led_pwm0_pcfg;
+/omit-if-no-ref/ &led_pwm1_pcfg;
+/omit-if-no-ref/ &led_pwm2_pcfg;
+/omit-if-no-ref/ &led_pwm3_pcfg;
+/omit-if-no-ref/ &phyled0_pcfg;
+/omit-if-no-ref/ &phyled1_pcfg;
+/omit-if-no-ref/ &hdmi_cec_pcfg;
+/omit-if-no-ref/ &hdmi_a_hpd_pcfg;
+/omit-if-no-ref/ &hdmi_a_pwr5v_pcfg;
+/omit-if-no-ref/ &hdmi_a_sda_pcfg;
+/omit-if-no-ref/ &hdmi_a_scl_pcfg;
+/omit-if-no-ref/ &hdmi_b_hpd_pcfg;
+/omit-if-no-ref/ &hdmi_b_pwr5v_pcfg;
+/omit-if-no-ref/ &hdmi_b_sda_pcfg;
+/omit-if-no-ref/ &hdmi_b_scl_pcfg;
+/omit-if-no-ref/ &hdmi_c_hpd_pcfg;
+/omit-if-no-ref/ &hdmi_c_pwr5v_pcfg;
+/omit-if-no-ref/ &hdmi_c_sda_pcfg;
+/omit-if-no-ref/ &hdmi_c_scl_pcfg;
+/omit-if-no-ref/ &hdmi_d_hpd_pcfg;
+/omit-if-no-ref/ &hdmi_d_pwr5v_pcfg;
+/omit-if-no-ref/ &hdmi_d_sda_pcfg;
+/omit-if-no-ref/ &hdmi_d_scl_pcfg;
+/omit-if-no-ref/ &i2c_tu_sda_pcfg;
+/omit-if-no-ref/ &i2c_tu_scl_pcfg;
+/omit-if-no-ref/ &dmic_bck_pcfg;
+/omit-if-no-ref/ &dmic_sd0_pcfg;
+/omit-if-no-ref/ &dmic_sd1_pcfg;
+/omit-if-no-ref/ &pmu_rstctl_pcfg;
+/omit-if-no-ref/ &pmu_bl_on_pcfg;
+/omit-if-no-ref/ &pmu_p_hl_pcfg;
+/omit-if-no-ref/ &pmu_p_on1_pcfg;
+/omit-if-no-ref/ &pmu_p_on2_pcfg;
+/omit-if-no-ref/ &rgmii_txctl_pcfg;
+/omit-if-no-ref/ &rgmii_txc_pcfg;
+/omit-if-no-ref/ &rgmii_txd0_pcfg;
+/omit-if-no-ref/ &rgmii_txd1_pcfg;
+/omit-if-no-ref/ &rgmii_txd2_pcfg;
+/omit-if-no-ref/ &rgmii_txd3_pcfg;
+/omit-if-no-ref/ &rgmii_rxc_pcfg;
+/omit-if-no-ref/ &rgmii_rxctl_pcfg;
+/omit-if-no-ref/ &rgmii_rxd0_pcfg;
+/omit-if-no-ref/ &rgmii_rxd1_pcfg;
+/omit-if-no-ref/ &rgmii_rxd2_pcfg;
+/omit-if-no-ref/ &rgmii_rxd3_pcfg;
+/omit-if-no-ref/ &rgmii_mdc_pcfg;
+/omit-if-no-ref/ &rgmii_mdio_pcfg;
+/omit-if-no-ref/ &rgmii_reset_pcfg;
+/omit-if-no-ref/ &rgmii_pmeb_pcfg;
+/omit-if-no-ref/ &pcie2_waken_pcfg;
+/omit-if-no-ref/ &pcie2_perstb_pcfg;
+/omit-if-no-ref/ &pcie2_pwr_ctl_pcfg;
+/omit-if-no-ref/ &pcie2_clkreqn_pcfg;
+/omit-if-no-ref/ &cil_rx0_d0_pcfg_shared;
+/omit-if-no-ref/ &cil_demod0_clk_pcfg_shared;
+/omit-if-no-ref/ &cil_tx_clk_pcfg_shared;
+/omit-if-no-ref/ &cil_tx0_d0_pcfg_shared;
+/omit-if-no-ref/ &cil_tx0_d1_pcfg_shared;
+/omit-if-no-ref/ &cil_rx_clk_pcfg_shared;
+/omit-if-no-ref/ &cil_rx0_d1_pcfg_shared;
+/omit-if-no-ref/ &cil_rx1_d1_pcfg_shared;
+/omit-if-no-ref/ &cil_rx1_d0_pcfg_shared;
+/omit-if-no-ref/ &cil_tx1_d1_pcfg_shared;
+/omit-if-no-ref/ &cil_tx1_d0_pcfg_shared;
+/omit-if-no-ref/ &cil_demod1_clk_pcfg_shared;
+/omit-if-no-ref/ &spi_clk_pcfg_shared;
+/omit-if-no-ref/ &spi_mosi_pcfg_shared;
+/omit-if-no-ref/ &spi_miso_pcfg_shared;
+/omit-if-no-ref/ &spi_cs_pcfg_shared;
+/omit-if-no-ref/ &bootup_note_pcfg;
+/omit-if-no-ref/ &u3rx_pcfg;
+/omit-if-no-ref/ &u3tx_pcfg;
+/omit-if-no-ref/ &smart_card2_pcfg_shared;
+/omit-if-no-ref/ &ci_reset_pcfg_shared;
+/omit-if-no-ref/ &int_pcfg_shared;
+/omit-if-no-ref/ &vid0_pcfg;

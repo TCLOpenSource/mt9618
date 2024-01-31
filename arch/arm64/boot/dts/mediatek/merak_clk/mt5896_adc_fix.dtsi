@@ -1,0 +1,164 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+
+/ {
+	ADC_fix: ADC_fix {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_fix";
+		num = <CLK_ADC_FIX_N>;
+
+		adcplla_mpll_clk432_p_ck {
+			id = <CLK_ADC_ADCPLLA_MPLL_CLK432_P_CK>;
+			clock-frequency = <4294>;
+		};
+
+		adcpllb_mpll_clk432_p_ck {
+			id = <CLK_ADC_ADCPLLB_MPLL_CLK432_P_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clk_dig_216_ck {
+			id = <CLK_ADC_CLK_DIG_216_CK>;
+			clock-frequency = <216>;
+		};
+
+		clk_dig_108_ck {
+			id = <CLK_ADC_CLK_DIG_108_CK>;
+			clock-frequency = <108>;
+		};
+
+		clkpll_atop_ck {
+			id = <CLK_ADC_CLKPLL_ATOP_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_r_atop_ck {
+			id = <CLK_ADC_CLKD_R_ATOP_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_r_atop_int_ck {
+			id = <CLK_ADC_CLKD_R_ATOP_INT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_g_atop_ck {
+			id = <CLK_ADC_CLKD_G_ATOP_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_g_atop_int_ck {
+			id = <CLK_ADC_CLKD_G_ATOP_INT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_b_atop_ck {
+			id = <CLK_ADC_CLKD_B_ATOP_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_b_atop_int_ck {
+			id = <CLK_ADC_CLKD_B_ATOP_INT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		vd_div2_en_to_local_ck {
+			id = <CLK_ADC_VD_DIV2_EN_TO_LOCAL_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_vd_atop_ck {
+			id = <CLK_ADC_CLKD_VD_ATOP_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_vd_atop_int_ck {
+			id = <CLK_ADC_CLKD_VD_ATOP_INT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clkd_2iclamp_s_ck {
+			id = <CLK_ADC_CLKD_2ICLAMP_S_CK>;
+			clock-frequency = <4294>;
+		};
+
+		nco_clk_ck {
+			id = <CLK_ADC_NCO_CLK_CK>;
+			clock-frequency = <4294>;
+		};
+
+		vd_nco_clk_ck {
+			id = <CLK_ADC_VD_NCO_CLK_CK>;
+			clock-frequency = <4294>;
+		};
+
+		ck_cvbs_dac_a_digital_p_ck {
+			id = <CLK_ADC_CK_CVBS_DAC_A_DIGITAL_P_CK>;
+			clock-frequency = <4294>;
+		};
+
+		ck_cvbs_dac_a_digital_p_buf_ck {
+			id = <CLK_ADC_CK_CVBS_DAC_A_DIGITAL_P_BUF_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clk_tstbus_ck {
+			id = <CLK_ADC_CLK_TSTBUS_CK>;
+			clock-frequency = <4294>;
+		};
+
+		clk_tstbus_div_ck {
+			id = <CLK_ADC_CLK_TSTBUS_DIV_CK>;
+			clock-frequency = <4294>;
+		};
+
+		adcpllb_mpll_216m_ck {
+			id = <CLK_ADC_ADCPLLB_MPLL_216M_CK>;
+			clock-frequency = <4294>;
+		};
+
+		riu_vd_ck {
+			id = <CLK_ADC_RIU_VD_CK>;
+			clock-frequency = <4294>;
+		};
+
+		adcplb_mpll_ck {
+			id = <CLK_ADC_ADCPLB_MPLL_CK>;
+			clock-frequency = <4294>;
+		};
+
+		adc_vif {
+			id = <CLK_ADC_ADC_VIF>;
+			clock-frequency = <4294>;
+		};
+
+		adc_clk_vd {
+			id = <CLK_ADC_ADC_CLK_VD>;
+			clock-frequency = <4294>;
+		};
+
+		adc_clk_dac_external {
+			id = <CLK_ADC_ADC_CLK_DAC_EXTERNAL>;
+			clock-frequency = <4294>;
+		};
+
+		adc_clk_vd2x {
+			id = <CLK_ADC_ADC_CLK_VD2X>;
+			clock-frequency = <4294>;
+		};
+
+		adc_clk_vd_32fsc {
+			id = <CLK_ADC_ADC_CLK_VD_32FSC>;
+			clock-frequency = <4294>;
+		};
+
+		adc_clk_vd_adc {
+			id = <CLK_ADC_ADC_CLK_VD_ADC>;
+			clock-frequency = <4294>;
+		};
+
+	};
+};

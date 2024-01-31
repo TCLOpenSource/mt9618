@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2021 MediaTek Inc.
+ */
+
+/ {
+	dramc: dramc {
+		compatible = "mtk-dramc";
+		reg = <0 0x1C380000 0 0x10000>,
+		      <0 0x1C38e000 0 0x10000>,
+		      <0 0x1C3A0000 0 0x6000>,
+		      <0 0x1C025000 0 0x1000>,
+		      <0 0x1C021000 0 0x1000>,
+		      <0 0x1C020000 0 0x1000>;
+		io-channels = <&saradc 7>, <&saradc 6>;
+		io-channel-names = "adc12", "adc13";
+	};
+};
+
+

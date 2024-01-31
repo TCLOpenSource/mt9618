@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+
+/ {
+	mtk_tvpqu: mtk-tvpqu {
+		compatible = "mediatek,tvpqu";
+		memory-region = <&MI_DISP_PQ_MEMORY
+		&MI_DISP_SRS_MEMORY &MI_DISP_GUCD_DMA
+		&MI_DISP_LOCALCOLOR_DMA &MI_AISR_STATISTIC_BUF
+		&MI_DISP_CUS_SWREG_MEMORY>;
+		alg_header_info = <0x40>;
+		DipUseDINR = <0>;
+		clocks = <&scip_mux_gate CLK_SCIP_XC_DIP1_INT_CK>;
+		clock-names = "scip_dip";
+		mtk-oled = <&mediatek_oled>;
+	};
+
+	pqu_test: pqu_test {
+		compatible = "mediatek,tvpqu-test";
+		iommus = <&iommu 0>;
+	};
+
+};

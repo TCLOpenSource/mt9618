@@ -1,0 +1,22 @@
+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+#ifndef _DT_BINDINGS_CLK_MT5896_PM_FIX_H
+#define _DT_BINDINGS_CLK_MT5896_PM_FIX_H
+
+#define CLK_PM_XTAL_PM_VCOD1_24M_CK	1
+#define CLK_PM_XTAL_PM_VCOD2_12M_CK	2
+#define CLK_PM_XTAL_PM_VCOD4_6M_CK	3
+#define CLK_PM_XTAL_PM_VCOD6_4M_CK	4
+#define CLK_PM_XTAL_PM_VCOD8_3M_CK	5
+#define CLK_PM_XTAL_PM_VCOD12_2M_CK	6
+#define CLK_PM_XTAL_PM_VCOD24_1M_CK	7
+#define CLK_PM_FIX_N	8
+
+#define CLK_PM_XTAL_PM_VCOD16_1P5M_CK	1
+#define CLK_PM_XTAL_PM_VCOD32_750K_CK	2
+#define CLK_PM_FIXDIV_N	3
+
+#endif

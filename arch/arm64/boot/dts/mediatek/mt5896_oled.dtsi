@@ -1,0 +1,51 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mediatek_oled: mediatek_oled {
+		compatible = "mtk-oled";
+		OLED_Support = <0>;
+
+		mtk_oled_i2c {
+			slave_addr = <0xF0>;
+			channel_id = <0x02>;
+			i2c_mode = <0x01>;
+			reg_offset = <0>;
+			lumin_gain_addr = <0x16>;
+			temp_addr = <0x5E>;
+			offrs_addr = <0x01>;
+			offrs_mask = <0x10>;
+			jb_addr = <0x5D>;
+			jb_mask = <0x80>;
+			hdr_addr = <0x0B>;
+			hdr_mask = <0x08>;
+			lea_addr = <0x0B>;
+			lea_mask = <0x10>;
+			tpc_addr = <0x01>;
+			tpc_mask = <0x40>;
+			cpc_addr = <0x01>;
+			cpc_mask = <0x80>;
+			opt_p0_addr = <0x03>;
+			opt_start_addr = <0x01>;
+			opt_start_mask = <0x3FF>;
+		};
+
+		mtk_oled_seq {
+			onrf_op = <2700>;
+			onrf_delay = <200>;
+			offrs_op = <320>;
+			jb_op = <120>;
+			jb_on_off = <10>;
+			jb_temp_max = <40>;
+			jb_temp_min = <10>;
+			jb_cooldown = <3600>;
+			qsm_on = <3000>;
+			qsm_evdd_off = <75>;
+			qsm_off = <990>;
+			qsm_evdd_on = <10>;
+			mon_delay = <200>;
+		};
+	};
+};

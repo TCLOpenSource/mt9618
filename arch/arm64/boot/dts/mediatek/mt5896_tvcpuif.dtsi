@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mtk-tvcpuif {
+		compatible = "mediatek,tvcpuif";
+		memory-region = <&MI_METADATA_BUF>;
+		mboxes = <&mailbox_to_frcr2 MBOX_CHAN_ID_FRC>;
+		interrupt-parent = <&mtk_intc1_fiq_low>;
+		interrupts = <0x0 0x13 0x4>;/*pqu_rv55_wdt_int*/
+	};
+
+	rpmsg_test: rpmsg_test {
+		compatible = "mediatek,rpmsg-test";
+	};
+};

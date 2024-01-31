@@ -1,0 +1,316 @@
+// SPDX-License-Identifier: GPL-2.0
+
+/ {
+    script_management: scriptmanagement {
+		compatible = "mediatek,scriptmgt";
+		memory-region = <&MI_MENULOAD_BUF
+		&MI_DISP_AUTO_UPLOAD &MI_DISP_AUTO_DOWNLOAD &MI_MCU_DS &MI_CMDQ_BUF
+		&MI_STR_LDR_BUF &MI_ONLY_STR_BUF>;
+		reg_size = <0x18>;
+		reg_ioremap = <0x1D400320 0x00000014>,
+				<0x1D404000 0x00000100>,
+				<0x1D405E00 0x00000200>,
+				<0x1D406000 0x00000200>,
+				<0x1D460000 0x00015C80>,
+				<0x1D475C84 0x0000A37C>,
+				<0x1D480000 0x00007200>,
+				<0x1D487A00 0x00000D00>,
+				<0x1D488A00 0x00000200>,
+				<0x1D488E00 0x0000E800>,
+				<0x1D49A000 0x00000600>,
+				<0x1D49AA00 0x00003400>,
+				<0x1D49E000 0x00001800>,
+				<0x1D500000 0x000C0000>,
+				<0x1D5C0000 0x00022100>,
+				<0x1C202200 0x00000200>,
+				<0x1C205400 0x00000200>,
+				<0x1C207E00 0x00000100>,
+				<0x1C640000 0x00002000>,
+				<0x1D0A0400 0x00000200>,
+				<0x1C484000 0x00001E00>,
+				<0x1C488000 0x00004000>,
+				<0x1C021000 0x00000200>,
+				<0x1C025200 0x00000200>;
+		script_ds: ds {
+		};
+		script_str_ldr: str_ldr {
+		};
+		adl_panel_gamma_0 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			frame2frame = <0x00>;
+			max_depth = <192>;
+			usercnt = <0x02>;        /* the number of the owners that use client*/
+			/*how many buf is allocated. = usercn * (signal/pingpong/DS_BUF_NUM)*/
+			buf_cnt = <0x02>;
+			miuno = <0x0>;         /* the total size. = buf_cnt * size/buf*/
+		};
+		script_adl_pq_gamma_1: adl_pq_gamma_1 {		};
+		adl_demura_0 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <961>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		script_adl_gop_0: adl_gop_0 {
+		};
+		script_adl_gop_1: adl_gop_1 {
+		};
+		script_adl_gop_2: adl_gop_2 {
+		};
+		script_adl_gop_3: adl_gop_3 {
+		};
+		adl_ld_3 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <393>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		adl_ld_1 {
+			support = <0x01>;
+			fake_support = <0x01>;
+			max_depth = <256>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x01>;
+		};
+		adl_ld_2 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <256>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x01>;
+		};
+		adl_ld_0 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <1024>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x01>;
+		};
+		adl_film_grain_0 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <922>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_ucd_0 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <16>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_hdr_0 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <129>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		adl_mpeg_nr_0 {
+			support = <0x01>;
+			fake_support = <0x01>;
+			max_depth = <1148>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		script_adl_nr_reserved_0: adl_nr_reserved_0 {
+		};
+		adl_mpeg_nr_1 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <68>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		script_adl_dv_0: adl_dv_0 {
+		};
+		script_adl_dv_lut_c1: adl_dv_lut_c1 {
+		};
+		script_adl_dv_lut_r_v2: adl_dv_lut_r_v2 {
+		};
+		adl_hvsp_0 {
+			support = <0x01>;
+			fake_support = <0x01>;
+			max_depth = <290>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x06>;
+		};
+		script_adl_vip_1: adl_vip_1 {
+		};
+		script_adl_sr_0: adl_sr_0 {
+		};
+		script_adl_ce_1: adl_ce_1 {
+		};
+		adl_vop_0 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <450>;
+			frame2frame = <0x00>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		adl_vop_1 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <729>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_pq_gamma_0 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <48>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_ce_0 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <162>;
+			frame2frame = <0x01>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		script_adl_vip_0: adl_vip_0 {
+		};
+		adl_ucd_2 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <9>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_ucd_3 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <16>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_ucd_1 {
+			support = <0x00>;
+			fake_support = <0x01>;
+			max_depth = <600>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_lce_0 {
+			support = <0x01>;
+			fake_support = <0x00>;
+			max_depth = <128>;
+			frame2frame = <0x01>;
+			usercnt = <0x01>;
+			buf_cnt = <0x02>;
+		};
+		script_adl_hvsp_1: adl_hvsp_1 {
+		};
+		adl_dip_0 {
+			support = <0x00>;
+			fake_support = <0x01>;
+			max_depth = <290>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		adl_dip_1 {
+			support = <0x00>;
+			fake_support = <0x00>;
+			max_depth = <450>;
+			frame2frame = <0x00>;
+			usercnt = <0x00>;
+			buf_cnt = <0x00>;
+		};
+		script_aul_yhsl: aul_yhsl {
+		};
+		script_aul_obj_hist: aul_obj_hist {
+		};
+		aul_freq_det {
+			support = <0x01>;
+			client_depth = <288>;
+			wmax_depth = <36>;
+			buf_cnt = <0x02>;
+		};
+		aul_ylite {
+			support = <0x01>;
+			client_depth = <128>;
+			wmax_depth = <16>;
+			buf_cnt = <0x02>;
+		};
+		aul_dv_hw5_hist_w {
+			support = <0x01>;
+			client_depth = <8>;
+			wmax_depth = <8>;
+			buf_cnt = <0x02>;
+		};
+		script_aul_mnc_stat: aul_mnc_stat {
+		};
+		aul_znr_me {
+			support = <0x01>;
+			client_depth = <49>;
+			wmax_depth = <49>;
+			buf_cnt = <0x02>;
+		};
+		aul_znr_mi {
+			support = <0x01>;
+			client_depth = <12>;
+			wmax_depth = <12>;
+			buf_cnt = <0x02>;
+		};
+		aul_dbk_hw_sp {
+			support = <0x01>;
+			client_depth = <188>;
+			wmax_depth = <188>;
+			buf_cnt = <0x02>;
+		};
+		aul_dbk {
+			support = <0x01>;
+			client_depth = <960>;
+			wmax_depth = <960>;
+			buf_cnt = <0x02>;
+		};
+		script_aul_res_det: aul_res_det {
+		};
+		aul_lce_scl {
+			support = <0x00>;
+			client_depth = <256>;
+			wmax_depth = <256>;
+			buf_cnt = <0x02>;
+		};
+		script_aul_3d_hist: aul_3d_hist {
+		};
+		aul_lce_ace {
+			support = <0x01>;
+			client_depth = <256>;
+			wmax_depth = <256>;
+			buf_cnt = <0x02>;
+		};
+		aul_amb {
+			support = <0x01>;
+			client_depth = <3>;
+			wmax_depth = <3>;
+			buf_cnt = <0x02>;
+		};
+		script_aul_logo_det: aul_logo_det {
+		};
+	};
+};

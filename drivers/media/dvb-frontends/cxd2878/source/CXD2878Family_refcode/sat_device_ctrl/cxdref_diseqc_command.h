@@ -1,0 +1,42 @@
+/*
+ *  CXD Demodulator driver
+ *
+ *  Copyright 2022 Sony Semiconductor Solutions Corporation
+ */
+
+#ifndef CXDREF_DISEQC_COMMAND_H
+#define CXDREF_DISEQC_COMMAND_H
+
+#include "cxdref_demod_sat_device_ctrl.h"
+
+typedef enum cxdref_diseqc_framing_t {
+    CXDREF_DISEQC_FRAMING_MASTER_NO_REPLY_FIRST        = 0xE0,
+    CXDREF_DISEQC_FRAMING_MASTER_NO_REPLY_REPEATED     = 0xE1,
+    CXDREF_DISEQC_FRAMING_MASTER_REPLY_FIRST           = 0xE2,
+    CXDREF_DISEQC_FRAMING_MASTER_REPLY_REPEATED        = 0xE3,
+    CXDREF_DISEQC_FRAMING_SLAVE_REPLY_OK               = 0xE4,
+    CXDREF_DISEQC_FRAMING_SLAVE_REPLY_CMD_UNSUPPORTED  = 0xE5,
+    CXDREF_DISEQC_FRAMING_SLAVE_REPLY_ERR_PARITY       = 0xE6,
+    CXDREF_DISEQC_FRAMING_SLAVE_REPLY_CMD_UNKNOWN      = 0xE7
+} cxdref_diseqc_framing_t;
+
+typedef enum cxdref_diseqc_address_t {
+    CXDREF_DISEQC_ADDRESS_ALL_DEVICES                       = 0x00,
+    CXDREF_DISEQC_ADDRESS_ALL_LNB_SMATV_SWITCHER            = 0x10,
+    CXDREF_DISEQC_ADDRESS_LNB_DEVICE                        = 0x11,
+    CXDREF_DISEQC_ADDRESS_LNB_WITH_LOOP_THROUGH             = 0x12,
+    CXDREF_DISEQC_ADDRESS_SWITCHER_DEVICE_DC_BLK            = 0x14,
+    CXDREF_DISEQC_ADDRESS_SWITCHER_DEVICE_DC_LOOP           = 0x15,
+    CXDREF_DISEQC_ADDRESS_SMATV_DEVICE                      = 0x18,
+    CXDREF_DISEQC_ADDRESS_ANY_POLARISER                     = 0x20,
+    CXDREF_DISEQC_ADDRESS_LIN_POL_CONTROLLER                = 0x21,
+    CXDREF_DISEQC_ADDRESS_ANY_POSITIONER                    = 0x30,
+    CXDREF_DISEQC_ADDRESS_POLAR_POSITIONER                  = 0x31,
+    CXDREF_DISEQC_ADDRESS_ELEVATION_POSITIONER              = 0x32,
+    CXDREF_DISEQC_ADDRESS_ANY_INSTALLER_AID                 = 0x40,
+    CXDREF_DISEQC_ADDRESS_SIGNAL_STRENGTH_ANALOGUE          = 0x41,
+    CXDREF_DISEQC_ADDRESS_ANY_INTELLI_SLAVES                = 0x70,
+    CXDREF_DISEQC_ADDRESS_SUBSCRIBER_CONTROLLED_HEADENDS    = 0x71
+} cxdref_diseqc_address_t;
+
+#endif

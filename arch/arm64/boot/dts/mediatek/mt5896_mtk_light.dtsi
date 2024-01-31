@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+
+/ {
+	mtk_light: mtk-light {
+		compatible = "mediatek,light";
+		io-channels = <&mtk_als 0>;
+		io-channel-names = "als0";
+		default-channel = "als0";
+	};
+};

@@ -1,0 +1,781 @@
+// SPDX-License-Identifier: GPL-2.0
+
+#include "mt5896_i2c.dtsi"
+
+/ {
+	mediatek-sound-register {
+		coprocessor-register {
+			reg_dec_aud_ctrl = <0x950020>;
+			reg_dec_mad_offset_base_l = <0x950022>;
+			reg_dec_mad_offset_base_h = <0x950024>;
+			reg_dec_mad_offset_base_ext = <0x950048>;
+			reg_se_aud_ctrl = <0x9500A0>;
+			reg_se_mad_offset_base_l = <0x9500A2>;
+			reg_se_mad_offset_base_h = <0x9500A4>;
+			reg_se_mad_offset_base_ext = <0x9500C8>;
+			reg_se_idma_ctrl0 = <0x950080>;
+			reg_se_dsp_icache_base_l = <0x950090>;
+			reg_se_bdma_cfg = <0x9500C0>;
+			reg_fd230_sel = <0x95007E>;
+			reg_se_dsp_brg_data_l = <0x950082>;
+			reg_se_dsp_brg_data_h = <0x950083>;
+			reg_se_idma_wrbase_addr_l = <0x950084>;
+			reg_se_idma_rdbase_addr_l = <0x950088>;
+			reg_se_idma_rddata_h_0 = <0x95008C>;
+			reg_se_idma_rddata_h_1 = <0x95008D>;
+			reg_se_idma_rddata_l = <0x95008E>;
+			reg_riu_mail_00 = <0x950140>;
+			reg_dsp_power_down_h = <0x950331>;
+			reg_dsp_dbg_cmd1 = <0x9503DC>;
+			reg_dsp_isr_cntr = <0x9503F9>;
+			reg_dsp_while1_cntr = <0x9503F8>;
+			reg_dsp_dbg_result1 = <0x9503FC>;
+			reg_dsp_test_mailbox = <0x950334>;
+			reg_dsp_test_status = <0x95041E>;
+		};
+		playback-register {
+			reg_pb_dma1_ctrl = <0x950300>;
+			reg_pb_dma1_wptr = <0x950310>;
+			reg_pb_dma1_ddr_level = <0x950370>;
+			reg_pb_dma2_ctrl = <0x950302>;
+			reg_pb_dma2_wptr = <0x950312>;
+			reg_pb_dma2_ddr_level = <0x950372>;
+			reg_pb_dma3_ctrl = <0x950304>;
+			reg_pb_dma3_wptr = <0x950314>;
+			reg_pb_dma3_ddr_level = <0x950374>;
+			reg_pb_dma4_ctrl = <0x950306>;
+			reg_pb_dma4_wptr = <0x950316>;
+			reg_pb_dma4_ddr_level = <0x950376>;
+			reg_pb_chg_finished = <0x951040>;
+			reg_pb_i2s_bck_width = <0x95028C>;
+			reg_pb_hp_opened = <0x9502EC>;
+			reg_pb_i2s_tx2_tdm_cfg = <0x950474>;
+		};
+		dplayback-register {
+			reg_dpb_dma5_ctrl = <0x950308>;
+			reg_dpb_dma5_wptr = <0x950318>;
+			reg_dpb_dma5_ddr_level = <0x950378>;
+			reg_dpb_dma6_ctrl = <0x95030A>;
+			reg_dpb_dma6_wptr = <0x95031A>;
+			reg_dpb_dma6_ddr_level = <0x95037A>;
+			reg_dpb_dma7_ctrl = <0x95030C>;
+			reg_dpb_dma7_wptr = <0x95031C>;
+			reg_dpb_dma7_ddr_level = <0x95037C>;
+			reg_dpb_earc_sine_gen = <0x9503CE>;
+			reg_digital_out_cs0 = <0x950280>;
+			reg_digital_out_cs1 = <0x950282>;
+			reg_digital_out_cs2 = <0x950284>;
+			reg_digital_out_cs3 = <0x950286>;
+			reg_digital_out_cs4 = <0x950288>;
+			reg_digital_spdif_out_cfg = <0x95028A>;
+			reg_digital_arc_out_cfg = <0x95025E>;
+			reg_digital_out_cs_toggle = <0x9505FC>;
+			reg_digital_out_spdif_synth_h = <0x9501B8>;
+			reg_digital_out_spdif_synth_l = <0x9501BA>;
+			reg_digital_out_arc_synth_h = <0x9501D0>;
+			reg_digital_out_arc_synth_l = <0x9501D2>;
+			reg_digital_out_synth_cfg = <0x9501CE>;
+			reg_digital_earc_out_cfg00 = <0x951100>;
+			reg_digital_earc_out_cfg01 = <0x951102>;
+			reg_digital_earc_out_cfg02 = <0x951104>;
+			reg_digital_earc_out_cfg03 = <0x951106>;
+			reg_digital_earc_out_cfg04 = <0x951108>;
+			reg_digital_earc_out_cfg05 = <0x95110A>;
+			reg_digital_earc_out_cfg06 = <0x95110C>;
+			reg_digital_earc_out_cfg07 = <0x95110E>;
+			reg_digital_earc_out_cfg08 = <0x951110>;
+			reg_digital_earc_out_cfg09 = <0x951112>;
+			reg_digital_earc_out_cfg10 = <0x951114>;
+			reg_digital_earc_out_cfg11 = <0x951116>;
+			reg_digital_earc_out_cfg12 = <0x951118>;
+			reg_digital_earc_out_cfg13 = <0x95111A>;
+			reg_digital_earc_out_cfg14 = <0x95111C>;
+			reg_digital_earc_out_cfg15 = <0x95111E>;
+			reg_digital_earc_out_cfg16 = <0x951120>;
+			reg_digital_earc_out_cfg17 = <0x951122>;
+			reg_digital_earc_out_cfg18 = <0x951124>;
+			reg_digital_earc_out_cfg19 = <0x951126>;
+			reg_digital_earc_out_cfg20 = <0x951128>;
+			reg_digital_earc_out_cfg21 = <0x95112A>;
+			reg_digital_earc_out_cfg22 = <0x95112C>;
+			reg_digital_earc_out_cfg23 = <0x95112E>;
+			reg_digital_earc_out_cfg24 = <0x951130>;
+			reg_digital_earc_out_cfg25 = <0x951132>;
+			reg_digital_earc_out_cfg26 = <0x951134>;
+			reg_digital_earc_out_cfg27 = <0x951136>;
+			reg_digital_earc_out_cfg28 = <0x951138>;
+			reg_digital_earc_out_cfg29 = <0x95113A>;
+			reg_digital_earc_out_cfg30 = <0x95113C>;
+			reg_digital_earc_out_cfg31 = <0x95113E>;
+			reg_digital_earc_out_cfg32 = <0x951140>;
+			reg_digital_earc_out_cfg33 = <0x951142>;
+			reg_digital_earc_out_cfg34 = <0x951144>;
+			reg_digital_earc_out_cfg35 = <0x951146>;
+			reg_digital_earc_out_cfg36 = <0x951148>;
+			reg_digital_earc_out_cfg37 = <0x95114A>;
+			reg_digital_earc_out_cfg38 = <0x95114C>;
+			reg_digital_earc_out_cfg39 = <0x95114E>;
+			reg_digital_earc_out_cfg40 = <0x951150>;
+			reg_digital_earc_out_cfg41 = <0x951152>;
+			reg_digital_earc_out_cfg42 = <0x951154>;
+			reg_digital_earc_out_cfg43 = <0x951156>;
+			reg_digital_earc_out_cfg44 = <0x951158>;
+			reg_digital_earc_out_cfg45 = <0x95115A>;
+			reg_digital_earc_out_cfg46 = <0x95115C>;
+			reg_digital_earc_out_cfg47 = <0x95115E>;
+			reg_digital_earc_out_cfg48 = <0x951160>;
+			reg_digital_earc_out_cfg49 = <0x951162>;
+			reg_digital_earc_out_cfg50 = <0x951164>;
+			reg_digital_earc_out_cfg51 = <0x951166>;
+			reg_digital_earc_out_cfg52 = <0x951168>;
+			reg_digital_earc_out_tx00 = <0xE24000>;
+			reg_digital_earc_out_tx18 = <0xE2400C>;
+			reg_digital_earc_out_tx20 = <0xE24010>;
+			reg_digital_earc_out_tx24 = <0xE24012>;
+			reg_digital_earc_out_tx28 = <0xE24014>;
+			reg_digital_earc_out_tx2C = <0xE24016>;
+			reg_digital_earc_out_tx30 = <0xE24018>;
+		};
+		capture-register {
+			reg_pas_ctrl_0 = <0x950C00>;
+			reg_pas_ctrl_9 = <0x950C12>;
+			reg_pas_ctrl_39 = <0x950C4E>;
+			reg_pas_ctrl_48 = <0x950C60>;
+			reg_pas_ctrl_49 = <0x950C62>;
+			reg_pas_ctrl_50 = <0x950C64>;
+			reg_pas_ctrl_64 = <0x950C80>;
+			reg_pas_ctrl_65 = <0x950C82>;
+			reg_pas_ctrl_66 = <0x950C84>;
+			reg_pas_ctrl_73 = <0x950C92>;
+			reg_pas_ctrl_74 = <0x950C94>;
+			reg_hdmi_event_0 = <0x950D26>;
+			reg_hdmi_event_1 = <0x950D28>;
+			reg_hdmi_event_2 = <0x950D2A>;
+			reg_hdmi2_event_0 = <0x950F9C>;
+			reg_hdmi2_event_1 = <0x950F9E>;
+			reg_hdmi2_event_2 = <0x950FA0>;
+			reg_hdmi2_event_3 = <0x950FC0>;
+			reg_hdmi2_event_4 = <0x950FC2>;
+			reg_se_idma_ctrl_0 = <0x950080>;
+			reg_se_bdma_cfg = <0x9500C0>;
+			reg_fd230_sel = <0x95007E>;
+			reg_se_dsp_brg_data_l = <0x950082>;
+			reg_se_dsp_brg_data_h = <0x950083>;
+			reg_se_idma_wrbase_addr_l = <0x950084>;
+			reg_se_idma_rdbase_addr_l = <0x950088>;
+			reg_se_idma_rddata_h_0 = <0x95008c>;
+			reg_se_idma_rddata_h_1 = <0x95008d>;
+			reg_se_idma_rddata_l = <0x95008e>;
+			reg_se_aud_ctrl = <0x9500A0>;
+			reg_se_mbase_h = <0x9500A6>;
+			reg_se_msize_h = <0x9500A8>;
+			reg_se_mcfg = <0x9500AA>;
+			reg_se_mbase_ext = <0x9500CA>;
+			reg_input_cfg = <0x950202>;
+			reg_status_hdmi_cs = <0x95020C>;
+			reg_status_hdmi_pc = <0x950240>;
+			reg_status_hdmi2_pc = <0x950FBC>;
+			reg_hdmi_tbus_3 = <0x95060C>;
+			reg_hdmi_cfg_6 = <0x950D44>;
+			reg_hdmi2_cfg_29 = <0x950FBA>;
+			reg_hdmi_mode_cfg = <0x950248>;
+			reg_hdmi2_mode_cfg1 = <0x950F94>;
+			reg_hdmi2_mode_cfg2 = <0x950F96>;
+			reg_decoder1_cfg = <0x950260>;
+			reg_decoder2_cfg = <0x950262>;
+			reg_clk_cfg6 = <0x9502B0>;
+			reg_sif_agc_cfg6 = <0x9502C6>;
+			reg_asif_amux = <0x9502C8>;
+			reg_i2s_input_cfg = <0x950202>;
+			reg_i2s_out2_cfg = <0x9502D2>;
+			reg_cap_hdmi_ctrl = <0x950332>;
+			reg_cap_hdmi_info = <0x950366>;
+			reg_cap_dma2_ctrl = <0x950342>;
+			reg_cap_dma2_rptr = <0x950352>;
+			reg_cap_dma2_wptr = <0x9503F2>;
+			reg_cap_dma4_ctrl = <0x950346>;
+			reg_cap_dma4_rptr = <0x950356>;
+			reg_cap_dma4_wptr = <0x95037E>;
+			reg_cap_dma7_ctrl = <0x95034C>;
+			reg_cap_dma7_rptr = <0x95035C>;
+			reg_cap_dma7_wptr = <0x9503EE>;
+			reg_cap_dma8_ctrl = <0x95034E>;
+			reg_cap_dma8_rptr = <0x95035E>;
+			reg_cap_dma8_wptr = <0x950360>;
+			reg_cap_dma9_ctrl = <0x950382>;
+			reg_cap_dma9_rptr = <0x950392>;
+			reg_cap_dma9_wptr = <0x950362>;
+			reg_cap_dma10_ctrl = <0x950384>;
+			reg_cap_dma10_rptr = <0x950394>;
+			reg_cap_dma10_wptr = <0x950364>;
+			reg_atv_play_cmd = <0x9500AC>;
+			reg_atv_std_cmd = <0x9503C0>;
+			reg_atv_comm_cfg = <0x9503C2>;
+			reg_atv_snd_mode_1 = <0x9503C4>;
+			reg_atv_snd_mode_2 = <0x9503C6>;
+			reg_atv_detection_result = <0x9503E0>;
+			reg_atv_snd_carrier_status_1 = <0x9503E4>;
+			reg_atv_snd_carrier_status_2 = <0x9503E6>;
+			reg_dbg_cmd_1 = <0x9503DC>;
+			reg_dbg_cmd_2 = <0x9503DE>;
+			reg_dbg_result_1 = <0x9503FC>;
+			reg_dbg_result_2 = <0x9503FE>;
+			reg_se_aid_ctrl = <0x95033E>;
+			reg_analog_mux = <0x9502E2>;
+			reg_irq0_idx = <0x950400>;
+			reg_irq1_idx = <0x950410>;
+			reg_hdmi_status_0 = <0x950D00>;
+			reg_hdmi_status_1 = <0x950D02>;
+			reg_hdmi_status_2 = <0x950D04>;
+			reg_hdmi_status_3 = <0x950D06>;
+			reg_hdmi_status_4 = <0x950D08>;
+			reg_hdmi_status_5 = <0x950D0A>;
+			reg_hdmi_status_6 = <0x950D0C>;
+			reg_hdmi_status_7 = <0x950D0E>;
+			reg_hdmi_status_8 = <0x950D10>;
+			reg_hdmi_status_9 = <0x950D12>;
+			reg_hdmi_status_10 = <0x950D14>;
+			reg_hdmi_status_11 = <0x950D16>;
+			reg_hwtsg_cfg1 = <0x950DE2>;
+			reg_hwtsg_cfg2 = <0x950DE4>;
+			reg_hwtsg_cfg4 = <0x950DE8>;
+			reg_hwtsg_ts_l = <0x950DF4>;
+			reg_hwtsg_ts_h = <0x950DF6>;
+			reg_hdmi2_status_0 = <0x950F00>;
+			reg_hdmi2_status_1 = <0x950F02>;
+			reg_hdmi2_status_2 = <0x950F04>;
+			reg_hdmi2_status_3 = <0x950F06>;
+			reg_hdmi2_status_4 = <0x950F08>;
+			reg_hdmi2_status_5 = <0x950F0A>;
+			reg_hdmi2_status_6 = <0x950F0C>;
+			reg_hdmi2_status_7 = <0x950F0E>;
+			reg_hdmi2_status_8 = <0x950F10>;
+			reg_hdmi2_status_9 = <0x950F12>;
+			reg_hdmi2_status_10 = <0x950F14>;
+			reg_hdmi2_status_11 = <0x950F16>;
+			reg_hwtsg2_cfg1 = <0x950FE2>;
+			reg_hwtsg2_cfg2 = <0x950FE4>;
+			reg_hwtsg2_cfg4 = <0x950FE8>;
+			reg_hwtsg2_ts_l = <0x950FF4>;
+			reg_hwtsg2_ts_h = <0x950FF6>;
+		};
+		duplex-register {
+			// SRC1
+			reg_pb_dma_synth_h = <0x9501A8>;
+			reg_pb_dma_synth_l = <0x9501AA>;
+			reg_pb_dma_synth_update = <0x9501CE>;
+			reg_pb_dma_cfg_00 = <0x950700>;
+			reg_pb_dma_cfg_01 = <0x950702>;
+			reg_pb_dma_cfg_02 = <0x950704>;
+			reg_pb_dma_cfg_03 = <0x950706>;
+			reg_pb_dma_cfg_04 = <0x950708>;
+			reg_pb_dma_cfg_05 = <0x95070A>;
+			reg_pb_dma_cfg_06 = <0x95070C>;
+			reg_pb_dma_cfg_07 = <0x95070E>;
+			reg_pb_dma_cfg_08 = <0x950710>;
+			reg_pb_dma_cfg_09 = <0x950712>;
+			reg_pb_dma_enable = <0x9507C0>;
+			reg_pb_dma_status_00 = <0x950714>;
+			reg_cap_dma_ctrl = <0x950344>;
+			reg_cap_dma_rptr = <0x950354>;
+			reg_cap_dma_wptr = <0x9503F4>;
+
+			// SRC2
+			reg_src2_pb_dma_ctrl = <0x95030E>;
+			reg_src2_pb_dma_wptr = <0x95031E>;
+			reg_src2_pb_dma_ddr_level = <0x9503E2>;
+			reg_src2_pb_dma_synth_h = <0x950226>;
+			reg_src2_pb_dma_synth_l = <0x950228>;
+			reg_src2_pb_dma_synth_update = <0x950224>;
+			reg_src2_cap_dma_ctrl = <0x950348>;
+			reg_src2_cap_dma_rptr = <0x950358>;
+			reg_src2_cap_dma_wptr = <0x9503E8>;
+
+			// SRC3
+			reg_src3_pb_dma_synth_h = <0x9501B0>;
+			reg_src3_pb_dma_synth_l = <0x9501B2>;
+			reg_src3_pb_dma_cfg_00 = <0x950720>;
+			reg_src3_pb_dma_cfg_01 = <0x950722>;
+			reg_src3_pb_dma_cfg_02 = <0x950724>;
+			reg_src3_pb_dma_cfg_03 = <0x950726>;
+			reg_src3_pb_dma_cfg_04 = <0x950728>;
+			reg_src3_pb_dma_cfg_05 = <0x95072A>;
+			reg_src3_pb_dma_cfg_06 = <0x95072C>;
+			reg_src3_pb_dma_cfg_07 = <0x95072E>;
+			reg_src3_pb_dma_cfg_08 = <0x950730>;
+			reg_src3_pb_dma_cfg_09 = <0x950732>;
+			reg_src3_pb_dma_enable = <0x9507E0>;
+			reg_src3_pb_dma_status_00 = <0x950734>;
+
+			reg_src3_cap_dma_ctrl = <0x95034A>;
+			reg_src3_cap_dma_rptr = <0x95035A>;
+			reg_src3_cap_dma_wptr = <0x9503EC>;
+		};
+		channel-mux-register {
+			reg_ch_m1_cfg = <0x951500>;
+			reg_ch_m2_cfg = <0x951501>;
+			reg_ch_m3_cfg = <0x951502>;
+			reg_ch_m4_cfg = <0x951503>;
+			reg_ch_m5_cfg = <0x951504>;
+			reg_ch_m6_cfg = <0x951505>;
+			reg_ch_m7_cfg = <0x951506>;
+			reg_ch_m8_cfg = <0x951507>;
+			reg_ch_m9_cfg = <0x951508>;
+			reg_ch_m10_cfg = <0x951509>;
+			reg_ch_m11_cfg = <0x95150A>;
+			reg_ch_m12_cfg = <0x95150B>;
+			reg_ch_m13_cfg = <0x95150C>;
+			reg_ch_m14_cfg = <0x95150D>;
+			reg_ch_m15_cfg = <0x95150E>;
+			reg_ch_m16_cfg = <0x95150F>;
+
+			reg_ch_5_cfg = <0x951510>;
+			reg_ch_6_cfg = <0x951511>;
+			reg_ch_7_cfg = <0x951512>;
+			reg_ch_8_cfg = <0x951513>;
+			reg_ch_9_cfg = <0x951514>;
+			reg_ch_10_cfg = <0x951515>;
+		};
+	};
+
+	mtk_sound_machine:mtk-sound-machine {
+		compatible = "mediatek,mtk-snd-machine";
+		adc_name = "ADC Capture_COMPONENT_COMPOSITE_VGA";
+		adc1_name = "ADC1 Capture_DVI";
+		loopback_name = "Loopback Capture_I2S";
+		audio-routing =
+			"I2S0", "SPEAKER_PLAYBACK",
+			"I2S5", "HFP_PLAYBACK",
+			"DAC0", "LINEOUT_PLAYBACK",
+			"DAC1", "HEADPHONE_PLAYBACK",
+			"I2S-TX2", "TDM_PLAYBACK";
+		mtk-sound-capability {
+			src1;
+			src2;
+			// src3;
+			speaker;
+			headphone;
+			lineout;
+			// tdm-tx2;
+			spdif-tx;
+			arc;
+			earc;
+			hdmi-rx1;
+			// hdmi-rx2;
+			atv;
+			adc;
+			adc1;
+			// i2s-rx2;
+			// loopback;  //only for china package use
+			// hfp;
+		};
+	};
+
+	mtk_sound_soc:mtk-sound-soc {
+		compatible = "mediatek,mtk-soc";
+		riu_base = <0x1C000000>;
+		audio_bank_num = <23>;
+		ioremap = <0x0 0x1DC48000 0x0 0x200>, /* 0xE240 */
+				<0x0 0x1D2A1600 0x0 0x200>, /* 950B00 */
+				<0x0 0x1D2A1800 0x0 0x200>, /* 950C00 */
+				<0x0 0x1D2A2400 0x0 0x200>, /* 951200 */
+				<0x0 0x1D2A1400 0x0 0x200>; /* 950A00 */
+		reg = <0x0 0x1D2A0000 0x0 0x200>,	/* 950000 */
+		      <0x0 0x1D2A0200 0x0 0x200>,	/* 950100 */
+		      <0x0 0x1D2A0400 0x0 0x200>,	/* 950200 */
+		      <0x0 0x1D2A0600 0x0 0x200>,	/* 950300 */
+		      <0x0 0x1D2A0800 0x0 0x200>,	/* 950400 */
+		      <0x0 0x1D2A0A00 0x0 0x200>,	/* 950500 */
+		      <0x0 0x1D2A0C00 0x0 0x200>,	/* 950600 */
+		      <0x0 0x1D2A0E00 0x0 0x200>,	/* 950700 */
+		      <0x0 0x1D2A1000 0x0 0x200>,	/* 950800 */
+		      <0x0 0x1D2A1200 0x0 0x200>,	/* 950900 */
+		      <0x0 0x1D2A1400 0x0 0x200>,	/* 950A00 */
+		      <0x0 0x1D2A1600 0x0 0x200>,	/* 950B00 */
+		      <0x0 0x1D2A1800 0x0 0x200>,	/* 950C00 */
+		      <0x0 0x1D2A1A00 0x0 0x200>,	/* 950D00 */
+		      <0x0 0x1D2A1C00 0x0 0x200>,	/* 950E00 */
+		      <0x0 0x1D2A1E00 0x0 0x200>,	/* 950F00 */
+		      <0x0 0x1D2A2000 0x0 0x200>,	/* 951000 */
+		      <0x0 0x1D2A2200 0x0 0x200>,	/* 951100 */
+		      <0x0 0x1D2A2400 0x0 0x200>,	/* 951200 */
+		      <0x0 0x1D2A2600 0x0 0x200>,	/* 951300 */
+		      <0x0 0x1D2A2800 0x0 0x200>,	/* 951400 */
+		      <0x0 0x1D2A2A00 0x0 0x200>,	/* 951500 */
+		      <0x0 0x1DC48000 0x0 0x200>;	/* 240000 for EARC*/
+	};
+
+	mtk_sound_coprocessor_platform:mtk-sound-coprocessor-platform {
+		compatible = "mediatek,mtk-coprocessor-platform";
+		dsp_name = "dsp.bin";
+		fw_size = <0x340000>;
+		memory-region = <&MI_MAD_ADV_BUF>;
+		memory_bus_base = <0x0 0x20000000>;
+	};
+
+	mtk_sound_playback_platform:mtk-sound-playback-platform {
+		compatible = "mediatek,mtk-playback-platform";
+		memory-region = <&MI_MAD_ADV_BUF>;
+		memory_bus_base = <0x0 0x20000000>;
+		speaker_dma_offset = <0x28000>;
+		speaker_dma_size = <0xC000>;
+		headphone_dma_offset = <0xB8000>;
+		headphone_dma_size = <0xC000>;
+		lineout_dma_offset = <0xCA000>;
+		lineout_dma_size = <0xC000>;
+		bt_dma_offset = <0xDC000>;
+		bt_dma_size = <0xC000>;
+	};
+
+	mtk_sound_dplayback_platform:mtk-sound-dplayback-platform {
+		compatible = "mediatek,mtk-dplayback-platform";
+		memory-region = <&MI_MAD_ADV_BUF>;
+		memory_bus_base = <0x0 0x20000000>;
+		spdif_dma_offset = <0xEE000>;
+		spdif_dma_size = <0xC000>;
+		arc_dma_offset = <0x100000>;
+		arc_dma_size = <0x30000>;
+		earc_dma_offset = <0x148000>;
+		earc_dma_size = <0xC0000>;
+	};
+
+	mtk_sound_duplex_platform:mtk-sound-duplex-platform {
+		compatible = "mediatek,mtk-duplex-platform";
+		memory-region = <&MI_MAD_ADV_BUF>;
+		memory_bus_base = <0x0 0x20000000>;
+		// SRC1
+		playback_dma_offset = <0x540000>;
+		playback_dma_size = <0x6C000>;
+		capture_dma_offset = <0x28C000>;
+		capture_dma_size = <0x6C000>;
+
+		// SRC2
+		src2_playback_dma_offset = <0x304000>;
+		src2_playback_dma_size = <0x6C000>;
+		src2_capture_dma_offset = <0x370000>;
+		src2_capture_dma_size = <0x6C000>;
+
+		// SRC3
+		src3_playback_dma_offset = <0x5AC000>;
+		src3_playback_dma_size = <0x6C000>;
+		src3_capture_dma_offset = <0x3DC000>;
+		src3_capture_dma_size = <0x6C000>;
+	};
+
+	mtk_sound_capture_platform:mtk-sound-capture-platform {
+		compatible = "mediatek,mtk-capture-platform";
+		interrupt-parent = <&mtk_intc0_fiq>;
+		interrupts = <0x0 0x0 0x4>,
+		<0x0 0x1 0x4>,
+		<0x0 0x6 0x4>,
+		<0x0 0x7 0x4>;
+		memory-region = <&MI_MAD_ADV_BUF>;
+		memory_bus_base = <0x0 0x20000000>;
+		hdmi1_dma_offset = <0x4D0000>;
+		hdmi1_dma_size = <0x30000>;
+		hdmi2_dma_offset = <0x500000>;
+		hdmi2_dma_size = <0x30000>;
+		capture2_dma_offset = <0x27A000>;
+		capture2_dma_size = <0xC000>;
+		capture4_dma_offset = <0x2F8000>;
+		capture4_dma_size = <0xC000>;
+		capture7_dma_offset = <0x448000>;
+		capture7_dma_size = <0xC000>;
+		capture8_dma_offset = <0x454000>;
+		capture8_dma_size = <0xC000>;
+		capture9_dma_offset = <0x460000>;
+		capture9_dma_size = <0x5A000>;
+		capture10_dma_offset = <0x4C0000>;
+		capture10_dma_size = <0x0C000>;
+
+		/* ATV palsum prescale */
+		pal_a2_fm_m = <(5)>;
+		pal_hidev_m = <(5)>;
+		pal_a2_fm_x = <(5)>;
+		pal_hidev_x = <(5)>;
+		pal_nicam = <(24)>;
+		pal_am = <(8)>;
+
+		/* ATV btsc prescale */
+		btsc_total =  <(0)>;
+		btsc_mono =  <(5)>;
+		btsc_stereo =  <(3)>;
+		btsc_sap =  <(1)>;
+
+		/* ATV palsum threshold */
+		a2_m_carrier1_on_amp		= <0x030000>;
+		a2_m_carrier1_off_amp		= <0x020000>;
+		a2_m_carrier1_on_nsr		= <0x120000>;
+		a2_m_carrier1_off_nsr		= <0x7FFFFF>;
+		a2_m_carrier2_on_amp		= <0x008400>;
+		a2_m_carrier2_off_amp		= <0x007400>;
+		a2_m_carrier2_on_nsr		= <0x110000>;
+		a2_m_carrier2_off_nsr		= <0x150000>;
+		a2_m_a2_pilot_on_amp		= <0x028000>;
+		a2_m_a2_pilot_off_amp		= <0x010000>;
+		a2_m_pilot_phase_on_thd		= <0x400000>;
+		a2_m_pilot_phase_off_thd	= <0x500000>;
+		a2_m_polit_mode_valid_ratio	= <0x0A0000>;
+		a2_m_polit_mode_invalid_ratio	= <0x009000>;
+		a2_m_carrier2_output_thr	= <0x002000>;
+
+		a2_bg_carrier1_on_amp		= <0x030000>;
+		a2_bg_carrier1_off_amp		= <0x020000>;
+		a2_bg_carrier1_on_nsr		= <0x200000>;
+		a2_bg_carrier1_off_nsr		= <0x7FFFFF>;
+		a2_bg_carrier2_on_amp		= <0x008400>;
+		a2_bg_carrier2_off_amp		= <0x007400>;
+		a2_bg_carrier2_on_nsr		= <0x110000>;
+		a2_bg_carrier2_off_nsr		= <0x300000>;
+		a2_bg_a2_pilot_on_amp		= <0x028000>;
+		a2_bg_a2_pilot_off_amp		= <0x010000>;
+		a2_bg_pilot_phase_on_thd	= <0x400000>;
+		a2_bg_pilot_phase_off_thd	= <0x500000>;
+		a2_bg_polit_mode_valid_ratio	= <0x0A0000>;
+		a2_bg_polit_mode_invalid_ratio	= <0x009000>;
+		a2_bg_carrier2_output_thr	= <0x000100>;
+
+		a2_dk_carrier1_on_amp		= <0x030000>;
+		a2_dk_carrier1_off_amp		= <0x020000>;
+		a2_dk_carrier1_on_nsr		= <0x130000>;
+		a2_dk_carrier1_off_nsr		= <0x7FFFFF>;
+		a2_dk_carrier2_on_amp		= <0x008400>;
+		a2_dk_carrier2_off_amp		= <0x007400>;
+		a2_dk_carrier2_on_nsr		= <0x110000>;
+		a2_dk_carrier2_off_nsr		= <0x150000>;
+		a2_dk_a2_pilot_on_amp		= <0x028000>;
+		a2_dk_a2_pilot_off_amp		= <0x010000>;
+		a2_dk_pilot_phase_on_thd	= <0x400000>;
+		a2_dk_pilot_phase_off_thd	= <0x500000>;
+		a2_dk_polit_mode_valid_ratio	= <0x0A0000>;
+		a2_dk_polit_mode_invalid_ratio	= <0x009000>;
+		a2_dk_carrier2_output_thr	= <0x000100>;
+
+		fm_i_carrier1_on_amp		= <0x030000>;
+		fm_i_carrier1_off_amp		= <0x020000>;
+		fm_i_carrier1_on_nsr		= <0x0E0000>;
+		fm_i_carrier1_off_nsr		= <0x7FFFFF>;
+
+		am_carrier1_on_amp		= <0x00A000>;
+		am_carrier1_off_amp		= <0x008000>;
+		am_agc_ref			= <0x0200B8>;
+
+		hidev_m_carrier1_on_amp		= <0x020000>;
+		hidev_m_carrier1_off_amp	= <0x010000>;
+		hidev_m_carrier1_on_nsr		= <0x120000>;
+		hidev_m_carrier1_off_nsr	= <0x7FFFFF>;
+
+		hidev_bg_carrier1_on_amp	= <0x020000>;
+		hidev_bg_carrier1_off_amp	= <0x010000>;
+		hidev_bg_carrier1_on_nsr	= <0x120000>;
+		hidev_bg_carrier1_off_nsr	= <0x7FFFFF>;
+
+		hidev_dk_carrier1_on_amp	= <0x020000>;
+		hidev_dk_carrier1_off_amp	= <0x010000>;
+		hidev_dk_carrier1_on_nsr	= <0x120000>;
+		hidev_dk_carrier1_off_nsr	= <0x7FFFFF>;
+
+		hidev_i_carrier1_on_amp		= <0x020000>;
+		hidev_i_carrier1_off_amp	= <0x010000>;
+		hidev_i_carrier1_on_nsr		= <0x120000>;
+		hidev_i_carrier1_off_nsr	= <0x7FFFFF>;
+
+		nicam_bg_nicam_on_sigerr	= <0x230000>;
+		nicam_bg_nicam_off_sigerr	= <0x3f0000>;
+		nicam_bg_reset_hw_siger		= <0x120000>;
+
+		nicam_i_nicam_on_sigerr		= <0x230000>;
+		nicam_i_nicam_off_sigerr	= <0x3f0000>;
+		nicam_i_reset_hw_siger		= <0x140000>;
+
+		pal_thr_type_end		= <0xFFFFFF>;
+
+		/* ATV btsc threshold */
+		btsc_mono_on_nsr		= <0x333300>;
+		btsc_mono_off_nsr		= <0x7FFFFF>;
+		btsc_pilot_on_amplitude		= <0x200000>;
+		btsc_pilot_off_amplitude	= <0x150000>;
+		btsc_sap_on_nsr			= <0x350000>;
+		btsc_sap_off_nsr		= <0x7FFF00>;
+		btsc_stereo_on			= <0x333300>;
+		btsc_stereo_off			= <0x7FFFFF>;
+		btsc_sap_on_amplitude		= <0x009000>;
+		btsc_sap_off_amplitude		= <0x005000>;
+
+		btsc_thr_type_end		= <0xFFFFFF>;
+	};
+
+	mtk_tv_machine:mtk-tvsnd-machine {
+		compatible = "mediatek,mtk-tvsnd-machine";
+	};
+
+	mtk_tv_offload_platform:mtk-tv-offload-platform {
+		compatible = "mediatek,mtk-tv-offload-platform";
+		interrupt-parent = <&mtk_intc0_fiq>;
+		interrupts = <0x0 0x9 0x4>; //MB_auR2toMCU_INT[1](EINIT5)<-0xB000_0020
+		dsp_name = "dsp.bin";
+		fw_size = <0x340000>;
+		memory-region = <&MI_MAD_ADV_BUF>;
+		memory_bus_base = <0x0 0x20000000>;
+		memory_base = <0x20000000>;
+		/*audio banks*/
+		reg_frc_rv55_intg_base = <0x810100>;
+		reg_frc_rv55_intg_hwdbg_base = <0x810200>;
+		reg_pqu_rv55_intg_base = <0x812100>;
+		reg_pqu_rv55_intg_hwdbg_base = <0x812200>;
+		reg_vivaldi0_base = <0x950000>;
+		reg_vivaldi1_base = <0x950100>;
+		reg_vivaldi2_base = <0x950200>;
+		reg_vivaldi3_base = <0x950300>;
+		reg_vivaldi4_base = <0x950400>;
+		reg_vivaldi5_base = <0x950500>;
+		reg_vivaldi6_base = <0x950600>;
+		reg_vivaldi7_base = <0x950700>;
+		reg_vivaldi8_base = <0x950800>;
+		reg_vivaldi9_base = <0x950900>;
+		reg_vivaldia_base = <0x950a00>;
+		reg_vivaldid_base = <0x950d00>;
+		reg_vivaldi00_base = <0x951000>;
+		reg_vivaldi01_1_base = <0x951100>;
+		reg_vivaldi05_base = <0x951500>;
+	};
+
+	mtk_tv_offload_soc:mtk-tv-offload-soc {
+		compatible = "mediatek,mtk-tv-offload-soc";
+		riu_base = <0x1C000000>;
+		audio_bank_num = <21>;
+		ioremap = <0x0 0x1C2E5800 0x0 0x200>, /* 0x172c00 */
+				<0x0 0x1D2A1600 0x0 0x200>, /* 950B00 */
+				<0x0 0x1D2A1800 0x0 0x200>, /* 950C00 */
+				<0x0 0x1D2A2400 0x0 0x200>, /* 951200 */
+				<0x0 0x1D2A1400 0x0 0x200>; /* 950A00 */
+		reg = <0x0 0x1C2E5800 0x0 0x200>, /* 172C00 for EARC*/
+		      <0x0 0x1C601000 0x0 0x200>, /* 300800 */
+		      <0x0 0x1D2A0000 0x0 0x200>, /* 950000 */
+		      <0x0 0x1D2A0200 0x0 0x200>, /* 950100 */
+		      <0x0 0x1D2A0400 0x0 0x200>, /* 950200 */
+		      <0x0 0x1D2A0600 0x0 0x200>, /* 950300 */
+		      <0x0 0x1D2A0800 0x0 0x200>, /* 950400 */
+		      <0x0 0x1D2A0A00 0x0 0x200>, /* 950500 */
+		      <0x0 0x1D2A0C00 0x0 0x200>, /* 950600 */
+		      <0x0 0x1D2A0E00 0x0 0x200>, /* 950700 */
+		      <0x0 0x1D2A1000 0x0 0x200>, /* 950800 */
+		      <0x0 0x1D2A1200 0x0 0x200>, /* 950900 */
+		      <0x0 0x1D2A1A00 0x0 0x200>, /* 950D00 */
+		      <0x0 0x1D2A1C00 0x0 0x200>, /* 950E00 */
+		      <0x0 0x1D2A1E00 0x0 0x200>, /* 950F00 */
+		      <0x0 0x1D2A2000 0x0 0x200>, /* 951000 */
+		      <0x0 0x1D2A2200 0x0 0x200>, /* 951100 */
+		      <0x0 0x1D2A2600 0x0 0x200>, /* 951300 */
+		      <0x0 0x1D2A2800 0x0 0x200>, /* 951400 */
+		      <0x0 0x1D2A2A00 0x0 0x200>, /* 951500 */
+		      <0x0 0x1D2A1400 0x0 0x200>; /* 950A00 */
+		digital-out-register {
+			reg_digital_earc_out_tx00 = <0x172C00>;
+			reg_digital_earc_out_tx18 = <0x172C0C>;
+			reg_digital_earc_out_tx20 = <0x172C10>;
+			reg_digital_earc_out_tx24 = <0x172C12>;
+			reg_digital_earc_out_tx28 = <0x172C14>;
+			reg_digital_earc_out_tx2C = <0x172C16>;
+			reg_digital_earc_out_tx30 = <0x172C18>;
+			reg_digital_earc_out_txC0 = <0x172C60>;
+		};
+	};
+
+	mtk-tv-duplex-platform {
+		compatible = "mediatek,mtk-tv-duplex-platform";
+	};
+
+	mtk-tv-capture-platform {
+		compatible = "mediatek,mtk-tv-capture-platform";
+	};
+};
+
+&i2c0 {
+	rt9114: mtk-amp9114 {
+		compatible = "mediatek, rt9114";
+		reg = <0x1B>;
+		status = "disabled";
+	};
+	rt9120: mtk-amp9120 {
+		compatible = "mediatek, rt9120";
+		reg = <0x1B>;
+		status = "disabled";
+	};
+	cus_i2c0_amp0: cus-i2c0-amp0 {
+		status = "disabled";
+	};
+	cus_i2c0_amp1: cus-i2c0-amp1 {
+		status = "disabled";
+	};
+	cus_i2c0_amp2: cus-i2c0-amp2 {
+		status = "disabled";
+	};
+	cus_i2c0_amp3: cus-i2c0-amp3 {
+		status = "disabled";
+	};
+	cus_i2c0_amp4: cus-i2c0-amp4 {
+		status = "disabled";
+	};
+};
+
+&i2c1 {
+	rt9120_1: mtk-amp9120 {
+		compatible = "mediatek, rt9120";
+		reg = <0x1B>;
+		status = "disabled";
+	};
+	cus_i2c1_amp0: cus-i2c1-amp0 {
+		status = "disabled";
+	};
+	cus_i2c1_amp1: cus-i2c1-amp1 {
+		status = "disabled";
+	};
+	cus_i2c1_amp2: cus-i2c1-amp2 {
+		status = "disabled";
+	};
+	cus_i2c1_amp3: cus-i2c1-amp3 {
+		status = "disabled";
+	};
+	cus_i2c1_amp4: cus-i2c1-amp4 {
+		status = "disabled";
+	};
+};
+
+&i2c2 {
+	cus_i2c2_amp0: cus-i2c2-amp0 {
+		reg = <0x1B>;
+		status = "disabled";
+	};
+	cus_i2c2_amp1: cus-i2c2-amp1 {
+		status = "disabled";
+	};
+	cus_i2c2_amp2: cus-i2c2-amp2 {
+		status = "disabled";
+	};
+	cus_i2c2_amp3: cus-i2c2-amp3 {
+		status = "disabled";
+	};
+	cus_i2c2_amp4: cus-i2c2-amp4 {
+		status = "disabled";
+	};
+};
+
+&i2c3 {
+	cus_i2c3_amp0: cus-i2c3-amp0 {
+		reg = <0x1B>;
+		status = "disabled";
+	};
+	cus_i2c3_amp1: cus-i2c3-amp1 {
+		status = "disabled";
+	};
+	cus_i2c3_amp2: cus-i2c3-amp2 {
+		status = "disabled";
+	};
+	cus_i2c3_amp3: cus-i2c3-amp3 {
+		status = "disabled";
+	};
+	cus_i2c3_amp4: cus-i2c3-amp4 {
+		status = "disabled";
+	};
+};

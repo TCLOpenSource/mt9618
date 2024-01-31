@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mtk_vcodec_dec: mtk-vcodec-dec {
+		compatible = "mediatek,mt5870-vcodec-dec";
+		mediatek,vcu = <&vcu>;
+		iommus = <&iommu 0>;
+	};
+
+	mtk-vcodec-enc {
+		compatible = "mediatek,m5870-vcodec-enc";
+		mediatek,vcu = <&vcu>;
+		iommus = <&iommu 0>;
+		clocks = <&topgen_mux_gate CLK_TOPGEN_VENC_CK>,
+			<&venc_clk_swen CLK_VENC_EN_VENC2VENC_IP>;
+		clock-names = "venc_clk",
+			"venc_ip_swen";
+	};
+};

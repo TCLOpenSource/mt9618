@@ -1,0 +1,47 @@
+#
+# Makefile for Mediatek Tuner drivers.
+#
+
+ccflags-y += -I$(srctree)/drivers/media/dvb-frontends
+ccflags-y += -I$(srctree)/drivers/media/dvb-frontends/cfm
+ccflags-y += -I$(REPO_ROOT_PATH)/mtktv_drivers/ree/dvb_adapter
+
+obj-m            := mtk-merak20-demod.o
+
+mtk-merak20-demod-objs    += demod_drv_dvbt_t2.o
+mtk-merak20-demod-objs    += demod_drv_dvbc.o
+mtk-merak20-demod-objs    += demod_drv_dvbs.o
+mtk-merak20-demod-objs    += demod_drv_atsc.o
+mtk-merak20-demod-objs    += demod_drv_isdbt.o
+mtk-merak20-demod-objs    += demod_drv_vif.o
+mtk-merak20-demod-objs    += demod_drv_dtmb.o
+mtk-merak20-demod-objs    += demod_hal_dvbt_t2.o
+mtk-merak20-demod-objs    += demod_hal_dvbc.o
+mtk-merak20-demod-objs    += demod_hal_dvbs.o
+mtk-merak20-demod-objs    += demod_hal_atsc.o
+mtk-merak20-demod-objs    += demod_hal_isdbt.o
+mtk-merak20-demod-objs    += demod_hal_vif.o
+mtk-merak20-demod-objs    += demod_hal_dtmb.o
+mtk-merak20-demod-objs    += demod_common.o
+mtk-merak20-demod-objs    += demod_core.o
+mtk-merak20-demod-objs    += demod_drv_alppreparse.o
+
+#Workaround for -Werror
+ccflags-y += -Wno-c99-compat
+ccflags-y += -Wno-enum-conversion
+ccflags-y += -Wno-format
+ccflags-y += -Wno-format-insufficient-args
+ccflags-y += -Wno-int-conversion
+ccflags-y += -Wno-macro-redefined
+ccflags-y += -Wno-misleading-indentation
+ccflags-y += -Wno-parentheses
+ccflags-y += -Wno-self-assign
+ccflags-y += -Wno-shift-count-overflow
+ccflags-y += -Wno-sometimes-uninitialized
+ccflags-y += -Wno-switch
+ccflags-y += -Wno-undef
+ccflags-y += -Wno-unknown-escape-sequence
+ccflags-y += -Wno-unused-function
+ccflags-y += -Wno-unused-variable
+ccflags-y += -Wno-uninitialized
+#End of workaround for -Werror

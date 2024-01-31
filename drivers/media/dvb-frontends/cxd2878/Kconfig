@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config DVB_CXD2878
+	tristate "Sony CXD2878 ATSC/ATSC3.0 demodulator"
+	depends on DVB_CORE && I2C
+	default m
+	help
+	  Say Y when you want to support this frontend.

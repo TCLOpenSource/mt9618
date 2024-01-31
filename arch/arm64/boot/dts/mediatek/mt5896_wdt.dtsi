@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2022 MediaTek Inc.
+ */
+
+/ {
+	wdt0:wdt0 {
+		compatible = "mediatek,mt5896-wdt";
+		interrupt-parent = <&mtk_intc1_irq_high>;
+		interrupts = <0x0 0x0d 0x4>;
+		reg = <0 0x1c400600 0 0x200>,
+			<0 0x1c020000 0 0x200>;
+	};
+};

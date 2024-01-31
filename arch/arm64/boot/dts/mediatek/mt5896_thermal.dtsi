@@ -1,0 +1,35 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2021 MediaTek Inc.
+ */
+
+/ {
+	tsensor_apu: mtk-sensor@14 {
+		compatible = "mt58xx-thermal";
+		#thermal-sensor-cells = <1>;
+		io-channels = <&saradc 14>;
+		io-channel-names = "thermal";
+		mediatek,thermal-config = <772 24000 770>;
+	};
+
+	mtk_gpu_sensor: mtk_gpu_sensor {
+		compatible = "gpu-thermal";
+		#thermal-sensor-cells = <1>;
+		reg = <0 0x1C021000 0 0x1000>,
+		<0 0x1C04A000 0 0x1000>,
+		<0 0x1C020000 0 0x1000>;
+		io-channels = <&saradc 13>;
+		io-channel-names = "gpu_adc";
+	};
+
+
+	test_cdev0: test_cdev0 {
+		compatible = "mtk-test-cdev";
+		#cooling-cells = <0x2>;
+	};
+
+	test_cdev1: test_cdev1 {
+		compatible = "mtk-test-cdev";
+		#cooling-cells = <0x2>;
+	};
+};

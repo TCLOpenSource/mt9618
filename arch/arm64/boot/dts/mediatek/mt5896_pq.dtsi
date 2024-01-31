@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	mtk_pq: mtk-pq {
+		compatible = "mediatek,pq";
+		interrupt-parent = <&mtk_intc0_irq>;
+		interrupts = <0x0 0x24 0x4>,/*mvop_int*/
+				<0x0 0x23 0x4>;/*xc_int*/
+		interrupt-names = "b2r","pq";
+		memory-region = <&MI_MCDI_BUF &MI_ABF_BUF
+		&MI_ZNR_BUF &MI_PQMAP_BUF &MI_CONTROLMAP_BUF &MI_DV_PYR_BUF
+		&MI_PQU_DOLBY_CONFIG_MEM &MI_STREAMON_METADATA &MI_METADATA_BUF
+		&MI_PQPARAM_METADATA &MI_MMAP_CFD_BUF>;
+		iommus = <&iommu 0>;
+		clocks =	<&topgen_mux_gate CLK_TOPGEN_XC_ED_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_XC_FN_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_XC_FS_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_XC_SRS_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_XC_SLOW_CK>,
+				<&scip_mux_gate CLK_SCIP_XC_IP2_SRC_INT_CK>,
+				<&scip_mux_gate CLK_SCIP_UCD_ST_SRAM_INT_CK>,
+				<&scsr_mux_gate CLK_SCSR_XC_SR_SRAM_SHARE_INT_CK>,
+				<&scsr_mux_gate CLK_SCSR_XC_SR_ALAI_INT_CK>,
+				<&b2r_swen CLK_B2R_EN_DC0_SRAM2SCIP>,
+				<&b2r_swen CLK_B2R_EN_XC_DC02SCIP>,
+				<&b2r_swen CLK_B2R_EN_XC_SUB1_DC02SCIP>,
+				<&topgen_mux_gate CLK_TOPGEN_XC_DC0_CK>,
+				<&topgen_mux_gate CLK_TOPGEN_XC_SUB1_DC0_CK>;
+		clock-names =	"clk_xc_ed",
+				"clk_xc_fn",
+				"clk_xc_fs",
+				"clk_xc_srs",
+				"clk_xc_slow",
+				"clk_xc_ip2_src",
+				"clk_xc_ucd_st_sram",
+				"clk_xc_sr_sram",
+				"clk_xc_sr_alai",
+				"clk_b2r_sram",
+				"clk_b2r_dc0",
+				"clk_b2r_sub1",
+				"clk_b2r_ckg_dc0",
+				"clk_b2r_ckg_sub1";
+		clock_target: clock-target {
+		};
+		clock_max: clock-max {
+		};
+		clock_rate: clock-rate {
+		};
+		cus-dev-id {
+				enable = <0>;
+				mtk-pq-dev0 = <0>;
+				mtk-pq-dev1 = <0>;
+				mtk-pq-dev2 = <0>;
+				mtk-pq-dev3 = <0>;
+				mtk-pq-dev4 = <0>;
+				mtk-pq-dev5 = <0>;
+				mtk-pq-dev6 = <0>;
+				mtk-pq-dev7 = <0>;
+				mtk-pq-dev8 = <0>;
+				mtk-pq-dev9 = <0>;
+				mtk-pq-dev10 = <0>;
+				mtk-pq-dev11 = <0>;
+				mtk-pq-dev12 = <0>;
+				mtk-pq-dev13 = <0>;
+				mtk-pq-dev14 = <0>;
+				mtk-pq-dev15 = <0>;
+		};
+		p_engine: p-engine {
+		};
+		mtk_capability: capability {
+		};
+		pq-enhance {
+			PQ_BINPATH = "/vendor/tvconfig/config/pq/";
+			IS_DDR2 = <0>;
+			DDR_FREQ = <400>;
+			BUS_WIDTH = <32>;
+			PQVR_ADDR = <0x0021C8A000>;
+			PQVR_LEN = <0x7000>;
+		};
+		mtk_histogram: histogram {
+		};
+		mtk_display: display {
+			mdw {
+				mdw_v_align = <2>;			/* in pixel */
+				mdw_h_align = <8>;			/* in pixel */
+			};
+		frc	{
+				frc_width = <7680>;			/* in pixel */
+				frc_height = <4320>;		/* in pixel */
+				frc_h_align = <1024>;		/* in pixel */
+				frc_frame_cnt = <10>;
+				frc_meds_width = <4096>;    /* in pixel */
+				frc_meds_height = <2160>;   /* in pixel */
+				frc_meds_bpp = <6>;         /* bit/pixel */
+				frc_ip_version = <1>;         /* 1: M6, 2: M6L */
+				memory-region = <&MI_MEMC_MV_BUFFER>;
+			};
+		};
+		mtk_b2r: mtk-b2r {
+		};
+		mtk_ucd: mtk-ucd {
+		};
+		cus01_customization: cus01-customization {
+		};
+	};
+
+	mtk_hdr_dolby_test: mtk-hdr-dolby-test {
+		compatible = "mediatek,mtk-hdr-dolby-test";
+		memory-region = <&MI_PQU_DOLBY_CONFIG_MEM>;
+	};
+};

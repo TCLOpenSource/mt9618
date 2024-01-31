@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	sampling_table {
+		sampling_num = <7>;
+		/* P_1135_1o5 for V4L2_EXT_AVD_STD_PAL_BGHI */
+		/* N_1135_1o5 for V4L2_EXT_AVD_STD_NTSC_M   */
+		/* S_1135_1o5 for V4L2_EXT_AVD_STD_SECAM    */
+		/* N4_1135_1o5 for V4L2_EXT_AVD_STD_NTSC_44 */
+		/* PM_1135_1o5 for V4L2_EXT_AVD_STD_PAL_M   */
+		/* PNC_1135_1o5 for V4L2_EXT_AVD_STD_PAL_N  */
+		/* P6_1135_1o5 for V4L2_EXT_AVD_STD_PAL_60  */
+		samplings =
+			/* type vst hst hde vde htt vfreqx1000 h_org_size  v_org_size*/
+			< 0 0x10 0xE5 0x58A 0x240 0x6A6 50000 0x2d0 0x240>,	// P_1135_1o5
+			< 1 0x07 0xE2 0x594 0x1E0 0x6A6 60000 0x2d0 0x1e0>,	// N_1135_1o5
+			< 2 0x0E 0xDA 0x58A 0x240 0x6A6 50000 0x2d0 0x240>, // S_1135_1o5
+			< 3 0x07 0xDC 0x58A 0x1E0 0x6A6 60000 0x2d0 0x1e0>, // N4_1135_1o5
+			< 4 0x10 0xDA 0x594 0x1E0 0x6A6 60000 0x2d0 0x1e0>,	// PM_1135_1o5
+			< 5 0x10 0xE6 0x594 0x240 0x6A6 50000 0x2d0 0x240>, // PNC_1135_1o5
+			< 6 0x10 0xDA 0x58A 0x1E0 0x6A6 60000 0x2d0 0x1E0>; // P6_1135_1o5
+	};
+};

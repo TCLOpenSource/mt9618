@@ -1,0 +1,522 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	vivaldi9_fix: vivaldi9_fix {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_fix";
+		num = <AU_FIX_N>;
+
+		riu_r2_wr_ck {
+			id = <AU_RIU_R2_WR_CK>;
+			clock-frequency = <0>;
+		};
+
+		riu_au_src_ck {
+			id = <AU_RIU_AU_SRC_CK>;
+			clock-frequency = <4294>;
+		};
+
+		mpll_216m_ck {
+			id = <AU_MPLL_216M_CK>;
+			clock-frequency = <216>;
+		};
+
+		mpll_216m_div2_ck {
+			id = <AU_MPLL_216M_DIV2_CK>;
+			clock-frequency = <108>;
+		};
+
+		mpll_216m_div4_ck {
+			id = <AU_MPLL_216M_DIV4_CK>;
+			clock-frequency = <54>;
+		};
+
+		mpll_216m_div8_ck {
+			id = <AU_MPLL_216M_DIV8_CK>;
+			clock-frequency = <27>;
+		};
+
+		mpll_216m_div16_ck {
+			id = <AU_MPLL_216M_DIV16_CK>;
+			clock-frequency = <13>;
+		};
+
+		mpll_432m_ck {
+			id = <AU_MPLL_432M_CK>;
+			clock-frequency = <432>;
+		};
+
+		mpll_345m_ck {
+			id = <AU_MPLL_345M_CK>;
+			clock-frequency = <352>;
+		};
+
+		mpll_288m_ck {
+			id = <AU_MPLL_288M_CK>;
+			clock-frequency = <288>;
+		};
+
+		mpll_172m_ck {
+			id = <AU_MPLL_172M_CK>;
+			clock-frequency = <172>;
+		};
+
+		mpll_144m_ck {
+			id = <AU_MPLL_144M_CK>;
+			clock-frequency = <144>;
+		};
+
+		aupll_kf0_ck {
+			id = <AU_AUPLL_KF0_CK>;
+			clock-frequency = <368>;
+		};
+
+		aupll_kf0_div_10_ck {
+			id = <AU_AUPLL_KF0_DIV_10_CK>;
+			clock-frequency = <36>;
+		};
+
+		aupll_kp0_div10_ck {
+			id = <AU_AUPLL_KP0_DIV10_CK>;
+			clock-frequency = <36>;
+		};
+
+		aupll_kp1_ck {
+			id = <AU_AUPLL_KP1_CK>;
+			clock-frequency = <23>;
+		};
+
+		aupll_kp1_div2_ck {
+			id = <AU_AUPLL_KP1_DIV2_CK>;
+			clock-frequency = <11>;
+		};
+
+		aupll_kp1_div10_ck {
+			id = <AU_AUPLL_KP1_DIV10_CK>;
+			clock-frequency = <2>;
+		};
+
+		aupll_kpdiv_ck {
+			id = <AU_AUPLL_KPDIV_CK>;
+			clock-frequency = <24>;
+		};
+
+		aupll_kpdiv_div2_ck {
+			id = <AU_AUPLL_KPDIV_DIV2_CK>;
+			clock-frequency = <12>;
+		};
+
+		aupll_kpdiv_div4_ck {
+			id = <AU_AUPLL_KPDIV_DIV4_CK>;
+			clock-frequency = <6>;
+		};
+
+		aupll_kpdiv_div8_ck {
+			id = <AU_AUPLL_KPDIV_DIV8_CK>;
+			clock-frequency = <3>;
+		};
+
+		aupll_kpdiv_div16_ck {
+			id = <AU_AUPLL_KPDIV_DIV16_CK>;
+			clock-frequency = <1>;
+		};
+
+		utmi_480m_ck {
+			id = <AU_UTMI_480M_CK>;
+			clock-frequency = <480>;
+		};
+
+		aur2pll_ck {
+			id = <AU_AUR2PLL_CK>;
+			clock-frequency = <1200>;
+		};
+
+		rv_tck_ck {
+			id = <AU_RV_TCK_CK>;
+			clock-frequency = <4294>;
+		};
+
+		dap_tck_ck {
+			id = <AU_DAP_TCK_CK>;
+			clock-frequency = <4294>;
+		};
+
+		dmd_mpll_div8_ck {
+			id = <AU_DMD_MPLL_DIV8_CK>;
+			clock-frequency = <4294>;
+		};
+
+		dmd_mpll_div10_ck {
+			id = <AU_DMD_MPLL_DIV10_CK>;
+			clock-frequency = <4294>;
+		};
+
+		dmd_mpll_div4_ck {
+			id = <AU_DMD_MPLL_DIV4_CK>;
+			clock-frequency = <4294>;
+		};
+
+		dmd_mpll_div5_ck {
+			id = <AU_DMD_MPLL_DIV5_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_ctsn_256fs_out_ck {
+			id = <AU_SYNTH_HDMI_CTSN_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_ctsn_256fs_out_div4_ck {
+			id = <AU_SYNTH_HDMI_CTSN_256FS_OUT_DIV4_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_ctsn_256fs_out_div8_ck {
+			id = <AU_SYNTH_HDMI_CTSN_256FS_OUT_DIV8_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_ctsn_256fs_out_div16_ck {
+			id = <AU_SYNTH_HDMI_CTSN_256FS_OUT_DIV16_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_ctsn_256fs_out_div32_ck {
+			id = <AU_SYNTH_HDMI_CTSN_256FS_OUT_DIV32_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_ctsn_128fs_out_ck {
+			id = <AU_SYNTH_HDMI_CTSN_128FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_patgen_256fs_out_ck {
+			id = <AU_SYNTH_HDMI_PATGEN_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi_patgen_256fs_out_div2_ck {
+			id = <AU_SYNTH_HDMI_PATGEN_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_ctsn_256fs_out_ck {
+			id = <AU_SYNTH_HDMI2_CTSN_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_ctsn_256fs_out_div4_ck {
+			id = <AU_SYNTH_HDMI2_CTSN_256FS_OUT_DIV4_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_ctsn_256fs_out_div8_ck {
+			id = <AU_SYNTH_HDMI2_CTSN_256FS_OUT_DIV8_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_ctsn_256fs_out_div16_ck {
+			id = <AU_SYNTH_HDMI2_CTSN_256FS_OUT_DIV16_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_ctsn_256fs_out_div32_ck {
+			id = <AU_SYNTH_HDMI2_CTSN_256FS_OUT_DIV32_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_ctsn_128fs_out_ck {
+			id = <AU_SYNTH_HDMI2_CTSN_128FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_patgen_256fs_out_ck {
+			id = <AU_SYNTH_HDMI2_PATGEN_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_hdmi2_patgen_256fs_out_div2_ck {
+			id = <AU_SYNTH_HDMI2_PATGEN_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		pad_test_in_ck {
+			id = <AU_PAD_TEST_IN_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_2nd_order_out_ck {
+			id = <AU_SYNTH_2ND_ORDER_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_ssc_2nd_order_out_div4_ck {
+			id = <AU_SYNTH_SSC_2ND_ORDER_OUT_DIV4_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_ssc_2nd_order_out_div8_ck {
+			id = <AU_SYNTH_SSC_2ND_ORDER_OUT_DIV8_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_ssc_2nd_order_out_div16_ck {
+			id = <AU_SYNTH_SSC_2ND_ORDER_OUT_DIV16_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_codec_out_ck {
+			id = <AU_SYNTH_CODEC_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb1_256fs_out_ck {
+			id = <AU_SYNTH_DVB1_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb1_256fs_out_div2_ck {
+			id = <AU_SYNTH_DVB1_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb2_256fs_out_ck {
+			id = <AU_SYNTH_DVB2_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb2_256fs_out_div2_ck {
+			id = <AU_SYNTH_DVB2_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb3_256fs_out_ck {
+			id = <AU_SYNTH_DVB3_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb3_256fs_out_div2_ck {
+			id = <AU_SYNTH_DVB3_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb4_256fs_out_ck {
+			id = <AU_SYNTH_DVB4_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb4_256fs_out_div2_ck {
+			id = <AU_SYNTH_DVB4_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb5_256fs_out_ck {
+			id = <AU_SYNTH_DVB5_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_dvb6_256fs_out_ck {
+			id = <AU_SYNTH_DVB6_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_sif_out_ck {
+			id = <AU_SYNTH_SIF_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_sif_out_div2_ck {
+			id = <AU_SYNTH_SIF_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_256fs_out_ck {
+			id = <AU_SYNTH_SPDIF_CDR_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_256fs_out_div2_ck {
+			id = <AU_SYNTH_SPDIF_CDR_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_256fs_out_div4_ck {
+			id = <AU_SYNTH_SPDIF_CDR_256FS_OUT_DIV4_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_256fs_out_div8_ck {
+			id = <AU_SYNTH_SPDIF_CDR_256FS_OUT_DIV8_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_256fs_out_div16_ck {
+			id = <AU_SYNTH_SPDIF_CDR_256FS_OUT_DIV16_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_256fs_out_div32_ck {
+			id = <AU_SYNTH_SPDIF_CDR_256FS_OUT_DIV32_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_cdr_128fs_out_ck {
+			id = <AU_SYNTH_SPDIF_CDR_128FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_i2s_fs_256fs_out_ck {
+			id = <AU_SYNTH_I2S_FS_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_pcm_trx_256fs_out_ck {
+			id = <AU_SYNTH_PCM_TRX_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_i2s_2_fs_256fs_out_ck {
+			id = <AU_SYNTH_I2S_2_FS_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_audma_v2_r1_256fs_out_ck {
+			id = <AU_SYNTH_AUDMA_V2_R1_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_audma_v2_r2_256fs_out_ck {
+			id = <AU_SYNTH_AUDMA_V2_R2_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		pad_i2s_rx_bclk_ck {
+			id = <AU_PAD_I2S_RX_BCLK_CK>;
+			clock-frequency = <4294>;
+		};
+
+		bclk_i2s_decoder_time_gen_ck {
+			id = <AU_BCLK_I2S_DECODER_TIME_GEN_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_clk_i2s_bclk_decoder_ck {
+			id = <AU_SYNTH_CLK_I2S_BCLK_DECODER_CK>;
+			clock-frequency = <4294>;
+		};
+
+		pad_i2s_rx2_bclk_ck {
+			id = <AU_PAD_I2S_RX2_BCLK_CK>;
+			clock-frequency = <4294>;
+		};
+
+		bclk_i2s_decoder2_time_gen_ck {
+			id = <AU_BCLK_I2S_DECODER2_TIME_GEN_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_mclk_i2s_encoder_out_ck {
+			id = <AU_SYNTH_MCLK_I2S_ENCODER_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_bclk_i2s_encoder_out_ck {
+			id = <AU_SYNTH_BCLK_I2S_ENCODER_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_mclk_i2s_encoder2_out_ck {
+			id = <AU_SYNTH_MCLK_I2S_ENCODER2_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_bclk_i2s_encoder2_out_ck {
+			id = <AU_SYNTH_BCLK_I2S_ENCODER2_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_tx_1024fs_out_ck {
+			id = <AU_SYNTH_SPDIF_TX_1024FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_tx_1024fs_out_div2_ck {
+			id = <AU_SYNTH_SPDIF_TX_1024FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm_256fs_out_ck {
+			id = <AU_SYNTH_SPDIF_NPCM_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm_256fs_out_div2_ck {
+			id = <AU_SYNTH_SPDIF_NPCM_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm2_256fs_out_ck {
+			id = <AU_SYNTH_SPDIF_NPCM2_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm2_256fs_out_div2_ck {
+			id = <AU_SYNTH_SPDIF_NPCM2_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm3_256fs_out_ck {
+			id = <AU_SYNTH_SPDIF_NPCM3_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm3_256fs_out_div2_ck {
+			id = <AU_SYNTH_SPDIF_NPCM3_256FS_OUT_DIV2_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm3_256fs_out_div4_ck {
+			id = <AU_SYNTH_SPDIF_NPCM3_256FS_OUT_DIV4_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_spdif_npcm3_256fs_out_div8_ck {
+			id = <AU_SYNTH_SPDIF_NPCM3_256FS_OUT_DIV8_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_npcm4_256fs_out_ck {
+			id = <AU_SYNTH_NPCM4_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_npcm5_256fs_out_ck {
+			id = <AU_SYNTH_NPCM5_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		earc_tx_pll_ck {
+			id = <AU_EARC_TX_PLL_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_earc_tx_gpa_1024fs_out_ck {
+			id = <AU_SYNTH_EARC_TX_GPA_1024FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_earc_tx_256fs_out_ck {
+			id = <AU_SYNTH_EARC_TX_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+
+		synth_earc_tx_iir_hdmi_rx_256fs_out_ck {
+			id = <AU_SYNTH_EARC_TX_IIR_HDMI_RX_256FS_OUT_CK>;
+			clock-frequency = <4294>;
+		};
+	};
+};

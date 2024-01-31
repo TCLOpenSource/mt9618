@@ -1,0 +1,172 @@
+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+/*
+ * Copyright (c) 2020 MediaTek Inc.
+ */
+
+/ {
+	memc_OOXX: memc_OOXX {
+		#clock-cells = <1>;
+		compatible = "mediatek,dtv_clk_gate_en";
+		num = <CLK_MEMC_EN_NR>;
+
+		frc_fclk_2x2deflicker {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2DEFLICKER>;
+		};
+
+		frc_fclk_2x2fdclk_2x {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2FDCLK_2X>;
+		};
+
+		frc_fclk_2x2frciopm {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2FRCIOPM>;
+		};
+
+		frc_fclk_2x2frciopmrv55 {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2FRCIOPMRV55>;
+		};
+
+		frc_fclk_2x2mi_ph3 {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2MI_PH3>;
+		};
+
+		frc_fclk_2x2mi_ph4 {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2MI_PH4>;
+		};
+
+		frc_fclk_2x2out_stage {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2OUT_STAGE>;
+		};
+
+		frc_fclk_2x2snr {
+			id = <CLK_MEMC_EN_FRC_FCLK_2X2SNR>;
+		};
+
+		frc_fclk_2xplus2frciopmrv55 {
+			id = <CLK_MEMC_EN_FRC_FCLK_2XPLUS2FRCIOPMRV55>;
+		};
+
+		frc_fclk_2xplus2scip {
+			id = <CLK_MEMC_EN_FRC_FCLK_2XPLUS2SCIP>;
+		};
+
+		frc_fclk_2xplus2scmw {
+			id = <CLK_MEMC_EN_FRC_FCLK_2XPLUS2SCMW>;
+		};
+
+		frc_fclk2fdclk {
+			id = <CLK_MEMC_EN_FRC_FCLK2FDCLK>;
+		};
+
+		frc_fclk2frciopm {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCIOPM>;
+		};
+
+		frc_fclk2frciopmrv55 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCIOPMRV55>;
+		};
+
+		frc_fclk2frcmemlb_clk_all {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_ALL>;
+		};
+
+		frc_fclk2frcmemlb_clk_mlb_sram {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_MLB_SRAM>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_0 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_0>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_1 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_1>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_2 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_2>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_3 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_3>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_4 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_4>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_5 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_5>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_6 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_6>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_7 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_7>;
+		};
+
+		frc_fclk2frcmemlb_gmv {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_GMV>;
+		};
+
+		frc_fclk2frcmi_clk_all {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMI_CLK_ALL>;
+		};
+
+		frc_fclk2frcmi_clk_mlb_mi_l {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMI_CLK_MLB_MI_L>;
+		};
+
+		frc_fclk2frcmi_clk_mlb_mi_r {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMI_CLK_MLB_MI_R>;
+		};
+
+		frc_fclk2frcmi_clk_mlb_mi_sram_l {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMI_CLK_MLB_MI_SRAM_L>;
+		};
+
+		frc_fclk2frcmi_clk_mlb_mi_sram_r {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMI_CLK_MLB_MI_SRAM_R>;
+		};
+
+		frc_fclk2me {
+			id = <CLK_MEMC_EN_FRC_FCLK2ME>;
+		};
+
+		frc_fclk2me_4x4 {
+			id = <CLK_MEMC_EN_FRC_FCLK2ME_4X4>;
+		};
+
+		frc_fclk2me_ph1 {
+			id = <CLK_MEMC_EN_FRC_FCLK2ME_PH1>;
+		};
+
+		frc_fclk2me_ph2 {
+			id = <CLK_MEMC_EN_FRC_FCLK2ME_PH2>;
+		};
+
+		frc_fclk2frcmemlb_clk_sad_8 {
+			id = <CLK_MEMC_EN_FRC_FCLK2FRCMEMLB_CLK_SAD_8>;
+		};
+
+		xtal_24m2frciopm {
+			id = <CLK_MEMC_EN_XTAL_24M2FRCIOPM>;
+		};
+
+		xtal_24m2frciopmrv55 {
+			id = <CLK_MEMC_EN_XTAL_24M2FRCIOPMRV55>;
+		};
+
+		xtal_24m2frcmehalo {
+			id = <CLK_MEMC_EN_XTAL_24M2FRCMEHALO>;
+		};
+
+		xtal_24m2frcmemlb {
+			id = <CLK_MEMC_EN_XTAL_24M2FRCMEMLB>;
+		};
+
+		xtal_24m2frcmi {
+			id = <CLK_MEMC_EN_XTAL_24M2FRCMI>;
+		};
+	};
+};
