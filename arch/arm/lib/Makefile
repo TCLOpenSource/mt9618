@@ -25,10 +25,6 @@ else
   lib-y	+= backtrace.o
 endif
 
-ifeq ($(CONFIG_MTK_32BIT_DIV_PATCH),y)
-  lib-y	+= ldivmod.o
-endif
-
 # using lib_ here won't override already available weak symbols
 obj-$(CONFIG_UACCESS_WITH_MEMCPY) += uaccess_with_memcpy.o
 

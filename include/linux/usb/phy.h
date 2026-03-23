@@ -10,6 +10,7 @@
 #ifndef __LINUX_USB_PHY_H
 #define __LINUX_USB_PHY_H
 
+#include <linux/android_vendor.h>
 #include <linux/extcon.h>
 #include <linux/notifier.h>
 #include <linux/usb.h>
@@ -157,7 +158,15 @@ struct usb_phy {
 	 */
 	enum usb_charger_type (*charger_detect)(struct usb_phy *x);
 
+	ANDROID_VENDOR_DATA(1);
+
+	/* notify phy port status change */
+	ANDROID_KABI_USE(0, int (*notify_port_status)(struct usb_phy *x, int port,
+						      u16 portstatus, u16 portchange));
 	ANDROID_KABI_RESERVE(1);
+	ANDROID_KABI_RESERVE(2);
+	ANDROID_KABI_RESERVE(3);
+	ANDROID_KABI_RESERVE(4);
 };
 
 /* for board-specific init logic */
@@ -315,6 +324,15 @@ usb_phy_set_wakeup(struct usb_phy *x, bool enabled)
 {
 	if (x && x->set_wakeup)
 		return x->set_wakeup(x, enabled);
+	else
+		return 0;
+}
+
+static inline int
+usb_phy_notify_port_status(struct usb_phy *x, int port, u16 portstatus, u16 portchange)
+{
+	if (x && x->notify_port_status)
+		return x->notify_port_status(x, port, portstatus, portchange);
 	else
 		return 0;
 }

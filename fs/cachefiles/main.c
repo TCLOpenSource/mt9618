@@ -28,6 +28,7 @@ MODULE_PARM_DESC(cachefiles_debug, "CacheFiles debugging mask");
 MODULE_DESCRIPTION("Mounted-filesystem based cache");
 MODULE_AUTHOR("Red Hat, Inc.");
 MODULE_LICENSE("GPL");
+MODULE_IMPORT_NS(ANDROID_GKI_VFS_EXPORT_ONLY);
 
 struct kmem_cache *cachefiles_object_jar;
 
@@ -69,15 +70,9 @@ static int __init cachefiles_init(void)
 		goto error_object_jar;
 	}
 
-	ret = cachefiles_proc_init();
-	if (ret < 0)
-		goto error_proc;
-
 	pr_info("Loaded\n");
 	return 0;
 
-error_proc:
-	kmem_cache_destroy(cachefiles_object_jar);
 error_object_jar:
 	misc_deregister(&cachefiles_dev);
 error_dev:
@@ -94,7 +89,6 @@ static void __exit cachefiles_exit(void)
 {
 	pr_info("Unloading\n");
 
-	cachefiles_proc_cleanup();
 	kmem_cache_destroy(cachefiles_object_jar);
 	misc_deregister(&cachefiles_dev);
 }

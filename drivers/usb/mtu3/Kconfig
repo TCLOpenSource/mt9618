@@ -5,7 +5,7 @@
 config USB_MTU3
 	tristate "MediaTek USB3 Dual Role controller"
 	depends on USB || USB_GADGET
-	depends on ARCH_MEDIATEK || ARCH_MEDIATEK_DTV || COMPILE_TEST
+	depends on ARCH_MEDIATEK || COMPILE_TEST
 	depends on EXTCON || !EXTCON
 	select USB_XHCI_MTK if USB_SUPPORT && USB_XHCI_HCD
 	help

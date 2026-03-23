@@ -14,13 +14,13 @@
 #include "device.h"
 #include "input.h"
 
-static unsigned short keycode_ak1[] =  { KEY_C, KEY_B, KEY_A };
-static unsigned short keycode_rk2[] =  { KEY_1, KEY_2, KEY_3, KEY_4,
+static const unsigned short keycode_ak1[] =  { KEY_C, KEY_B, KEY_A };
+static const unsigned short keycode_rk2[] =  { KEY_1, KEY_2, KEY_3, KEY_4,
 					 KEY_5, KEY_6, KEY_7 };
-static unsigned short keycode_rk3[] =  { KEY_1, KEY_2, KEY_3, KEY_4,
+static const unsigned short keycode_rk3[] =  { KEY_1, KEY_2, KEY_3, KEY_4,
 					 KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
 
-static unsigned short keycode_kore[] = {
+static const unsigned short keycode_kore[] = {
 	KEY_FN_F1,      /* "menu"               */
 	KEY_FN_F7,      /* "lcd backlight       */
 	KEY_FN_F2,      /* "control"            */
@@ -60,7 +60,7 @@ static unsigned short keycode_kore[] = {
 #define MASCHINE_PADS      (16)
 #define MASCHINE_PAD(X)    ((X) + ABS_PRESSURE)
 
-static unsigned short keycode_maschine[] = {
+static const unsigned short keycode_maschine[] = {
 	MASCHINE_BUTTON(40), /* mute       */
 	MASCHINE_BUTTON(39), /* solo       */
 	MASCHINE_BUTTON(38), /* select     */
@@ -804,6 +804,7 @@ int snd_usb_caiaq_input_init(struct snd_usb_caiaqdev *cdev)
 
 	default:
 		/* no input methods supported on this device */
+		ret = -EINVAL;
 		goto exit_free_idev;
 	}
 
@@ -828,15 +829,21 @@ exit_free_idev:
 	return ret;
 }
 
-void snd_usb_caiaq_input_free(struct snd_usb_caiaqdev *cdev)
+void snd_usb_caiaq_input_disconnect(struct snd_usb_caiaqdev *cdev)
 {
 	if (!cdev || !cdev->input_dev)
 		return;
 
 	usb_kill_urb(cdev->ep4_in_urb);
+	input_unregister_device(cdev->input_dev);
+}
+
+void snd_usb_caiaq_input_free(struct snd_usb_caiaqdev *cdev)
+{
+	if (!cdev || !cdev->input_dev)
+		return;
+
 	usb_free_urb(cdev->ep4_in_urb);
 	cdev->ep4_in_urb = NULL;
-
-	input_unregister_device(cdev->input_dev);
 	cdev->input_dev = NULL;
 }

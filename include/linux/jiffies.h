@@ -3,8 +3,9 @@
 #define _LINUX_JIFFIES_H
 
 #include <linux/cache.h>
+#include <linux/limits.h>
 #include <linux/math64.h>
-#include <linux/kernel.h>
+#include <linux/minmax.h>
 #include <linux/types.h>
 #include <linux/time.h>
 #include <linux/timex.h>
@@ -348,7 +349,7 @@ static inline unsigned long _msecs_to_jiffies(const unsigned int m)
  * - all other values are converted to jiffies by either multiplying
  *   the input value by a factor or dividing it with a factor and
  *   handling any 32-bit overflows.
- *   for the details see __msecs_to_jiffies()
+ *   for the details see _msecs_to_jiffies()
  *
  * msecs_to_jiffies() checks for the passed in value being a constant
  * via __builtin_constant_p() allowing gcc to eliminate most of the
@@ -420,26 +421,6 @@ static __always_inline unsigned long usecs_to_jiffies(const unsigned int u)
 extern unsigned long timespec64_to_jiffies(const struct timespec64 *value);
 extern void jiffies_to_timespec64(const unsigned long jiffies,
 				  struct timespec64 *value);
-static inline unsigned long timespec_to_jiffies(const struct timespec *value)
-{
-	struct timespec64 ts = timespec_to_timespec64(*value);
-
-	return timespec64_to_jiffies(&ts);
-}
-
-static inline void jiffies_to_timespec(const unsigned long jiffies,
-				       struct timespec *value)
-{
-	struct timespec64 ts;
-
-	jiffies_to_timespec64(jiffies, &ts);
-	*value = timespec64_to_timespec(ts);
-}
-
-extern unsigned long timeval_to_jiffies(const struct timeval *value);
-extern void jiffies_to_timeval(const unsigned long jiffies,
-			       struct timeval *value);
-
 extern clock_t jiffies_to_clock_t(unsigned long x);
 static inline clock_t jiffies_delta_to_clock_t(long delta)
 {

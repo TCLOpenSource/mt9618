@@ -33,7 +33,7 @@ static void xhci_mvebu_mbus_config(void __iomem *base,
 
 	/* Program each DRAM CS in a seperate window */
 	for (win = 0; win < dram->num_cs; win++) {
-		const struct mbus_dram_window *cs = dram->cs + win;
+		const struct mbus_dram_window *cs = &dram->cs[win];
 
 		writel(((cs->size - 1) & 0xffff0000) | (cs->mbus_attr << 8) |
 		       (dram->mbus_dram_target_id << 4) | 1,
@@ -110,7 +110,7 @@ int xhci_mvebu_a3700_plat_setup(struct usb_hcd *hcd)
 phy_exit:
 	phy_exit(phy);
 phy_put:
-	phy_put(phy);
+	of_phy_put(phy);
 phy_out:
 
 	return 0;

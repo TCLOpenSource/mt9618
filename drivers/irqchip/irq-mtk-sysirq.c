@@ -13,7 +13,6 @@
 #include <linux/io.h>
 #include <linux/slab.h>
 #include <linux/spinlock.h>
-#include <linux/module.h>
 
 struct mtk_sysirq_chip_data {
 	raw_spinlock_t lock;
@@ -66,6 +65,7 @@ static struct irq_chip mtk_sysirq_chip = {
 	.irq_set_type		= mtk_sysirq_set_type,
 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
 	.irq_set_affinity	= irq_chip_set_affinity_parent,
+	.flags			= IRQCHIP_SKIP_SET_WAKE,
 };
 
 static int mtk_sysirq_domain_translate(struct irq_domain *d,
@@ -232,32 +232,4 @@ out_free_chip:
 	kfree(chip_data);
 	return ret;
 }
-
-#if !defined(MODULE)
 IRQCHIP_DECLARE(mtk_sysirq, "mediatek,mt6577-sysirq", mtk_sysirq_of_init);
-#else
-static int __init mtk_sysirq_module_init(void)
-{
-	struct device_node *node, *gic_node;
-
-	pr_info("sysirq was loaded\n");
-
-	node = of_find_compatible_node(NULL, NULL, "mediatek,mt6577-sysirq");
-	if (!node) {
-		pr_err("sysirq could not find the device node\n");
-		return -ENODEV;
-	}
-
-	gic_node = of_irq_find_parent(node);
-	if (!gic_node) {
-		pr_err("sysirq failed to find the GIC node\n");
-		return -ENODEV;
-	}
-
-	return mtk_sysirq_of_init(node, gic_node);
-}
-
-module_init(mtk_sysirq_module_init);
-
-MODULE_LICENSE("GPL v2");
-#endif

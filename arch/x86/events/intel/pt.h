@@ -33,8 +33,8 @@ struct topa_entry {
 	u64	rsvd2	: 1;
 	u64	size	: 4;
 	u64	rsvd3	: 2;
-	u64	base	: 36;
-	u64	rsvd4	: 16;
+	u64	base	: 40;
+	u64	rsvd4	: 12;
 };
 
 /* TSC to Core Crystal Clock Ratio */
@@ -64,6 +64,8 @@ struct pt_pmu {
  * @lost:	if data was lost/truncated
  * @head:	logical write offset inside the buffer
  * @snapshot:	if this is for a snapshot/overwrite counter
+ * @single:	use Single Range Output instead of ToPA
+ * @wrapped:	buffer advance wrapped back to the first topa table
  * @stop_pos:	STOP topa entry index
  * @intr_pos:	INT topa entry index
  * @stop_te:	STOP topa entry pointer
@@ -80,6 +82,8 @@ struct pt_buffer {
 	local_t			data_size;
 	local64_t		head;
 	bool			snapshot;
+	bool			single;
+	bool			wrapped;
 	long			stop_pos, intr_pos;
 	struct topa_entry	*stop_te, *intr_te;
 	void			**data_pages;
@@ -111,16 +115,20 @@ struct pt_filters {
 
 /**
  * struct pt - per-cpu pt context
- * @handle:	perf output handle
+ * @handle:		perf output handle
  * @filters:		last configured filters
- * @handle_nmi:	do handle PT PMI on this cpu, there's an active event
- * @vmx_on:	1 if VMX is ON on this cpu
+ * @handle_nmi:		do handle PT PMI on this cpu, there's an active event
+ * @vmx_on:		1 if VMX is ON on this cpu
+ * @output_base:	cached RTIT_OUTPUT_BASE MSR value
+ * @output_mask:	cached RTIT_OUTPUT_MASK MSR value
  */
 struct pt {
 	struct perf_output_handle handle;
 	struct pt_filters	filters;
 	int			handle_nmi;
 	int			vmx_on;
+	u64			output_base;
+	u64			output_mask;
 };
 
 #endif /* __INTEL_PT_H__ */

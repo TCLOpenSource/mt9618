@@ -2644,8 +2644,7 @@ static int ntfs_statfs(struct dentry *dentry, struct kstatfs *sfs)
 	 * the least significant 32-bits in f_fsid[0] and the most significant
 	 * 32-bits in f_fsid[1].
 	 */
-	sfs->f_fsid.val[0] = vol->serial_no & 0xffffffff;
-	sfs->f_fsid.val[1] = (vol->serial_no >> 32) & 0xffffffff;
+	sfs->f_fsid = u64_to_fsid(vol->serial_no);
 	/* Maximum length of filenames. */
 	sfs->f_namelen	   = NTFS_MAX_NAME_LEN;
 	return 0;
@@ -3188,6 +3187,7 @@ MODULE_AUTHOR("Anton Altaparmakov <anton@tuxera.com>");
 MODULE_DESCRIPTION("NTFS 1.2/3.x driver - Copyright (c) 2001-2014 Anton Altaparmakov and Tuxera Inc.");
 MODULE_VERSION(NTFS_VERSION);
 MODULE_LICENSE("GPL");
+MODULE_IMPORT_NS(ANDROID_GKI_VFS_EXPORT_ONLY);
 #ifdef DEBUG
 module_param(debug_msgs, bint, 0);
 MODULE_PARM_DESC(debug_msgs, "Enable debug messages.");

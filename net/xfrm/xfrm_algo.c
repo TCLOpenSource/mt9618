@@ -237,7 +237,7 @@ static struct xfrm_algo_desc aalg_list[] = {
 
 	.uinfo = {
 		.auth = {
-			.icv_truncbits = 128,
+			.icv_truncbits = IS_ENABLED(CONFIG_ANDROID) ? 128 : 96,
 			.icv_fullbits = 256,
 		}
 	},
@@ -626,8 +626,8 @@ static const struct xfrm_algo_list xfrm_aalg_list = {
 static const struct xfrm_algo_list xfrm_ealg_list = {
 	.algs = ealg_list,
 	.entries = ARRAY_SIZE(ealg_list),
-	.type = CRYPTO_ALG_TYPE_BLKCIPHER,
-	.mask = CRYPTO_ALG_TYPE_BLKCIPHER_MASK,
+	.type = CRYPTO_ALG_TYPE_SKCIPHER,
+	.mask = CRYPTO_ALG_TYPE_MASK,
 };
 
 static const struct xfrm_algo_list xfrm_calg_list = {

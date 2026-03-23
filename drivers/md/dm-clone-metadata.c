@@ -276,12 +276,6 @@ static inline int superblock_read_lock(struct dm_clone_metadata *cmd,
 	return dm_bm_read_lock(cmd->bm, SUPERBLOCK_LOCATION, &sb_validator, sblock);
 }
 
-static inline int superblock_write_lock(struct dm_clone_metadata *cmd,
-					struct dm_block **sblock)
-{
-	return dm_bm_write_lock(cmd->bm, SUPERBLOCK_LOCATION, &sb_validator, sblock);
-}
-
 static inline int superblock_write_lock_zero(struct dm_clone_metadata *cmd,
 					     struct dm_block **sblock)
 {
@@ -470,11 +464,6 @@ static void __destroy_persistent_data_structures(struct dm_clone_metadata *cmd)
 }
 
 /*---------------------------------------------------------------------------*/
-
-static size_t bitmap_size(unsigned long nr_bits)
-{
-	return BITS_TO_LONGS(nr_bits) * sizeof(long);
-}
 
 static int __dirty_map_init(struct dirty_map *dmap, unsigned long nr_words,
 			    unsigned long nr_regions)

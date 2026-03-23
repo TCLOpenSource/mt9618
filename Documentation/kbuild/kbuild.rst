@@ -32,6 +32,11 @@ Additional options to pass when preprocessing. The preprocessing options
 will be used in all cases where kbuild does preprocessing including
 building C files and assembler files.
 
+KCPPFLAGS_COMPAT
+----------------
+Additional options to pass to $(CC_COMPAT) when preprocessing C and assembler
+files.
+
 KAFLAGS
 -------
 Additional options to the assembler (for built-in and modules).
@@ -76,6 +81,17 @@ Additional flags to be passed when linking host programs.
 HOSTLDLIBS
 ----------
 Additional libraries to link against when building host programs.
+
+.. _userkbuildflags:
+
+USERCFLAGS
+----------
+Additional options used for $(CC) when compiling userprogs.
+
+USERLDFLAGS
+-----------
+Additional options used for $(LD) when linking userprogs. userprogs are linked
+with CC, so $(USERLDFLAGS) should include "-Wl," prefix as applicable.
 
 KBUILD_KCONFIG
 --------------
@@ -237,7 +253,7 @@ This is solely useful to speed up test compiles.
 KBUILD_EXTRA_SYMBOLS
 --------------------
 For modules that use symbols from other modules.
-See more details in modules.txt.
+See more details in modules.rst.
 
 ALLSOURCE_ARCHS
 ---------------

@@ -174,7 +174,7 @@ static int _pwrdm_state_switch(struct powerdomain *pwrdm, int flag)
 		break;
 	case PWRDM_STATE_PREV:
 		prev = pwrdm_read_prev_pwrst(pwrdm);
-		if (pwrdm->state != prev)
+		if (prev >= 0 && pwrdm->state != prev)
 			pwrdm->state_counter[prev]++;
 		if (prev == PWRDM_POWER_RET)
 			_update_logic_membank_counters(pwrdm);
@@ -1202,26 +1202,26 @@ bool pwrdm_can_ever_lose_context(struct powerdomain *pwrdm)
 	if (!pwrdm) {
 		pr_debug("powerdomain: %s: invalid powerdomain pointer\n",
 			 __func__);
-		return 1;
+		return true;
 	}
 
 	if (pwrdm->pwrsts & PWRSTS_OFF)
-		return 1;
+		return true;
 
 	if (pwrdm->pwrsts & PWRSTS_RET) {
 		if (pwrdm->pwrsts_logic_ret & PWRSTS_OFF)
-			return 1;
+			return true;
 
 		for (i = 0; i < pwrdm->banks; i++)
 			if (pwrdm->pwrsts_mem_ret[i] & PWRSTS_OFF)
-				return 1;
+				return true;
 	}
 
 	for (i = 0; i < pwrdm->banks; i++)
 		if (pwrdm->pwrsts_mem_on[i] & PWRSTS_OFF)
-			return 1;
+			return true;
 
-	return 0;
+	return false;
 }
 
 /**

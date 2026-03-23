@@ -17,25 +17,45 @@
 #include <linux/init.h>
 #include <linux/irqchip.h>
 #include <linux/kprobes.h>
+#include <linux/scs.h>
 #include <linux/seq_file.h>
+#include <asm/numa.h>
 #include <linux/vmalloc.h>
 #include <asm/daifflags.h>
 #include <asm/vmap_stack.h>
-#include <asm/scs.h>
 
 /* Only access this in an NMI enter/exit */
 DEFINE_PER_CPU(struct nmi_ctx, nmi_contexts);
 
 DEFINE_PER_CPU(unsigned long *, irq_stack_ptr);
 
+
+DECLARE_PER_CPU(unsigned long *, irq_shadow_call_stack_ptr);
+
+#ifdef CONFIG_SHADOW_CALL_STACK
+DEFINE_PER_CPU(unsigned long *, irq_shadow_call_stack_ptr);
+#endif
+
+static void init_irq_scs(void)
+{
+	int cpu;
+
+	if (!scs_is_enabled())
+		return;
+
+	for_each_possible_cpu(cpu)
+		per_cpu(irq_shadow_call_stack_ptr, cpu) =
+			scs_alloc(early_cpu_to_node(cpu));
+}
+
 #ifdef CONFIG_VMAP_STACK
-static void init_irq_stacks(void)
+static void __init init_irq_stacks(void)
 {
 	int cpu;
 	unsigned long *p;
 
 	for_each_possible_cpu(cpu) {
-		p = arch_alloc_vmap_stack(IRQ_STACK_SIZE, cpu_to_node(cpu));
+		p = arch_alloc_vmap_stack(IRQ_STACK_SIZE, early_cpu_to_node(cpu));
 		per_cpu(irq_stack_ptr, cpu) = p;
 	}
 }
@@ -52,13 +72,44 @@ static void init_irq_stacks(void)
 }
 #endif
 
+static void default_handle_irq(struct pt_regs *regs)
+{
+	panic("IRQ taken without a root IRQ handler\n");
+}
+
+static void default_handle_fiq(struct pt_regs *regs)
+{
+	panic("FIQ taken without a root FIQ handler\n");
+}
+
+void (*handle_arch_irq)(struct pt_regs *) __ro_after_init = default_handle_irq;
+void (*handle_arch_fiq)(struct pt_regs *) __ro_after_init = default_handle_fiq;
+
+int __init set_handle_irq(void (*handle_irq)(struct pt_regs *))
+{
+	if (handle_arch_irq != default_handle_irq)
+		return -EBUSY;
+
+	handle_arch_irq = handle_irq;
+	pr_info("Root IRQ handler: %ps\n", handle_irq);
+	return 0;
+}
+
+int __init set_handle_fiq(void (*handle_fiq)(struct pt_regs *))
+{
+	if (handle_arch_fiq != default_handle_fiq)
+		return -EBUSY;
+
+	handle_arch_fiq = handle_fiq;
+	pr_info("Root FIQ handler: %ps\n", handle_fiq);
+	return 0;
+}
+
 void __init init_IRQ(void)
 {
 	init_irq_stacks();
-	scs_init_irq();
+	init_irq_scs();
 	irqchip_init();
-	if (!handle_arch_irq)
-		panic("No interrupt controller found.");
 
 	if (system_uses_irq_prio_masking()) {
 		/*
@@ -69,18 +120,3 @@ void __init init_IRQ(void)
 		local_daif_restore(DAIF_PROCCTX_NOIRQ);
 	}
 }
-
-/*
- * Stubs to make nmi_enter/exit() code callable from ASM
- */
-asmlinkage void notrace asm_nmi_enter(void)
-{
-	nmi_enter();
-}
-NOKPROBE_SYMBOL(asm_nmi_enter);
-
-asmlinkage void notrace asm_nmi_exit(void)
-{
-	nmi_exit();
-}
-NOKPROBE_SYMBOL(asm_nmi_exit);

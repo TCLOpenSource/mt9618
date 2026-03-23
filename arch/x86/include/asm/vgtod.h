@@ -21,10 +21,4 @@ typedef unsigned long gtod_long_t;
 #endif
 #endif /* CONFIG_GENERIC_GETTIMEOFDAY */
 
-extern int vclocks_used;
-static inline bool vclock_was_used(int vclock)
-{
-	return READ_ONCE(vclocks_used) & (1 << vclock);
-}
-
 #endif /* _ASM_X86_VGTOD_H */

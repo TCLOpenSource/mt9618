@@ -86,7 +86,6 @@ struct gsc_scaler {
 /*
  * A structure of gsc context.
  *
- * @regs_res: register resources.
  * @regs: memory mapped io registers.
  * @gsc_clk: gsc gate clock.
  * @sc: scaler infomations.
@@ -103,7 +102,6 @@ struct gsc_context {
 	struct exynos_drm_ipp_formats	*formats;
 	unsigned int			num_formats;
 
-	struct resource	*regs_res;
 	void __iomem	*regs;
 	const char	**clk_names;
 	struct clk	*clocks[GSC_MAX_CLOCKS];
@@ -118,6 +116,7 @@ struct gsc_context {
  * struct gsc_driverdata - per device type driver data for init time.
  *
  * @limits: picture size limits array
+ * @num_limits: number of items in the aforementioned array
  * @clk_names: names of clocks needed by this variant
  * @num_clocks: the number of clocks needed by this variant
  */
@@ -1117,7 +1116,12 @@ static int gsc_commit(struct exynos_drm_ipp *ipp,
 	struct gsc_context *ctx = container_of(ipp, struct gsc_context, ipp);
 	int ret;
 
-	pm_runtime_get_sync(ctx->dev);
+	ret = pm_runtime_resume_and_get(ctx->dev);
+	if (ret < 0) {
+		dev_err(ctx->dev, "failed to enable GScaler device.\n");
+		return ret;
+	}
+
 	ctx->task = task;
 
 	ret = gsc_reset(ctx);
@@ -1169,7 +1173,7 @@ static int gsc_bind(struct device *dev, struct device *master, void *data)
 	struct exynos_drm_ipp *ipp = &ctx->ipp;
 
 	ctx->drm_dev = drm_dev;
-	ctx->drm_dev = drm_dev;
+	ipp->drm_dev = drm_dev;
 	exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
 
 	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
@@ -1266,9 +1270,7 @@ static int gsc_probe(struct platform_device *pdev)
 		}
 	}
 
-	/* resource memory */
-	ctx->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	ctx->regs = devm_ioremap_resource(dev, ctx->regs_res);
+	ctx->regs = devm_platform_ioremap_resource(pdev, 0);
 	if (IS_ERR(ctx->regs))
 		return PTR_ERR(ctx->regs);
 
@@ -1344,7 +1346,7 @@ static int __maybe_unused gsc_runtime_resume(struct device *dev)
 	for (i = 0; i < ctx->num_clocks; i++) {
 		ret = clk_prepare_enable(ctx->clocks[i]);
 		if (ret) {
-			while (--i > 0)
+			while (--i >= 0)
 				clk_disable_unprepare(ctx->clocks[i]);
 			return ret;
 		}

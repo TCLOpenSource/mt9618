@@ -140,15 +140,7 @@ static int dvb_dvr_open(struct inode *inode, struct file *file)
 		return -ENODEV;
 	}
 
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	#ifdef CONFIG_DVB_MMAP
-	dmxdev->may_do_mmap = 1;
-	#else
 	dmxdev->may_do_mmap = 0;
-	#endif
-#else
-	dmxdev->may_do_mmap = 0;
-#endif
 
 	/*
 	 * The logic here is a little tricky due to the ifdef.
@@ -165,10 +157,7 @@ static int dvb_dvr_open(struct inode *inode, struct file *file)
 	else if ((file->f_flags & O_ACCMODE) == O_RDWR) {
 		if (!(dmxdev->capabilities & DMXDEV_CAP_DUPLEX)) {
 #ifdef CONFIG_DVB_MMAP
-		#ifdef CONFIG_ARCH_MEDIATEK_DTV
-		#else
 			dmxdev->may_do_mmap = 1;
-		#endif
 			need_ringbuffer = true;
 #else
 			mutex_unlock(&dmxdev->mutex);
@@ -232,12 +221,7 @@ static int dvb_dvr_release(struct inode *inode, struct file *file)
 	}
 
 	if (((file->f_flags & O_ACCMODE) == O_RDONLY) ||
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-		(((file->f_flags & O_ACCMODE) == O_RDWR) &&
-		!(dmxdev->capabilities & DMXDEV_CAP_DUPLEX))) {
-#else
 	    dmxdev->may_do_mmap) {
-#endif
 		if (dmxdev->may_do_mmap) {
 			if (dvb_vb2_is_streaming(&dmxdev->dvr_vb2_ctx))
 				dvb_vb2_stream_off(&dmxdev->dvr_vb2_ctx);
@@ -736,7 +720,7 @@ static int dvb_dmxdev_filter_start(struct dmxdev_filter *filter)
 			ret = dmxdev->demux->allocate_section_feed(dmxdev->demux,
 								   secfeed,
 								   dvb_dmxdev_section_callback);
-			if (ret < 0) {
+			if (!*secfeed) {
 				pr_err("DVB (%s): could not alloc feed\n",
 				       __func__);
 				return ret;
@@ -1414,11 +1398,6 @@ static const struct file_operations dvb_dvr_fops = {
 	.read = dvb_dvr_read,
 	.write = dvb_dvr_write,
 	.unlocked_ioctl = dvb_dvr_ioctl,
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-#ifdef CONFIG_COMPAT
-    .compat_ioctl = dvb_dvr_ioctl,
-#endif
-#endif
 	.open = dvb_dvr_open,
 	.release = dvb_dvr_release,
 	.poll = dvb_dvr_poll,

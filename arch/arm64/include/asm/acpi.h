@@ -47,20 +47,7 @@
 pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
 
 /* ACPI table mapping after acpi_permanent_mmap is set */
-static inline void __iomem *acpi_os_ioremap(acpi_physical_address phys,
-					    acpi_size size)
-{
-	/* For normal memory we already have a cacheable mapping. */
-	if (memblock_is_map_memory(phys))
-		return (void __iomem *)__phys_to_virt(phys);
-
-	/*
-	 * We should still honor the memory's attribute here because
-	 * crash dump kernel possibly excludes some ACPI (reclaim)
-	 * regions from memblock list.
-	 */
-	return __ioremap(phys, size, __acpi_get_mem_attribute(phys));
-}
+void __iomem *acpi_os_ioremap(acpi_physical_address phys, acpi_size size);
 #define acpi_os_ioremap acpi_os_ioremap
 
 typedef u64 phys_cpuid_t;
@@ -108,6 +95,18 @@ struct acpi_madt_generic_interrupt *acpi_cpu_get_madt_gicc(int cpu);
 static inline u32 get_acpi_id_for_cpu(unsigned int cpu)
 {
 	return	acpi_cpu_get_madt_gicc(cpu)->uid;
+}
+
+static inline int get_cpu_for_acpi_id(u32 uid)
+{
+	int cpu;
+
+	for (cpu = 0; cpu < nr_cpu_ids; cpu++)
+		if (acpi_cpu_get_madt_gicc(cpu) &&
+		    uid == get_acpi_id_for_cpu(cpu))
+			return cpu;
+
+	return -EINVAL;
 }
 
 static inline void arch_fix_phys_package_id(int num, u32 slot) { }

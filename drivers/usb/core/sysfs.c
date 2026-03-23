@@ -167,7 +167,10 @@ static ssize_t speed_show(struct device *dev, struct device_attribute *attr,
 		speed = "5000";
 		break;
 	case USB_SPEED_SUPER_PLUS:
-		speed = "10000";
+		if (udev->ssp_rate == USB_SSP_GEN_2x2)
+			speed = "20000";
+		else
+			speed = "10000";
 		break;
 	default:
 		speed = "unknown";
@@ -297,29 +300,6 @@ static ssize_t urbnum_show(struct device *dev, struct device_attribute *attr,
 	return sprintf(buf, "%d\n", atomic_read(&udev->urbnum));
 }
 static DEVICE_ATTR_RO(urbnum);
-
-static ssize_t removable_show(struct device *dev, struct device_attribute *attr,
-			      char *buf)
-{
-	struct usb_device *udev;
-	char *state;
-
-	udev = to_usb_device(dev);
-
-	switch (udev->removable) {
-	case USB_DEVICE_REMOVABLE:
-		state = "removable";
-		break;
-	case USB_DEVICE_FIXED:
-		state = "fixed";
-		break;
-	default:
-		state = "unknown";
-	}
-
-	return sprintf(buf, "%s\n", state);
-}
-static DEVICE_ATTR_RO(removable);
 
 static ssize_t ltm_capable_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
@@ -641,7 +621,7 @@ static struct attribute *usb2_hardware_lpm_attr[] = {
 	&dev_attr_usb2_lpm_besl.attr,
 	NULL,
 };
-static struct attribute_group usb2_hardware_lpm_attr_group = {
+static const struct attribute_group usb2_hardware_lpm_attr_group = {
 	.name	= power_group_name,
 	.attrs	= usb2_hardware_lpm_attr,
 };
@@ -651,7 +631,7 @@ static struct attribute *usb3_hardware_lpm_attr[] = {
 	&dev_attr_usb3_hardware_lpm_u2.attr,
 	NULL,
 };
-static struct attribute_group usb3_hardware_lpm_attr_group = {
+static const struct attribute_group usb3_hardware_lpm_attr_group = {
 	.name	= power_group_name,
 	.attrs	= usb3_hardware_lpm_attr,
 };
@@ -663,7 +643,7 @@ static struct attribute *power_attrs[] = {
 	&dev_attr_active_duration.attr,
 	NULL,
 };
-static struct attribute_group power_attr_group = {
+static const struct attribute_group power_attr_group = {
 	.name	= power_group_name,
 	.attrs	= power_attrs,
 };
@@ -690,6 +670,7 @@ static int add_power_attributes(struct device *dev)
 
 static void remove_power_attributes(struct device *dev)
 {
+	sysfs_unmerge_group(&dev->kobj, &usb3_hardware_lpm_attr_group);
 	sysfs_unmerge_group(&dev->kobj, &usb2_hardware_lpm_attr_group);
 	sysfs_unmerge_group(&dev->kobj, &power_attr_group);
 }
@@ -825,14 +806,13 @@ static struct attribute *dev_attrs[] = {
 	&dev_attr_avoid_reset_quirk.attr,
 	&dev_attr_authorized.attr,
 	&dev_attr_remove.attr,
-	&dev_attr_removable.attr,
 	&dev_attr_ltm_capable.attr,
 #ifdef CONFIG_OF
 	&dev_attr_devspec.attr,
 #endif
 	NULL,
 };
-static struct attribute_group dev_attr_grp = {
+static const struct attribute_group dev_attr_grp = {
 	.attrs = dev_attrs,
 };
 
@@ -849,7 +829,7 @@ static struct attribute *dev_string_attrs[] = {
 static umode_t dev_string_attrs_are_visible(struct kobject *kobj,
 		struct attribute *a, int n)
 {
-	struct device *dev = container_of(kobj, struct device, kobj);
+	struct device *dev = kobj_to_dev(kobj);
 	struct usb_device *udev = to_usb_device(dev);
 
 	if (a == &dev_attr_manufacturer.attr) {
@@ -865,7 +845,7 @@ static umode_t dev_string_attrs_are_visible(struct kobject *kobj,
 	return a->mode;
 }
 
-static struct attribute_group dev_string_attr_grp = {
+static const struct attribute_group dev_string_attr_grp = {
 	.attrs =	dev_string_attrs,
 	.is_visible =	dev_string_attrs_are_visible,
 };
@@ -883,17 +863,13 @@ read_descriptors(struct file *filp, struct kobject *kobj,
 		struct bin_attribute *attr,
 		char *buf, loff_t off, size_t count)
 {
-	struct device *dev = container_of(kobj, struct device, kobj);
+	struct device *dev = kobj_to_dev(kobj);
 	struct usb_device *udev = to_usb_device(dev);
 	size_t nleft = count;
 	size_t srclen, n;
 	int cfgno;
 	void *src;
-	int retval;
 
-	retval = usb_lock_device_interruptible(udev);
-	if (retval < 0)
-		return -EINTR;
 	/* The binary attribute begins with the device descriptor.
 	 * Following that are the raw descriptor entries for all the
 	 * configurations (config plus subsidiary descriptors).
@@ -918,7 +894,6 @@ read_descriptors(struct file *filp, struct kobject *kobj,
 			off -= srclen;
 		}
 	}
-	usb_unlock_device(udev);
 	return count - nleft;
 }
 
@@ -1195,14 +1170,24 @@ static ssize_t interface_authorized_store(struct device *dev,
 {
 	struct usb_interface *intf = to_usb_interface(dev);
 	bool val;
+	struct kernfs_node *kn;
 
 	if (strtobool(buf, &val) != 0)
 		return -EINVAL;
 
-	if (val)
+	if (val) {
 		usb_authorize_interface(intf);
-	else
-		usb_deauthorize_interface(intf);
+	} else {
+		/*
+		 * Prevent deadlock if another process is concurrently
+		 * trying to unregister intf.
+		 */
+		kn = sysfs_break_active_protection(&dev->kobj, &attr->attr);
+		if (kn) {
+			usb_deauthorize_interface(intf);
+			sysfs_unbreak_active_protection(kn);
+		}
+	}
 
 	return count;
 }
@@ -1222,7 +1207,7 @@ static struct attribute *intf_attrs[] = {
 	&dev_attr_interface_authorized.attr,
 	NULL,
 };
-static struct attribute_group intf_attr_grp = {
+static const struct attribute_group intf_attr_grp = {
 	.attrs = intf_attrs,
 };
 
@@ -1238,7 +1223,7 @@ static struct attribute *intf_assoc_attrs[] = {
 static umode_t intf_assoc_attrs_are_visible(struct kobject *kobj,
 		struct attribute *a, int n)
 {
-	struct device *dev = container_of(kobj, struct device, kobj);
+	struct device *dev = kobj_to_dev(kobj);
 	struct usb_interface *intf = to_usb_interface(dev);
 
 	if (intf->intf_assoc == NULL)
@@ -1246,7 +1231,7 @@ static umode_t intf_assoc_attrs_are_visible(struct kobject *kobj,
 	return a->mode;
 }
 
-static struct attribute_group intf_assoc_attr_grp = {
+static const struct attribute_group intf_assoc_attr_grp = {
 	.attrs =	intf_assoc_attrs,
 	.is_visible =	intf_assoc_attrs_are_visible,
 };
@@ -1267,8 +1252,10 @@ void usb_create_sysfs_intf_files(struct usb_interface *intf)
 
 	if (!alt->string && !(udev->quirks & USB_QUIRK_CONFIG_INTF_STRINGS))
 		alt->string = usb_cache_string(udev, alt->desc.iInterface);
-	if (alt->string && device_create_file(&intf->dev, &dev_attr_interface))
-		;	/* We don't actually care if the function fails. */
+	if (alt->string && device_create_file(&intf->dev, &dev_attr_interface)) {
+		/* This is not a serious error */
+		dev_dbg(&intf->dev, "interface string descriptor file not created\n");
+	}
 	intf->sysfs_files_created = 1;
 }
 

@@ -31,9 +31,6 @@
 
 #include "drm_crtc_internal.h"
 
-#define MAX_BLOB_PROP_SIZE	(PAGE_SIZE * 30)
-#define MAX_BLOB_PROP_COUNT	250
-
 /**
  * DOC: overview
  *
@@ -46,7 +43,7 @@
  * property types and ranges.
  *
  * Properties don't store the current value directly, but need to be
- * instatiated by attaching them to a &drm_mode_object with
+ * instantiated by attaching them to a &drm_mode_object with
  * drm_object_attach_property().
  *
  * Property values are only 64bit. To support bigger piles of data (like gamma
@@ -437,7 +434,7 @@ EXPORT_SYMBOL(drm_property_add_enum);
 /**
  * drm_property_destroy - destroy a drm property
  * @dev: drm device
- * @property: property to destry
+ * @property: property to destroy
  *
  * This function frees a property including any attached resources like
  * enumeration values.
@@ -647,7 +644,7 @@ EXPORT_SYMBOL(drm_property_blob_get);
  * @id: id of the blob property
  *
  * If successful, this takes an additional reference to the blob property.
- * callers need to make sure to eventually unreference the returned property
+ * callers need to make sure to eventually unreferenced the returned property
  * again, using drm_property_blob_put().
  *
  * Return:
@@ -790,19 +787,10 @@ int drm_mode_createblob_ioctl(struct drm_device *dev,
 			      void *data, struct drm_file *file_priv)
 {
 	struct drm_mode_create_blob *out_resp = data;
-	struct drm_property_blob *blob, *bt;
+	struct drm_property_blob *blob;
 	int ret = 0;
-	u32 count = 0;
 
 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
-		return -EOPNOTSUPP;
-
-	mutex_lock(&dev->mode_config.blob_lock);
-	list_for_each_entry(bt, &file_priv->blobs, head_file)
-		count++;
-	mutex_unlock(&dev->mode_config.blob_lock);
-
-	if (count >= MAX_BLOB_PROP_COUNT)
 		return -EOPNOTSUPP;
 
 	blob = drm_property_create_blob(dev, out_resp->length, NULL);

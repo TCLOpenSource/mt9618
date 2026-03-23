@@ -1,7 +1,0 @@
-gate_shift
-mux_shift
-mux_width
-ctrl_reg
-BIT
-reg_ckg
-reg_sw_en

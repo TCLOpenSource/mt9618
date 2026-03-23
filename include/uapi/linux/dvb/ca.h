@@ -55,7 +55,6 @@ struct ca_slot_info {
 #define CA_CI_LINK       2
 #define CA_CI_PHYS       4
 #define CA_DESCR         8
-#define CA_SCRB         16
 #define CA_SC          128
 
 	unsigned int flags;
@@ -133,12 +132,6 @@ struct ca_descr {
 	unsigned char cw[8];
 };
 
-struct ca_cis_tuples {
-	unsigned int tuple_length;
-	unsigned char tuple[257];
-};
-
-
 #define CA_RESET          _IO('o', 128)
 #define CA_GET_CAP        _IOR('o', 129, struct ca_caps)
 #define CA_GET_SLOT_INFO  _IOR('o', 130, struct ca_slot_info)
@@ -146,8 +139,6 @@ struct ca_cis_tuples {
 #define CA_GET_MSG        _IOR('o', 132, struct ca_msg)
 #define CA_SEND_MSG       _IOW('o', 133, struct ca_msg)
 #define CA_SET_DESCR      _IOW('o', 134, struct ca_descr)
-#define CA_SET_RS_FLAG    _IO('o', 160)
-#define CA_GET_CISTPL_VERS_1    _IOR('o', 161, struct ca_cis_tuples)
 
 #if !defined(__KERNEL__)
 

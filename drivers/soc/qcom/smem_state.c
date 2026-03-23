@@ -116,7 +116,8 @@ struct qcom_smem_state *qcom_smem_state_get(struct device *dev,
 
 	if (args.args_count != 1) {
 		dev_err(dev, "invalid #qcom,smem-state-cells\n");
-		return ERR_PTR(-EINVAL);
+		state = ERR_PTR(-EINVAL);
+		goto put;
 	}
 
 	state = of_node_to_state(args.np);
@@ -151,6 +152,42 @@ void qcom_smem_state_put(struct qcom_smem_state *state)
 	mutex_unlock(&list_lock);
 }
 EXPORT_SYMBOL_GPL(qcom_smem_state_put);
+
+static void devm_qcom_smem_state_release(struct device *dev, void *res)
+{
+	qcom_smem_state_put(*(struct qcom_smem_state **)res);
+}
+
+/**
+ * devm_qcom_smem_state_get() - acquire handle to a devres managed state
+ * @dev:	client device pointer
+ * @con_id:	name of the state to lookup
+ * @bit:	flags from the state reference, indicating which bit's affected
+ *
+ * Returns handle to the state, or ERR_PTR(). qcom_smem_state_put() is called
+ * automatically when @dev is removed.
+ */
+struct qcom_smem_state *devm_qcom_smem_state_get(struct device *dev,
+						 const char *con_id,
+						 unsigned *bit)
+{
+	struct qcom_smem_state **ptr, *state;
+
+	ptr = devres_alloc(devm_qcom_smem_state_release, sizeof(*ptr), GFP_KERNEL);
+	if (!ptr)
+		return ERR_PTR(-ENOMEM);
+
+	state = qcom_smem_state_get(dev, con_id, bit);
+	if (!IS_ERR(state)) {
+		*ptr = state;
+		devres_add(dev, ptr);
+	} else {
+		devres_free(ptr);
+	}
+
+	return state;
+}
+EXPORT_SYMBOL_GPL(devm_qcom_smem_state_get);
 
 /**
  * qcom_smem_state_register() - register a new state

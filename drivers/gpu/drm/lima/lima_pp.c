@@ -223,6 +223,23 @@ static void lima_pp_print_version(struct lima_ip *ip)
 		 lima_ip_name(ip), name, major, minor);
 }
 
+static int lima_pp_hw_init(struct lima_ip *ip)
+{
+	ip->data.async_reset = false;
+	lima_pp_soft_reset_async(ip);
+	return lima_pp_soft_reset_async_wait(ip);
+}
+
+int lima_pp_resume(struct lima_ip *ip)
+{
+	return lima_pp_hw_init(ip);
+}
+
+void lima_pp_suspend(struct lima_ip *ip)
+{
+
+}
+
 int lima_pp_init(struct lima_ip *ip)
 {
 	struct lima_device *dev = ip->dev;
@@ -230,9 +247,7 @@ int lima_pp_init(struct lima_ip *ip)
 
 	lima_pp_print_version(ip);
 
-	ip->data.async_reset = false;
-	lima_pp_soft_reset_async(ip);
-	err = lima_pp_soft_reset_async_wait(ip);
+	err = lima_pp_hw_init(ip);
 	if (err)
 		return err;
 
@@ -250,6 +265,20 @@ int lima_pp_init(struct lima_ip *ip)
 }
 
 void lima_pp_fini(struct lima_ip *ip)
+{
+	struct lima_device *dev = ip->dev;
+
+	devm_free_irq(dev->dev, ip->irq, ip);
+}
+
+int lima_pp_bcast_resume(struct lima_ip *ip)
+{
+	/* PP has been reset by individual PP resume */
+	ip->data.async_reset = false;
+	return 0;
+}
+
+void lima_pp_bcast_suspend(struct lima_ip *ip)
 {
 
 }
@@ -272,7 +301,9 @@ int lima_pp_bcast_init(struct lima_ip *ip)
 
 void lima_pp_bcast_fini(struct lima_ip *ip)
 {
+	struct lima_device *dev = ip->dev;
 
+	devm_free_irq(dev->dev, ip->irq, ip);
 }
 
 static int lima_pp_task_validate(struct lima_sched_pipe *pipe,
@@ -381,12 +412,29 @@ static void lima_pp_task_error(struct lima_sched_pipe *pipe)
 
 		lima_pp_hard_reset(ip);
 	}
+
+	if (pipe->bcast_processor)
+		lima_bcast_reset(pipe->bcast_processor);
 }
 
 static void lima_pp_task_mmu_error(struct lima_sched_pipe *pipe)
 {
 	if (atomic_dec_and_test(&pipe->task))
 		lima_sched_pipe_task_done(pipe);
+}
+
+static void lima_pp_task_mask_irq(struct lima_sched_pipe *pipe)
+{
+	int i;
+
+	for (i = 0; i < pipe->num_processor; i++) {
+		struct lima_ip *ip = pipe->processor[i];
+
+		pp_write(LIMA_PP_INT_MASK, 0);
+	}
+
+	if (pipe->bcast_processor)
+		lima_bcast_mask_irq(pipe->bcast_processor);
 }
 
 static struct kmem_cache *lima_pp_task_slab;
@@ -420,6 +468,7 @@ int lima_pp_pipe_init(struct lima_device *dev)
 	pipe->task_fini = lima_pp_task_fini;
 	pipe->task_error = lima_pp_task_error;
 	pipe->task_mmu_error = lima_pp_task_mmu_error;
+	pipe->task_mask_irq = lima_pp_task_mask_irq;
 
 	return 0;
 }

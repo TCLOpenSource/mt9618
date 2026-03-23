@@ -52,7 +52,7 @@
 #define DASD_ECKD_CCW_RCD		 0xFA
 #define DASD_ECKD_CCW_DSO		 0xF7
 
-/* Define Subssystem Function / Orders */
+/* Define Subsystem Function / Orders */
 #define DSO_ORDER_RAS			 0x81
 
 /*
@@ -66,8 +66,14 @@
  * Perform Subsystem Function / Sub-Orders
  */
 #define PSF_SUBORDER_QHA		 0x1C /* Query Host Access */
+#define PSF_SUBORDER_PPRCEQ		 0x50 /* PPRC Extended Query */
 #define PSF_SUBORDER_VSQ		 0x52 /* Volume Storage Query */
 #define PSF_SUBORDER_LCQ		 0x53 /* Logical Configuration Query */
+
+/*
+ * PPRC Extended Query Scopes
+ */
+#define PPRCEQ_SCOPE_4			 0x04 /* Scope 4 for PPRC Extended Query */
 
 /*
  * CUIR response condition codes
@@ -110,7 +116,7 @@
 #define DASD_ECKD_PG_GROUPED		 0x10
 
 /*
- * Size that is reportet for large volumes in the old 16-bit no_cyl field
+ * Size that is reported for large volumes in the old 16-bit no_cyl field
  */
 #define LV_COMPAT_CYL 0xFFFE
 
@@ -220,7 +226,7 @@ struct LRE_eckd_data {
 	__u8 imbedded_count;
 	__u8 extended_operation;
 	__u16 extended_parameter_length;
-	__u8 extended_parameter[0];
+	__u8 extended_parameter[];
 } __attribute__ ((packed));
 
 /* Prefix data for format 0x00 and 0x01 */
@@ -261,7 +267,7 @@ struct dasd_eckd_characteristics {
 		unsigned char reserved3:8;
 		unsigned char defect_wr:1;
 		unsigned char XRC_supported:1;
-		unsigned char reserved4:1;
+		unsigned char PPRC_enabled:1;
 		unsigned char striping:1;
 		unsigned char reserved5:4;
 		unsigned char cfw:1;
@@ -332,8 +338,10 @@ struct dasd_ned {
 	__u8 dev_type[6];
 	__u8 dev_model[3];
 	__u8 HDA_manufacturer[3];
-	__u8 HDA_location[2];
-	__u8 HDA_seqno[12];
+	struct {
+		__u8 HDA_location[2];
+		__u8 HDA_seqno[12];
+	} serial;
 	__u8 ID;
 	__u8 unit_addr;
 } __attribute__ ((packed));
@@ -555,7 +563,7 @@ struct dasd_dso_ras_ext_range {
 } __packed;
 
 /*
- * Define Subsytem Operation - Release Allocated Space
+ * Define Subsystem Operation - Release Allocated Space
  */
 struct dasd_dso_ras_data {
 	__u8 order;
@@ -676,7 +684,7 @@ struct dasd_eckd_private {
 	struct dasd_ext_pool_sum eps;
 	u32 real_cyl;
 
-	/* alias managemnet */
+	/* alias management */
 	struct dasd_uid uid;
 	struct alias_pav_group *pavgroup;
 	struct alias_lcu *lcu;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-/**
+/*
  * AMCC SoC PPC4xx Crypto Driver
  *
  * Copyright (c) 2008 Applied Micro Circuits Corporation.
@@ -30,7 +30,7 @@
 #include <crypto/aes.h>
 #include <crypto/ctr.h>
 #include <crypto/gcm.h>
-#include <crypto/sha.h>
+#include <crypto/sha1.h>
 #include <crypto/rng.h>
 #include <crypto/scatterwalk.h>
 #include <crypto/skcipher.h>
@@ -44,7 +44,7 @@
 
 #define PPC4XX_SEC_VERSION_STR			"0.5"
 
-/**
+/*
  * PPC4xx Crypto Engine Initialization Routine
  */
 static void crypto4xx_hw_init(struct crypto4xx_device *dev)
@@ -159,7 +159,7 @@ void crypto4xx_free_sa(struct crypto4xx_ctx *ctx)
 	ctx->sa_len = 0;
 }
 
-/**
+/*
  * alloc memory for the gather ring
  * no need to alloc buf for the ring
  * gdr_tail, gdr_head and gdr_count are initialized by this function
@@ -169,7 +169,7 @@ static u32 crypto4xx_build_pdr(struct crypto4xx_device *dev)
 	int i;
 	dev->pdr = dma_alloc_coherent(dev->core_dev->device,
 				      sizeof(struct ce_pd) * PPC4XX_NUM_PD,
-				      &dev->pdr_pa, GFP_ATOMIC);
+				      &dev->pdr_pa, GFP_KERNEL);
 	if (!dev->pdr)
 		return -ENOMEM;
 
@@ -185,13 +185,13 @@ static u32 crypto4xx_build_pdr(struct crypto4xx_device *dev)
 	dev->shadow_sa_pool = dma_alloc_coherent(dev->core_dev->device,
 				   sizeof(union shadow_sa_buf) * PPC4XX_NUM_PD,
 				   &dev->shadow_sa_pool_pa,
-				   GFP_ATOMIC);
+				   GFP_KERNEL);
 	if (!dev->shadow_sa_pool)
 		return -ENOMEM;
 
 	dev->shadow_sr_pool = dma_alloc_coherent(dev->core_dev->device,
 			 sizeof(struct sa_state_record) * PPC4XX_NUM_PD,
-			 &dev->shadow_sr_pool_pa, GFP_ATOMIC);
+			 &dev->shadow_sr_pool_pa, GFP_KERNEL);
 	if (!dev->shadow_sr_pool)
 		return -ENOMEM;
 	for (i = 0; i < PPC4XX_NUM_PD; i++) {
@@ -268,7 +268,7 @@ static u32 crypto4xx_put_pd_to_pdr(struct crypto4xx_device *dev, u32 idx)
 	return tail;
 }
 
-/**
+/*
  * alloc memory for the gather ring
  * no need to alloc buf for the ring
  * gdr_tail, gdr_head and gdr_count are initialized by this function
@@ -277,7 +277,7 @@ static u32 crypto4xx_build_gdr(struct crypto4xx_device *dev)
 {
 	dev->gdr = dma_alloc_coherent(dev->core_dev->device,
 				      sizeof(struct ce_gd) * PPC4XX_NUM_GD,
-				      &dev->gdr_pa, GFP_ATOMIC);
+				      &dev->gdr_pa, GFP_KERNEL);
 	if (!dev->gdr)
 		return -ENOMEM;
 
@@ -286,7 +286,8 @@ static u32 crypto4xx_build_gdr(struct crypto4xx_device *dev)
 
 static inline void crypto4xx_destroy_gdr(struct crypto4xx_device *dev)
 {
-	dma_free_coherent(dev->core_dev->device,
+	if (dev->gdr)
+		dma_free_coherent(dev->core_dev->device,
 			  sizeof(struct ce_gd) * PPC4XX_NUM_GD,
 			  dev->gdr, dev->gdr_pa);
 }
@@ -345,7 +346,7 @@ static inline struct ce_gd *crypto4xx_get_gdp(struct crypto4xx_device *dev,
 	return &dev->gdr[idx];
 }
 
-/**
+/*
  * alloc memory for the scatter ring
  * need to alloc buf for the ring
  * sdr_tail, sdr_head and sdr_count are initialized by this function
@@ -354,18 +355,18 @@ static u32 crypto4xx_build_sdr(struct crypto4xx_device *dev)
 {
 	int i;
 
-	/* alloc memory for scatter descriptor ring */
-	dev->sdr = dma_alloc_coherent(dev->core_dev->device,
-				      sizeof(struct ce_sd) * PPC4XX_NUM_SD,
-				      &dev->sdr_pa, GFP_ATOMIC);
-	if (!dev->sdr)
-		return -ENOMEM;
-
 	dev->scatter_buffer_va =
 		dma_alloc_coherent(dev->core_dev->device,
 			PPC4XX_SD_BUFFER_SIZE * PPC4XX_NUM_SD,
-			&dev->scatter_buffer_pa, GFP_ATOMIC);
+			&dev->scatter_buffer_pa, GFP_KERNEL);
 	if (!dev->scatter_buffer_va)
+		return -ENOMEM;
+
+	/* alloc memory for scatter descriptor ring */
+	dev->sdr = dma_alloc_coherent(dev->core_dev->device,
+				      sizeof(struct ce_sd) * PPC4XX_NUM_SD,
+				      &dev->sdr_pa, GFP_KERNEL);
+	if (!dev->sdr)
 		return -ENOMEM;
 
 	for (i = 0; i < PPC4XX_NUM_SD; i++) {
@@ -521,7 +522,6 @@ static void crypto4xx_cipher_done(struct crypto4xx_device *dev,
 {
 	struct skcipher_request *req;
 	struct scatterlist *dst;
-	dma_addr_t addr;
 
 	req = skcipher_request_cast(pd_uinfo->async_req);
 
@@ -530,8 +530,8 @@ static void crypto4xx_cipher_done(struct crypto4xx_device *dev,
 					  req->cryptlen, req->dst);
 	} else {
 		dst = pd_uinfo->dest_va;
-		addr = dma_map_page(dev->core_dev->device, sg_page(dst),
-				    dst->offset, dst->length, DMA_FROM_DEVICE);
+		dma_unmap_page(dev->core_dev->device, pd->dest, dst->length,
+			       DMA_FROM_DEVICE);
 	}
 
 	if (pd_uinfo->sa_va->sa_command_0.bf.save_iv == SA_SAVE_IV) {
@@ -556,10 +556,9 @@ static void crypto4xx_ahash_done(struct crypto4xx_device *dev,
 	struct ahash_request *ahash_req;
 
 	ahash_req = ahash_request_cast(pd_uinfo->async_req);
-	ctx  = crypto_tfm_ctx(ahash_req->base.tfm);
+	ctx = crypto_ahash_ctx(crypto_ahash_reqtfm(ahash_req));
 
-	crypto4xx_copy_digest_to_dst(ahash_req->result, pd_uinfo,
-				     crypto_tfm_ctx(ahash_req->base.tfm));
+	crypto4xx_copy_digest_to_dst(ahash_req->result, pd_uinfo, ctx);
 	crypto4xx_ret_sg_desc(dev, pd_uinfo);
 
 	if (pd_uinfo->state & PD_ENTRY_BUSY)
@@ -929,7 +928,7 @@ int crypto4xx_build_pd(struct crypto_async_request *req,
 	return is_busy ? -EBUSY : -EINPROGRESS;
 }
 
-/**
+/*
  * Algorithm Registration Functions
  */
 static void crypto4xx_ctx_init(struct crypto4xx_alg *amcc_alg,
@@ -1096,7 +1095,7 @@ static void crypto4xx_bh_tasklet_cb(unsigned long data)
 	} while (head != tail);
 }
 
-/**
+/*
  * Top Half of isr.
  */
 static inline irqreturn_t crypto4xx_interrupt_handler(int irq, void *data,
@@ -1185,7 +1184,7 @@ static int crypto4xx_prng_seed(struct crypto_rng *tfm, const u8 *seed,
 	return 0;
 }
 
-/**
+/*
  * Supported Crypto Algorithms
  */
 static struct crypto4xx_alg_common crypto4xx_alg[] = {
@@ -1368,7 +1367,7 @@ static struct crypto4xx_alg_common crypto4xx_alg[] = {
 	} },
 };
 
-/**
+/*
  * Module Initialization Routine
  */
 static int crypto4xx_probe(struct platform_device *ofdev)
@@ -1439,15 +1438,14 @@ static int crypto4xx_probe(struct platform_device *ofdev)
 	spin_lock_init(&core_dev->lock);
 	INIT_LIST_HEAD(&core_dev->dev->alg_list);
 	ratelimit_default_init(&core_dev->dev->aead_ratelimit);
+	rc = crypto4xx_build_sdr(core_dev->dev);
+	if (rc)
+		goto err_build_sdr;
 	rc = crypto4xx_build_pdr(core_dev->dev);
 	if (rc)
-		goto err_build_pdr;
+		goto err_build_sdr;
 
 	rc = crypto4xx_build_gdr(core_dev->dev);
-	if (rc)
-		goto err_build_pdr;
-
-	rc = crypto4xx_build_sdr(core_dev->dev);
 	if (rc)
 		goto err_build_sdr;
 
@@ -1493,7 +1491,6 @@ err_iomap:
 err_build_sdr:
 	crypto4xx_destroy_sdr(core_dev->dev);
 	crypto4xx_destroy_gdr(core_dev->dev);
-err_build_pdr:
 	crypto4xx_destroy_pdr(core_dev->dev);
 	kfree(core_dev->dev);
 err_alloc_dev:

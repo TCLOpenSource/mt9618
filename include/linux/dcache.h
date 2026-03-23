@@ -4,6 +4,7 @@
 
 #include <linux/atomic.h>
 #include <linux/list.h>
+#include <linux/math.h>
 #include <linux/rculist.h>
 #include <linux/rculist_bl.h>
 #include <linux/spinlock.h>
@@ -59,6 +60,7 @@ struct qstr {
 
 extern const struct qstr empty_name;
 extern const struct qstr slash_name;
+extern const struct qstr dotdot_name;
 
 struct dentry_stat_t {
 	long nr_dentry;
@@ -90,7 +92,7 @@ extern struct dentry_stat_t dentry_stat;
 struct dentry {
 	/* RCU lookup touched fields */
 	unsigned int d_flags;		/* protected by d_lock */
-	seqcount_t d_seq;		/* per dentry seqlock */
+	seqcount_spinlock_t d_seq;	/* per dentry seqlock */
 	struct hlist_bl_node d_hash;	/* lookup hash list */
 	struct dentry *d_parent;	/* parent directory */
 	struct qstr d_name;
@@ -151,8 +153,7 @@ struct dentry_operations {
 	struct vfsmount *(*d_automount)(struct path *);
 	int (*d_manage)(const struct path *, bool);
 	struct dentry *(*d_real)(struct dentry *, const struct inode *);
-	void (*d_canonical_path)(const struct path *, struct path *);
-
+	int (*d_canonical_path)(const struct path *, struct path *);
 	ANDROID_KABI_RESERVE(1);
 	ANDROID_KABI_RESERVE(2);
 	ANDROID_KABI_RESERVE(3);
@@ -186,6 +187,8 @@ struct dentry_operations {
       * typically using d_splice_alias. */
 
 #define DCACHE_REFERENCED		0x00000040 /* Recently used, don't discard. */
+
+#define DCACHE_DONTCACHE		0x00000080 /* Purge from memory on final dput() */
 
 #define DCACHE_CANT_MOUNT		0x00000100
 #define DCACHE_GENOCIDE			0x00000200
@@ -269,6 +272,8 @@ extern void d_tmpfile(struct dentry *, struct inode *);
 extern struct dentry *d_find_alias(struct inode *);
 extern void d_prune_aliases(struct inode *);
 
+extern struct dentry *d_find_alias_rcu(struct inode *);
+
 /* test whether we have any submounts in a subdir tree */
 extern int path_has_submounts(const struct path *);
 
@@ -305,8 +310,8 @@ char *dynamic_dname(struct dentry *, char *, int, const char *, ...);
 extern char *__d_path(const struct path *, const struct path *, char *, int);
 extern char *d_absolute_path(const struct path *, char *, int);
 extern char *d_path(const struct path *, char *, int);
-extern char *dentry_path_raw(struct dentry *, char *, int);
-extern char *dentry_path(struct dentry *, char *, int);
+extern char *dentry_path_raw(const struct dentry *, char *, int);
+extern char *dentry_path(const struct dentry *, char *, int);
 
 /* Allocation counts.. */
 
@@ -448,6 +453,11 @@ static inline bool d_is_negative(const struct dentry *dentry)
 {
 	// TODO: check d_is_whiteout(dentry) also.
 	return d_is_miss(dentry);
+}
+
+static inline bool d_flags_negative(unsigned flags)
+{
+	return (flags & DCACHE_ENTRY_TYPE) == DCACHE_MISS_TYPE;
 }
 
 static inline bool d_is_positive(const struct dentry *dentry)

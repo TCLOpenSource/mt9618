@@ -5,7 +5,6 @@
 
 #if !defined(_TRACE_HOOK_WQLOCKUP_H) || defined(TRACE_HEADER_MULTI_READ)
 #define _TRACE_HOOK_WQLOCKUP_H
-#include <linux/tracepoint.h>
 #include <trace/hooks/vendor_hooks.h>
 /*
  * Following tracepoints are not exported in tracefs and provide a
@@ -14,8 +13,6 @@
 DECLARE_HOOK(android_vh_wq_lockup_pool,
 	TP_PROTO(int cpu, unsigned long pool_ts),
 	TP_ARGS(cpu, pool_ts));
-
-/* macro versions of hooks are no longer required */
 
 #endif /* _TRACE_HOOK_WQLOCKUP_H */
 /* This part must be outside protection */

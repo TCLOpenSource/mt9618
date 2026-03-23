@@ -301,7 +301,8 @@ static ssize_t tcrit2_store(struct device *dev, struct device_attribute *attr,
 	if (ret < 0)
 		return ret;
 
-	val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, index ? 255 : 127);
+	val = DIV_ROUND_CLOSEST(clamp_val(val, 0, (index ? 255 : 127) * 1000),
+				1000);
 
 	mutex_lock(&data->update_lock);
 	data->tcrit2[index] = val;
@@ -350,7 +351,7 @@ static ssize_t tcrit1_store(struct device *dev, struct device_attribute *attr,
 	if (ret < 0)
 		return ret;
 
-	val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, 255);
+	val = DIV_ROUND_CLOSEST(clamp_val(val, 0, 255000), 1000);
 
 	mutex_lock(&data->update_lock);
 	data->tcrit1[index] = val;
@@ -391,7 +392,7 @@ static ssize_t tcrit1_hyst_store(struct device *dev,
 	if (ret < 0)
 		return ret;
 
-	val = DIV_ROUND_CLOSEST(val, 1000);
+	val = DIV_ROUND_CLOSEST(clamp_val(val, -255000, 255000), 1000);
 	val = clamp_val((int)data->tcrit1[index] - val, 0, 31);
 
 	mutex_lock(&data->update_lock);
@@ -431,7 +432,7 @@ static ssize_t offset_store(struct device *dev, struct device_attribute *attr,
 		return ret;
 
 	/* Accuracy is 1/2 degrees C */
-	val = clamp_val(DIV_ROUND_CLOSEST(val, 500), -128, 127);
+	val = DIV_ROUND_CLOSEST(clamp_val(val, -64000, 63500), 500);
 
 	mutex_lock(&data->update_lock);
 	data->toffset[index] = val;
@@ -677,8 +678,9 @@ static int lm95234_init_client(struct i2c_client *client)
 	return 0;
 }
 
-static int lm95234_probe(struct i2c_client *client,
-			 const struct i2c_device_id *id)
+static const struct i2c_device_id lm95234_id[];
+
+static int lm95234_probe(struct i2c_client *client)
 {
 	struct device *dev = &client->dev;
 	struct lm95234_data *data;
@@ -698,7 +700,7 @@ static int lm95234_probe(struct i2c_client *client,
 		return err;
 
 	data->groups[0] = &lm95234_common_group;
-	if (id->driver_data == lm95234)
+	if (i2c_match_id(lm95234_id, client)->driver_data == lm95234)
 		data->groups[1] = &lm95234_group;
 
 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
@@ -719,7 +721,7 @@ static struct i2c_driver lm95234_driver = {
 	.driver = {
 		.name	= DRVNAME,
 	},
-	.probe		= lm95234_probe,
+	.probe_new	= lm95234_probe,
 	.id_table	= lm95234_id,
 	.detect		= lm95234_detect,
 	.address_list	= normal_i2c,

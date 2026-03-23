@@ -37,9 +37,7 @@ static unsigned long adjust_error_retval(unsigned long addr, unsigned long retv)
 {
 	switch (get_injectable_error_type(addr)) {
 	case EI_ETYPE_NULL:
-		if (retv != 0)
-			return 0;
-		break;
+		return 0;
 	case EI_ETYPE_ERRNO:
 		if (retv < (unsigned long)-MAX_ERRNO)
 			return (unsigned long)-EINVAL;
@@ -48,6 +46,8 @@ static unsigned long adjust_error_retval(unsigned long addr, unsigned long retv)
 		if (retv != 0 && retv < (unsigned long)-MAX_ERRNO)
 			return (unsigned long)-EINVAL;
 		break;
+	case EI_ETYPE_TRUE:
+		return 1;
 	}
 
 	return retv;
@@ -163,10 +163,7 @@ static void fei_debugfs_add_attr(struct fei_attr *attr)
 
 static void fei_debugfs_remove_attr(struct fei_attr *attr)
 {
-	struct dentry *dir;
-
-	dir = debugfs_lookup(attr->kp.symbol_name, fei_debugfs_dir);
-	debugfs_remove_recursive(dir);
+	debugfs_lookup_and_remove(attr->kp.symbol_name, fei_debugfs_dir);
 }
 
 static int fei_kprobe_handler(struct kprobe *kp, struct pt_regs *regs)

@@ -164,7 +164,7 @@ EXPORT_SYMBOL(refcount_dec_and_lock);
  * @flags: saved IRQ-flags if the is acquired
  *
  * Same as refcount_dec_and_lock() above except that the spinlock is acquired
- * with disabled interupts.
+ * with disabled interrupts.
  *
  * Return: true and hold spinlock if able to decrement refcount to 0, false
  *         otherwise
@@ -184,32 +184,3 @@ bool refcount_dec_and_lock_irqsave(refcount_t *r, spinlock_t *lock,
 	return true;
 }
 EXPORT_SYMBOL(refcount_dec_and_lock_irqsave);
-
-/**************************************************************************/
-/*
- * Android backport use only, due to these functions going away in 5.4.208
- * Do not use these in new code, this is only for ABI preservation.
- */
-void refcount_inc_checked(refcount_t *r)
-{
-	refcount_inc(r);
-}
-EXPORT_SYMBOL(refcount_inc_checked);
-
-bool refcount_inc_not_zero_checked(refcount_t *r)
-{
-	return refcount_inc_not_zero(r);
-}
-EXPORT_SYMBOL(refcount_inc_not_zero_checked);
-
-void refcount_dec_checked(refcount_t *r)
-{
-	refcount_dec(r);
-}
-EXPORT_SYMBOL(refcount_dec_checked);
-
-bool refcount_dec_and_test_checked(refcount_t *r)
-{
-	return refcount_sub_and_test(1, r);
-}
-EXPORT_SYMBOL(refcount_dec_and_test_checked);

@@ -14,25 +14,23 @@ void afs_put_serverlist(struct afs_net *net, struct afs_server_list *slist)
 	int i;
 
 	if (slist && refcount_dec_and_test(&slist->usage)) {
-		for (i = 0; i < slist->nr_servers; i++) {
-			afs_put_cb_interest(net, slist->servers[i].cb_interest);
-			afs_put_server(net, slist->servers[i].server,
-				       afs_server_trace_put_slist);
-		}
-		kfree(slist);
+		for (i = 0; i < slist->nr_servers; i++)
+			afs_unuse_server(net, slist->servers[i].server,
+					 afs_server_trace_put_slist);
+		kfree_rcu(slist, rcu);
 	}
 }
 
 /*
  * Build a server list from a VLDB record.
  */
-struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
+struct afs_server_list *afs_alloc_server_list(struct afs_volume *volume,
 					      struct key *key,
-					      struct afs_vldb_entry *vldb,
-					      u8 type_mask)
+					      struct afs_vldb_entry *vldb)
 {
 	struct afs_server_list *slist;
 	struct afs_server *server;
+	unsigned int type_mask = 1 << volume->type;
 	int ret = -ENOMEM, nr_servers = 0, i, j;
 
 	for (i = 0; i < vldb->nr_servers; i++)
@@ -51,7 +49,8 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
 		if (!(vldb->fs_mask[i] & type_mask))
 			continue;
 
-		server = afs_lookup_server(cell, key, &vldb->fs_server[i]);
+		server = afs_lookup_server(volume->cell, key, &vldb->fs_server[i],
+					   vldb->addr_version[i]);
 		if (IS_ERR(server)) {
 			ret = PTR_ERR(server);
 			if (ret == -ENOENT ||
@@ -68,8 +67,8 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
 				break;
 		if (j < slist->nr_servers) {
 			if (slist->servers[j].server == server) {
-				afs_put_server(cell->net, server,
-					       afs_server_trace_put_slist_isort);
+				afs_unuse_server(volume->cell->net, server,
+						 afs_server_trace_put_slist_isort);
 				continue;
 			}
 
@@ -79,6 +78,7 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
 		}
 
 		slist->servers[j].server = server;
+		slist->servers[j].volume = volume;
 		slist->nr_servers++;
 	}
 
@@ -90,7 +90,7 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
 	return slist;
 
 error_2:
-	afs_put_serverlist(cell->net, slist);
+	afs_put_serverlist(volume->cell->net, slist);
 error:
 	return ERR_PTR(ret);
 }
@@ -123,31 +123,101 @@ changed:
 		}
 	}
 
-	/* Keep the old callback interest records where possible so that we
-	 * maintain callback interception.
-	 */
-	i = 0;
-	j = 0;
-	while (i < old->nr_servers && j < new->nr_servers) {
-		if (new->servers[j].server == old->servers[i].server) {
-			struct afs_cb_interest *cbi = old->servers[i].cb_interest;
-			if (cbi) {
-				new->servers[j].cb_interest = cbi;
-				refcount_inc(&cbi->usage);
-			}
-			i++;
-			j++;
-			continue;
-		}
+	return true;
+}
 
-		if (new->servers[j].server < old->servers[i].server) {
-			j++;
-			continue;
-		}
+/*
+ * Attach a volume to the servers it is going to use.
+ */
+void afs_attach_volume_to_servers(struct afs_volume *volume, struct afs_server_list *slist)
+{
+	struct afs_server_entry *se, *pe;
+	struct afs_server *server;
+	struct list_head *p;
+	unsigned int i;
 
-		i++;
-		continue;
+	spin_lock(&volume->cell->vs_lock);
+
+	for (i = 0; i < slist->nr_servers; i++) {
+		se = &slist->servers[i];
+		server = se->server;
+
+		list_for_each(p, &server->volumes) {
+			pe = list_entry(p, struct afs_server_entry, slink);
+			if (volume->vid <= pe->volume->vid)
+				break;
+		}
+		list_add_tail_rcu(&se->slink, p);
 	}
 
-	return true;
+	slist->attached = true;
+	spin_unlock(&volume->cell->vs_lock);
+}
+
+/*
+ * Reattach a volume to the servers it is going to use when server list is
+ * replaced.  We try to switch the attachment points to avoid rewalking the
+ * lists.
+ */
+void afs_reattach_volume_to_servers(struct afs_volume *volume, struct afs_server_list *new,
+				    struct afs_server_list *old)
+{
+	unsigned int n = 0, o = 0;
+
+	spin_lock(&volume->cell->vs_lock);
+
+	while (n < new->nr_servers || o < old->nr_servers) {
+		struct afs_server_entry *pn = n < new->nr_servers ? &new->servers[n] : NULL;
+		struct afs_server_entry *po = o < old->nr_servers ? &old->servers[o] : NULL;
+		struct afs_server_entry *s;
+		struct list_head *p;
+		int diff;
+
+		if (pn && po && pn->server == po->server) {
+			list_replace_rcu(&po->slink, &pn->slink);
+			n++;
+			o++;
+			continue;
+		}
+
+		if (pn && po)
+			diff = memcmp(&pn->server->uuid, &po->server->uuid,
+				      sizeof(pn->server->uuid));
+		else
+			diff = pn ? -1 : 1;
+
+		if (diff < 0) {
+			list_for_each(p, &pn->server->volumes) {
+				s = list_entry(p, struct afs_server_entry, slink);
+				if (volume->vid <= s->volume->vid)
+					break;
+			}
+			list_add_tail_rcu(&pn->slink, p);
+			n++;
+		} else {
+			list_del_rcu(&po->slink);
+			o++;
+		}
+	}
+
+	spin_unlock(&volume->cell->vs_lock);
+}
+
+/*
+ * Detach a volume from the servers it has been using.
+ */
+void afs_detach_volume_from_servers(struct afs_volume *volume, struct afs_server_list *slist)
+{
+	unsigned int i;
+
+	if (!slist->attached)
+		return;
+
+	spin_lock(&volume->cell->vs_lock);
+
+	for (i = 0; i < slist->nr_servers; i++)
+		list_del_rcu(&slist->servers[i].slink);
+
+	slist->attached = false;
+	spin_unlock(&volume->cell->vs_lock);
 }

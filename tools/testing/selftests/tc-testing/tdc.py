@@ -129,7 +129,6 @@ class PluginMgr:
             except Exception as ee:
                 print('exception {} in call to pre_case for {} plugin'.
                       format(ee, pgn_inst.__class__))
-                print('test_ordinal is {}'.format(test_ordinal))
                 print('testid is {}'.format(caseinfo['id']))
                 raise
 
@@ -713,9 +712,8 @@ def set_operation_mode(pm, parser, args, remaining):
         exit(0)
 
     if args.list:
-        if args.list:
-            list_test_cases(alltests)
-            exit(0)
+        list_test_cases(alltests)
+        exit(0)
 
     if len(alltests):
         req_plugins = pm.get_required_plugins(alltests)

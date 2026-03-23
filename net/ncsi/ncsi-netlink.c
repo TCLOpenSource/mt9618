@@ -71,8 +71,8 @@ static int ncsi_write_channel_info(struct sk_buff *skb,
 	if (nc == nc->package->preferred_channel)
 		nla_put_flag(skb, NCSI_CHANNEL_ATTR_FORCED);
 
-	nla_put_u32(skb, NCSI_CHANNEL_ATTR_VERSION_MAJOR, nc->version.version);
-	nla_put_u32(skb, NCSI_CHANNEL_ATTR_VERSION_MINOR, nc->version.alpha2);
+	nla_put_u32(skb, NCSI_CHANNEL_ATTR_VERSION_MAJOR, nc->version.major);
+	nla_put_u32(skb, NCSI_CHANNEL_ATTR_VERSION_MINOR, nc->version.minor);
 	nla_put_string(skb, NCSI_CHANNEL_ATTR_VERSION_STR, nc->version.fw_name);
 
 	vid_nest = nla_nest_start_noflag(skb, NCSI_CHANNEL_ATTR_VLAN_LIST);
@@ -720,7 +720,7 @@ static int ncsi_set_channel_mask_nl(struct sk_buff *msg,
 	return 0;
 }
 
-static const struct genl_ops ncsi_ops[] = {
+static const struct genl_small_ops ncsi_ops[] = {
 	{
 		.cmd = NCSI_CMD_PKG_INFO,
 		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
@@ -766,8 +766,8 @@ static struct genl_family ncsi_genl_family __ro_after_init = {
 	.maxattr = NCSI_ATTR_MAX,
 	.policy = ncsi_genl_policy,
 	.module = THIS_MODULE,
-	.ops = ncsi_ops,
-	.n_ops = ARRAY_SIZE(ncsi_ops),
+	.small_ops = ncsi_ops,
+	.n_small_ops = ARRAY_SIZE(ncsi_ops),
 };
 
 static int __init ncsi_init_netlink(void)

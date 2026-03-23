@@ -7,10 +7,11 @@
 #include <linux/of.h>
 #include <linux/of_address.h>
 #include <linux/io.h>
+#include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/clkdev.h>
 #include <linux/delay.h>
-#include <linux/module.h>
+
 #include "clk-mtk.h"
 
 #define REG_CON0		0
@@ -47,9 +48,6 @@ struct mtk_clk_pll {
 	void __iomem	*en_addr;
 	const struct mtk_pll_data *data;
 };
-
-bool (*mtk_fh_set_rate)(int pll_id, unsigned long dds, int postdiv) = NULL;
-EXPORT_SYMBOL(mtk_fh_set_rate);
 
 static inline struct mtk_clk_pll *to_mtk_clk_pll(struct clk_hw *hw)
 {
@@ -205,8 +203,7 @@ static int mtk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
 	u32 postdiv;
 
 	mtk_pll_calc_values(pll, &pcw, &postdiv, rate, parent_rate);
-	if (!mtk_fh_set_rate || !mtk_fh_set_rate(pll->data->id, pcw, postdiv))
-		mtk_pll_set_rate_regs(pll, pcw, postdiv);
+	mtk_pll_set_rate_regs(pll, pcw, postdiv);
 
 	return 0;
 }
@@ -243,6 +240,7 @@ static int mtk_pll_prepare(struct clk_hw *hw)
 {
 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
 	u32 r;
+	u32 div_en_mask;
 
 	r = readl(pll->pwr_addr) | CON0_PWR_ON;
 	writel(r, pll->pwr_addr);
@@ -252,13 +250,14 @@ static int mtk_pll_prepare(struct clk_hw *hw)
 	writel(r, pll->pwr_addr);
 	udelay(1);
 
-	if (pll->data->en_mask) {
-		r = readl(pll->en_addr) | pll->data->en_mask;
-		writel(r, pll->en_addr);
-	}
-
 	r = readl(pll->en_addr) | BIT(pll->data->pll_en_bit);
 	writel(r, pll->en_addr);
+
+	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
+	if (div_en_mask) {
+		r = readl(pll->base_addr + REG_CON0) | div_en_mask;
+		writel(r, pll->base_addr + REG_CON0);
+	}
 
 	__mtk_pll_tuner_enable(pll);
 
@@ -277,6 +276,7 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
 {
 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
 	u32 r;
+	u32 div_en_mask;
 
 	if (pll->data->flags & HAVE_RST_BAR) {
 		r = readl(pll->base_addr + REG_CON0);
@@ -286,13 +286,14 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
 
 	__mtk_pll_tuner_disable(pll);
 
+	div_en_mask = pll->data->en_mask & ~CON0_BASE_EN;
+	if (div_en_mask) {
+		r = readl(pll->base_addr + REG_CON0) & ~div_en_mask;
+		writel(r, pll->base_addr + REG_CON0);
+	}
+
 	r = readl(pll->en_addr) & ~BIT(pll->data->pll_en_bit);
 	writel(r, pll->en_addr);
-
-	if (pll->data->en_mask) {
-		r = readl(pll->en_addr) & ~pll->data->en_mask;
-		writel(r, pll->en_addr);
-	}
 
 	r = readl(pll->pwr_addr) | CON0_ISO_EN;
 	writel(r, pll->pwr_addr);
@@ -385,8 +386,6 @@ void mtk_clk_register_plls(struct device_node *node,
 		clk_data->clks[pll->id] = clk;
 	}
 }
-EXPORT_SYMBOL(mtk_clk_register_plls);
+EXPORT_SYMBOL_GPL(mtk_clk_register_plls);
 
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("MediaTek PLL");
-MODULE_AUTHOR("MediaTek Inc.");

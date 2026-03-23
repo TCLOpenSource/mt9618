@@ -16,7 +16,7 @@
 #include <linux/power_supply.h>
 #include <linux/errno.h>
 #include <linux/delay.h>
-#include <linux/vermagic.h>
+#include <generated/utsrelease.h>
 
 enum test_power_id {
 	TEST_AC,
@@ -27,14 +27,14 @@ enum test_power_id {
 
 static int ac_online			= 1;
 static int usb_online			= 1;
-static int battery_status		= POWER_SUPPLY_STATUS_UNKNOWN;
+static int battery_status		= POWER_SUPPLY_STATUS_DISCHARGING;
 static int battery_health		= POWER_SUPPLY_HEALTH_GOOD;
 static int battery_present		= 1; /* true */
 static int battery_technology		= POWER_SUPPLY_TECHNOLOGY_LION;
 static int battery_capacity		= 50;
 static int battery_voltage		= 3300;
-static int battery_charge_counter	= 50;
-static int battery_current		= 0;
+static int battery_charge_counter	= -1000;
+static int battery_current		= -1600;
 
 static bool module_initialized;
 
@@ -106,8 +106,6 @@ static int test_power_get_battery_property(struct power_supply *psy,
 		val->intval = battery_charge_counter;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-		val->intval = 150000;
-		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
 		val->intval = 100;
 		break;
@@ -354,9 +352,8 @@ static int param_set_ac_online(const char *key, const struct kernel_param *kp)
 
 static int param_get_ac_online(char *buffer, const struct kernel_param *kp)
 {
-	strcpy(buffer, map_get_key(map_ac_online, ac_online, "unknown"));
-	strcat(buffer, "\n");
-	return strlen(buffer);
+	return sprintf(buffer, "%s\n",
+			map_get_key(map_ac_online, ac_online, "unknown"));
 }
 
 static int param_set_usb_online(const char *key, const struct kernel_param *kp)
@@ -368,9 +365,8 @@ static int param_set_usb_online(const char *key, const struct kernel_param *kp)
 
 static int param_get_usb_online(char *buffer, const struct kernel_param *kp)
 {
-	strcpy(buffer, map_get_key(map_ac_online, usb_online, "unknown"));
-	strcat(buffer, "\n");
-	return strlen(buffer);
+	return sprintf(buffer, "%s\n",
+			map_get_key(map_ac_online, usb_online, "unknown"));
 }
 
 static int param_set_battery_status(const char *key,
@@ -383,9 +379,8 @@ static int param_set_battery_status(const char *key,
 
 static int param_get_battery_status(char *buffer, const struct kernel_param *kp)
 {
-	strcpy(buffer, map_get_key(map_status, battery_status, "unknown"));
-	strcat(buffer, "\n");
-	return strlen(buffer);
+	return sprintf(buffer, "%s\n",
+			map_get_key(map_ac_online, battery_status, "unknown"));
 }
 
 static int param_set_battery_health(const char *key,
@@ -398,9 +393,8 @@ static int param_set_battery_health(const char *key,
 
 static int param_get_battery_health(char *buffer, const struct kernel_param *kp)
 {
-	strcpy(buffer, map_get_key(map_health, battery_health, "unknown"));
-	strcat(buffer, "\n");
-	return strlen(buffer);
+	return sprintf(buffer, "%s\n",
+			map_get_key(map_ac_online, battery_health, "unknown"));
 }
 
 static int param_set_battery_present(const char *key,
@@ -414,9 +408,8 @@ static int param_set_battery_present(const char *key,
 static int param_get_battery_present(char *buffer,
 					const struct kernel_param *kp)
 {
-	strcpy(buffer, map_get_key(map_present, battery_present, "unknown"));
-	strcat(buffer, "\n");
-	return strlen(buffer);
+	return sprintf(buffer, "%s\n",
+			map_get_key(map_ac_online, battery_present, "unknown"));
 }
 
 static int param_set_battery_technology(const char *key,
@@ -431,10 +424,9 @@ static int param_set_battery_technology(const char *key,
 static int param_get_battery_technology(char *buffer,
 					const struct kernel_param *kp)
 {
-	strcpy(buffer,
-		map_get_key(map_technology, battery_technology, "unknown"));
-	strcat(buffer, "\n");
-	return strlen(buffer);
+	return sprintf(buffer, "%s\n",
+			map_get_key(map_ac_online, battery_technology,
+					"unknown"));
 }
 
 static int param_set_battery_capacity(const char *key,
@@ -597,4 +589,3 @@ MODULE_PARM_DESC(battery_current, "battery current (milliampere)");
 MODULE_DESCRIPTION("Power supply driver for testing");
 MODULE_AUTHOR("Anton Vorontsov <cbouatmailru@gmail.com>");
 MODULE_LICENSE("GPL");
-

@@ -132,7 +132,7 @@ nfs41_callback_svc(void *vrqstp)
 		} else {
 			spin_unlock_bh(&serv->sv_cb_lock);
 			if (!kthread_should_stop())
-				schedule();
+				freezable_schedule();
 			finish_wait(&serv->sv_cb_waitq, &wq);
 		}
 	}
@@ -429,6 +429,8 @@ check_gss_callback_principal(struct nfs_client *clp, struct svc_rqst *rqstp)
  */
 static int nfs_callback_authenticate(struct svc_rqst *rqstp)
 {
+	rqstp->rq_auth_stat = rpc_autherr_badcred;
+
 	switch (rqstp->rq_authop->flavour) {
 	case RPC_AUTH_NULL:
 		if (rqstp->rq_proc != CB_NULL)
@@ -439,6 +441,8 @@ static int nfs_callback_authenticate(struct svc_rqst *rqstp)
 		 if (svc_is_backchannel(rqstp))
 			return SVC_DENIED;
 	}
+
+	rqstp->rq_auth_stat = rpc_auth_ok;
 	return SVC_OK;
 }
 

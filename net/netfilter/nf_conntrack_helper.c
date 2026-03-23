@@ -212,22 +212,23 @@ EXPORT_SYMBOL_GPL(nf_ct_helper_ext_add);
 static struct nf_conntrack_helper *
 nf_ct_lookup_helper(struct nf_conn *ct, struct net *net)
 {
-	if (!net->ct.sysctl_auto_assign_helper) {
-		if (net->ct.auto_assign_helper_warned)
+	struct nf_conntrack_net *cnet = nf_ct_pernet(net);
+
+	if (!cnet->sysctl_auto_assign_helper) {
+		if (cnet->auto_assign_helper_warned)
 			return NULL;
 		if (!__nf_ct_helper_find(&ct->tuplehash[IP_CT_DIR_REPLY].tuple))
 			return NULL;
 		pr_info("nf_conntrack: default automatic helper assignment "
 			"has been turned off for security reasons and CT-based "
-			" firewall rule not found. Use the iptables CT target "
+			"firewall rule not found. Use the iptables CT target "
 			"to attach helpers instead.\n");
-		net->ct.auto_assign_helper_warned = 1;
+		cnet->auto_assign_helper_warned = true;
 		return NULL;
 	}
 
 	return __nf_ct_helper_find(&ct->tuplehash[IP_CT_DIR_REPLY].tuple);
 }
-
 
 int __nf_ct_try_assign_helper(struct nf_conn *ct, struct nf_conn *tmpl,
 			      gfp_t flags)
@@ -404,6 +405,9 @@ int nf_conntrack_helper_register(struct nf_conntrack_helper *me)
 	BUG_ON(me->expect_class_max >= NF_CT_MAX_EXPECT_CLASSES);
 	BUG_ON(strlen(me->name) > NF_CT_HELPER_NAME_LEN - 1);
 
+	if (!nf_ct_helper_hash)
+		return -ENOENT;
+
 	if (me->expect_policy->max_expected > NF_CT_EXPECT_MAX_CNT)
 		return -EINVAL;
 
@@ -555,10 +559,17 @@ static const struct nf_ct_ext_type helper_extend = {
 	.id	= NF_CT_EXT_HELPER,
 };
 
+void nf_ct_set_auto_assign_helper_warned(struct net *net)
+{
+	nf_ct_pernet(net)->auto_assign_helper_warned = true;
+}
+EXPORT_SYMBOL_GPL(nf_ct_set_auto_assign_helper_warned);
+
 void nf_conntrack_helper_pernet_init(struct net *net)
 {
-	net->ct.auto_assign_helper_warned = false;
-	net->ct.sysctl_auto_assign_helper = nf_ct_auto_assign_helper;
+	struct nf_conntrack_net *cnet = nf_ct_pernet(net);
+
+	cnet->sysctl_auto_assign_helper = nf_ct_auto_assign_helper;
 }
 
 int nf_conntrack_helper_init(void)
@@ -587,4 +598,5 @@ void nf_conntrack_helper_fini(void)
 {
 	nf_ct_extend_unregister(&helper_extend);
 	kvfree(nf_ct_helper_hash);
+	nf_ct_helper_hash = NULL;
 }

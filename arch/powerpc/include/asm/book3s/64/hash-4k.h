@@ -23,6 +23,11 @@
 #define H_KERN_MAP_SIZE		(ASM_CONST(1) << REGION_SHIFT)
 
 /*
+ * Limits the linear mapping range
+ */
+#define H_MAX_PHYSMEM_BITS	46
+
+/*
  * Define the address range of the kernel non-linear virtual area (61TB)
  */
 #define H_KERN_VIRT_START	ASM_CONST(0xc0003d0000000000)
@@ -33,11 +38,11 @@
 #define H_PUD_TABLE_SIZE	(sizeof(pud_t) << H_PUD_INDEX_SIZE)
 #define H_PGD_TABLE_SIZE	(sizeof(pgd_t) << H_PGD_INDEX_SIZE)
 
-#define H_PAGE_F_GIX_SHIFT	53
-#define H_PAGE_F_SECOND	_RPAGE_RPN44	/* HPTE is in 2ndary HPTEG */
-#define H_PAGE_F_GIX	(_RPAGE_RPN43 | _RPAGE_RPN42 | _RPAGE_RPN41)
-#define H_PAGE_BUSY	_RPAGE_RSV1     /* software: PTE & hash are busy */
-#define H_PAGE_HASHPTE	_RPAGE_RSV2     /* software: PTE & hash are busy */
+#define H_PAGE_F_GIX_SHIFT	_PAGE_PA_MAX
+#define H_PAGE_F_SECOND		_RPAGE_PKEY_BIT0 /* HPTE is in 2ndary HPTEG */
+#define H_PAGE_F_GIX		(_RPAGE_RPN43 | _RPAGE_RPN42 | _RPAGE_RPN41)
+#define H_PAGE_BUSY		_RPAGE_RSV1
+#define H_PAGE_HASHPTE		_RPAGE_PKEY_BIT4
 
 /* PTE flags to conserve for HPTE identification */
 #define _PAGE_HPTEFLAGS (H_PAGE_BUSY | H_PAGE_HASHPTE | \
@@ -56,11 +61,12 @@
 #define H_PMD_FRAG_NR	(PAGE_SIZE >> H_PMD_FRAG_SIZE_SHIFT)
 
 /* memory key bits, only 8 keys supported */
-#define H_PTE_PKEY_BIT0	0
-#define H_PTE_PKEY_BIT1	0
-#define H_PTE_PKEY_BIT2	_RPAGE_RSV3
-#define H_PTE_PKEY_BIT3	_RPAGE_RSV4
-#define H_PTE_PKEY_BIT4	_RPAGE_RSV5
+#define H_PTE_PKEY_BIT4	0
+#define H_PTE_PKEY_BIT3	0
+#define H_PTE_PKEY_BIT2	_RPAGE_PKEY_BIT3
+#define H_PTE_PKEY_BIT1	_RPAGE_PKEY_BIT2
+#define H_PTE_PKEY_BIT0	_RPAGE_PKEY_BIT1
+
 
 /*
  * On all 4K setups, remap_4k_pfn() equates to remap_pfn_range()
@@ -82,6 +88,34 @@ static inline int hash__hugepd_ok(hugepd_t hpd)
 	return false;
 }
 #endif
+
+/*
+ * With 4K page size the real_pte machinery is all nops.
+ */
+static inline real_pte_t __real_pte(pte_t pte, pte_t *ptep, int offset)
+{
+	return (real_pte_t){pte};
+}
+
+#define __rpte_to_pte(r)	((r).pte)
+
+static inline unsigned long __rpte_to_hidx(real_pte_t rpte, unsigned long index)
+{
+	return pte_val(__rpte_to_pte(rpte)) >> H_PAGE_F_GIX_SHIFT;
+}
+
+#define pte_iterate_hashed_subpages(rpte, psize, va, index, shift)       \
+	do {							         \
+		index = 0;					         \
+		shift = mmu_psize_defs[psize].shift;		         \
+
+#define pte_iterate_hashed_end() } while(0)
+
+/*
+ * We expect this to be called only for user addresses or kernel virtual
+ * addresses other than the linear mapping.
+ */
+#define pte_pagesize_index(mm, addr, pte)	MMU_PAGE_4K
 
 /*
  * 4K PTE format is different from 64K PTE format. Saving the hash_slot is just

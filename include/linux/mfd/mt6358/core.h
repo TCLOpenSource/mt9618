@@ -22,7 +22,7 @@ struct pmic_irq_data {
 	unsigned short top_int_status_reg;
 	bool *enable_hwirq;
 	bool *cache_hwirq;
-	struct irq_top_t *pmic_ints;
+	const struct irq_top_t *pmic_ints;
 };
 
 enum mt6358_irq_top_status_shift {
@@ -32,7 +32,7 @@ enum mt6358_irq_top_status_shift {
 	MT6358_SCK_TOP,
 	MT6358_BM_TOP,
 	MT6358_HK_TOP,
-	MT6358_AUD_TOP = 7,
+	MT6358_AUD_TOP,
 	MT6358_MISC_TOP,
 };
 

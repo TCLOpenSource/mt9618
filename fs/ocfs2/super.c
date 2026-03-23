@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-/* -*- mode: c; c-basic-offset: 8; -*-
- * vim: noexpandtab sw=8 ts=8 sts=0:
- *
+/*
  * super.c
  *
  * load/unload driver, mount/dismount volumes
@@ -71,6 +69,7 @@ static struct dentry *ocfs2_debugfs_root;
 
 MODULE_AUTHOR("Oracle");
 MODULE_LICENSE("GPL");
+MODULE_IMPORT_NS(ANDROID_GKI_VFS_EXPORT_ONLY);
 MODULE_DESCRIPTION("OCFS2 cluster file system");
 
 struct mount_options
@@ -220,31 +219,31 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
 	int i, out = 0;
 	unsigned long flags;
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => Id: %-s  Uuid: %-s  Gen: 0x%X  Label: %-s\n",
 			"Device", osb->dev_str, osb->uuid_str,
 			osb->fs_generation, osb->vol_label);
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => State: %d  Flags: 0x%lX\n", "Volume",
 			atomic_read(&osb->vol_state), osb->osb_flags);
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => Block: %lu  Cluster: %d\n", "Sizes",
 			osb->sb->s_blocksize, osb->s_clustersize);
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => Compat: 0x%X  Incompat: 0x%X  "
 			"ROcompat: 0x%X\n",
 			"Features", osb->s_feature_compat,
 			osb->s_feature_incompat, osb->s_feature_ro_compat);
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => Opts: 0x%lX  AtimeQuanta: %u\n", "Mount",
 			osb->s_mount_opt, osb->s_atime_quantum);
 
 	if (cconn) {
-		out += snprintf(buf + out, len - out,
+		out += scnprintf(buf + out, len - out,
 				"%10s => Stack: %s  Name: %*s  "
 				"Version: %d.%d\n", "Cluster",
 				(*osb->osb_cluster_stack == '\0' ?
@@ -255,7 +254,7 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
 	}
 
 	spin_lock_irqsave(&osb->dc_task_lock, flags);
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => Pid: %d  Count: %lu  WakeSeq: %lu  "
 			"WorkSeq: %lu\n", "DownCnvt",
 			(osb->dc_task ?  task_pid_nr(osb->dc_task) : -1),
@@ -264,32 +263,32 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
 	spin_unlock_irqrestore(&osb->dc_task_lock, flags);
 
 	spin_lock(&osb->osb_lock);
-	out += snprintf(buf + out, len - out, "%10s => Pid: %d  Nodes:",
+	out += scnprintf(buf + out, len - out, "%10s => Pid: %d  Nodes:",
 			"Recovery",
 			(osb->recovery_thread_task ?
 			 task_pid_nr(osb->recovery_thread_task) : -1));
 	if (rm->rm_used == 0)
-		out += snprintf(buf + out, len - out, " None\n");
+		out += scnprintf(buf + out, len - out, " None\n");
 	else {
 		for (i = 0; i < rm->rm_used; i++)
-			out += snprintf(buf + out, len - out, " %d",
+			out += scnprintf(buf + out, len - out, " %d",
 					rm->rm_entries[i]);
-		out += snprintf(buf + out, len - out, "\n");
+		out += scnprintf(buf + out, len - out, "\n");
 	}
 	spin_unlock(&osb->osb_lock);
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => Pid: %d  Interval: %lu\n", "Commit",
 			(osb->commit_task ? task_pid_nr(osb->commit_task) : -1),
 			osb->osb_commit_interval);
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => State: %d  TxnId: %lu  NumTxns: %d\n",
 			"Journal", osb->journal->j_state,
 			osb->journal->j_trans_id,
 			atomic_read(&osb->journal->j_num_trans));
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => GlobalAllocs: %d  LocalAllocs: %d  "
 			"SubAllocs: %d  LAWinMoves: %d  SAExtends: %d\n",
 			"Stats",
@@ -299,7 +298,7 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
 			atomic_read(&osb->alloc_stats.moves),
 			atomic_read(&osb->alloc_stats.bg_extends));
 
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => State: %u  Descriptor: %llu  Size: %u bits  "
 			"Default: %u bits\n",
 			"LocalAlloc", osb->local_alloc_state,
@@ -307,7 +306,7 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
 			osb->local_alloc_bits, osb->local_alloc_default_bits);
 
 	spin_lock(&osb->osb_lock);
-	out += snprintf(buf + out, len - out,
+	out += scnprintf(buf + out, len - out,
 			"%10s => InodeSlot: %d  StolenInodes: %d, "
 			"MetaSlot: %d  StolenMeta: %d\n", "Steal",
 			osb->s_inode_steal_slot,
@@ -316,20 +315,20 @@ static int ocfs2_osb_dump(struct ocfs2_super *osb, char *buf, int len)
 			atomic_read(&osb->s_num_meta_stolen));
 	spin_unlock(&osb->osb_lock);
 
-	out += snprintf(buf + out, len - out, "OrphanScan => ");
-	out += snprintf(buf + out, len - out, "Local: %u  Global: %u ",
+	out += scnprintf(buf + out, len - out, "OrphanScan => ");
+	out += scnprintf(buf + out, len - out, "Local: %u  Global: %u ",
 			os->os_count, os->os_seqno);
-	out += snprintf(buf + out, len - out, " Last Scan: ");
+	out += scnprintf(buf + out, len - out, " Last Scan: ");
 	if (atomic_read(&os->os_state) == ORPHAN_SCAN_INACTIVE)
-		out += snprintf(buf + out, len - out, "Disabled\n");
+		out += scnprintf(buf + out, len - out, "Disabled\n");
 	else
-		out += snprintf(buf + out, len - out, "%lu seconds ago\n",
+		out += scnprintf(buf + out, len - out, "%lu seconds ago\n",
 				(unsigned long)(ktime_get_seconds() - os->os_scantime));
 
-	out += snprintf(buf + out, len - out, "%10s => %3s  %10s\n",
+	out += scnprintf(buf + out, len - out, "%10s => %3s  %10s\n",
 			"Slots", "Num", "RecoGen");
 	for (i = 0; i < osb->max_slots; ++i) {
-		out += snprintf(buf + out, len - out,
+		out += scnprintf(buf + out, len - out,
 				"%10s  %c %3d  %10d\n",
 				" ",
 				(i == osb->slot_num ? '*' : ' '),
@@ -926,8 +925,8 @@ static int ocfs2_enable_quotas(struct ocfs2_super *osb)
 			status = -ENOENT;
 			goto out_quota_off;
 		}
-		status = dquot_enable(inode[type], type, QFMT_OCFS2,
-				      DQUOT_USAGE_ENABLED);
+		status = dquot_load_quota_inode(inode[type], type, QFMT_OCFS2,
+						DQUOT_USAGE_ENABLED);
 		if (status < 0)
 			goto out_quota_off;
 	}
@@ -955,16 +954,16 @@ static void ocfs2_disable_quotas(struct ocfs2_super *osb)
 	for (type = 0; type < OCFS2_MAXQUOTAS; type++) {
 		if (!sb_has_quota_loaded(sb, type))
 			continue;
-		oinfo = sb_dqinfo(sb, type)->dqi_priv;
-		cancel_delayed_work_sync(&oinfo->dqi_sync_work);
+		if (!sb_has_quota_suspended(sb, type)) {
+			oinfo = sb_dqinfo(sb, type)->dqi_priv;
+			cancel_delayed_work_sync(&oinfo->dqi_sync_work);
+		}
 		inode = igrab(sb->s_dquot.files[type]);
 		/* Turn off quotas. This will remove all dquot structures from
 		 * memory and so they will be automatically synced to global
 		 * quota files */
 		dquot_disable(sb, type, DQUOT_USAGE_ENABLED |
 					DQUOT_LIMITS_ENABLED);
-		if (!inode)
-			continue;
 		iput(inode);
 	}
 }
@@ -2327,6 +2326,7 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
 			       struct ocfs2_blockcheck_stats *stats)
 {
 	int status = -EAGAIN;
+	u32 blksz_bits;
 
 	if (memcmp(di->i_signature, OCFS2_SUPER_BLOCK_SIGNATURE,
 		   strlen(OCFS2_SUPER_BLOCK_SIGNATURE)) == 0) {
@@ -2341,11 +2341,15 @@ static int ocfs2_verify_volume(struct ocfs2_dinode *di,
 				goto out;
 		}
 		status = -EINVAL;
-		if ((1 << le32_to_cpu(di->id2.i_super.s_blocksize_bits)) != blksz) {
+		/* Acceptable block sizes are 512 bytes, 1K, 2K and 4K. */
+		blksz_bits = le32_to_cpu(di->id2.i_super.s_blocksize_bits);
+		if (blksz_bits < 9 || blksz_bits > 12) {
 			mlog(ML_ERROR, "found superblock with incorrect block "
-			     "size: found %u, should be %u\n",
-			     1 << le32_to_cpu(di->id2.i_super.s_blocksize_bits),
-			       blksz);
+			     "size bits: found %u, should be 9, 10, 11, or 12\n",
+			     blksz_bits);
+		} else if ((1 << blksz_bits) != blksz) {
+			mlog(ML_ERROR, "found superblock with incorrect block "
+			     "size: found %u, should be %u\n", 1 << blksz_bits, blksz);
 		} else if (le16_to_cpu(di->id2.i_super.s_major_rev_level) !=
 			   OCFS2_MAJOR_REV_LEVEL ||
 			   le16_to_cpu(di->id2.i_super.s_minor_rev_level) !=

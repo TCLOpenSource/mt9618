@@ -145,11 +145,20 @@ static int btsdio_rx_packet(struct btsdio_data *data)
 
 	data->hdev->stat.byte_rx += len;
 
-	hci_skb_pkt_type(skb) = hdr[3];
-
-	err = hci_recv_frame(data->hdev, skb);
-	if (err < 0)
-		return err;
+	switch (hdr[3]) {
+	case HCI_EVENT_PKT:
+	case HCI_ACLDATA_PKT:
+	case HCI_SCODATA_PKT:
+	case HCI_ISODATA_PKT:
+		hci_skb_pkt_type(skb) = hdr[3];
+		err = hci_recv_frame(data->hdev, skb);
+		if (err < 0)
+			return err;
+		break;
+	default:
+		kfree_skb(skb);
+		return -EINVAL;
+	}
 
 	sdio_writeb(data->func, 0x00, REG_PC_RRT, NULL);
 
@@ -346,6 +355,7 @@ static void btsdio_remove(struct sdio_func *func)
 	if (!data)
 		return;
 
+	cancel_work_sync(&data->work);
 	hdev = data->hdev;
 
 	sdio_set_drvdata(func, NULL);

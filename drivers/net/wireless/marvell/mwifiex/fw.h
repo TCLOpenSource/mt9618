@@ -1,10 +1,10 @@
 /*
- * Marvell Wireless LAN device driver: Firmware specific macros & structures
+ * NXP Wireless LAN device driver: Firmware specific macros & structures
  *
- * Copyright (C) 2011-2014, Marvell International Ltd.
+ * Copyright 2011-2020 NXP
  *
- * This software file (the "File") is distributed by Marvell International
- * Ltd. under the terms of the GNU General Public License Version 2, June 1991
+ * This software file (the "File") is distributed by NXP
+ * under the terms of the GNU General Public License Version 2, June 1991
  * (the "License").  You may use, redistribute and/or modify this File in
  * accordance with the terms and conditions of the License, a copy of which
  * is available by writing to the Free Software Foundation, Inc.,
@@ -177,6 +177,7 @@ enum MWIFIEX_802_11_PRIVACY_FILTER {
 #define TLV_TYPE_STA_MAC_ADDR       (PROPRIETARY_TLV_BASE_ID + 32)
 #define TLV_TYPE_BSSID              (PROPRIETARY_TLV_BASE_ID + 35)
 #define TLV_TYPE_CHANNELBANDLIST    (PROPRIETARY_TLV_BASE_ID + 42)
+#define TLV_TYPE_UAP_MAC_ADDRESS    (PROPRIETARY_TLV_BASE_ID + 43)
 #define TLV_TYPE_UAP_BEACON_PERIOD  (PROPRIETARY_TLV_BASE_ID + 44)
 #define TLV_TYPE_UAP_DTIM_PERIOD    (PROPRIETARY_TLV_BASE_ID + 45)
 #define TLV_TYPE_UAP_BCAST_SSID     (PROPRIETARY_TLV_BASE_ID + 48)
@@ -220,6 +221,7 @@ enum MWIFIEX_802_11_PRIVACY_FILTER {
 #define TLV_TYPE_BSS_MODE           (PROPRIETARY_TLV_BASE_ID + 206)
 #define TLV_TYPE_RANDOM_MAC         (PROPRIETARY_TLV_BASE_ID + 236)
 #define TLV_TYPE_CHAN_ATTR_CFG      (PROPRIETARY_TLV_BASE_ID + 237)
+#define TLV_TYPE_MAX_CONN           (PROPRIETARY_TLV_BASE_ID + 279)
 
 #define MWIFIEX_TX_DATA_BUF_SIZE_2K        2048
 
@@ -846,13 +848,13 @@ struct mwifiex_ie_types_random_mac {
 
 struct mwifiex_ietypes_chanstats {
 	struct mwifiex_ie_types_header header;
-	struct mwifiex_fw_chan_stats chanstats[0];
+	struct mwifiex_fw_chan_stats chanstats[];
 } __packed;
 
 struct mwifiex_ie_types_wildcard_ssid_params {
 	struct mwifiex_ie_types_header header;
 	u8 max_ssid_length;
-	u8 ssid[1];
+	u8 ssid[];
 } __packed;
 
 #define TSF_DATA_SIZE            8
@@ -994,6 +996,11 @@ struct host_cmd_ds_802_11_key_material {
 	struct mwifiex_ie_type_key_param_set key_param_set;
 } __packed;
 
+struct host_cmd_ds_802_11_key_material_wep {
+	__le16 action;
+	struct mwifiex_ie_type_key_param_set key_param_set[NUM_WEP_KEYS];
+} __packed;
+
 struct host_cmd_ds_gen {
 	__le16 command;
 	__le16 size;
@@ -1052,6 +1059,8 @@ struct host_cmd_ds_802_11_ps_mode_enh {
 enum API_VER_ID {
 	KEY_API_VER_ID = 1,
 	FW_API_VER_ID = 2,
+	UAP_FW_API_VER_ID = 3,
+	CHANRPT_API_VER_ID = 4,
 };
 
 struct hw_spec_api_rev {
@@ -1082,7 +1091,7 @@ struct host_cmd_ds_get_hw_spec {
 	__le32 reserved_6;
 	__le32 dot_11ac_dev_cap;
 	__le32 dot_11ac_mcs_support;
-	u8 tlvs[0];
+	u8 tlvs[];
 } __packed;
 
 struct host_cmd_ds_802_11_rssi_info {
@@ -1140,7 +1149,7 @@ struct ieee_types_assoc_rsp {
 	__le16 cap_info_bitmap;
 	__le16 status_code;
 	__le16 a_id;
-	u8 ie_buffer[0];
+	u8 ie_buffer[];
 } __packed;
 
 struct host_cmd_ds_802_11_associate_rsp {
@@ -1455,7 +1464,7 @@ struct host_cmd_ds_chan_rpt_event {
 	__le32 result;
 	__le64 start_tsf;
 	__le32 duration;
-	u8 tlvbuf[0];
+	u8 tlvbuf[];
 } __packed;
 
 struct host_cmd_sdio_sp_rx_aggr_cfg {
@@ -1589,7 +1598,7 @@ struct host_cmd_ds_802_11_scan_rsp {
 
 struct host_cmd_ds_802_11_scan_ext {
 	u32   reserved;
-	u8    tlv_buffer[1];
+	u8    tlv_buffer[];
 } __packed;
 
 struct mwifiex_ie_types_bss_mode {
@@ -1625,7 +1634,7 @@ struct host_cmd_ds_802_11_bg_scan_config {
 	__le32 reserved2;
 	__le32 report_condition;
 	__le16 reserved3;
-	u8 tlv[0];
+	u8 tlv[];
 } __packed;
 
 struct host_cmd_ds_802_11_bg_scan_query {
@@ -1720,7 +1729,7 @@ struct mwifiex_ie_types_sta_info {
 
 struct host_cmd_ds_sta_list {
 	__le16 sta_count;
-	u8 tlv[0];
+	u8 tlv[];
 } __packed;
 
 struct mwifiex_ie_types_pwr_capability {
@@ -1743,7 +1752,7 @@ struct mwifiex_ie_types_wmm_param_set {
 struct mwifiex_ie_types_mgmt_frame {
 	struct mwifiex_ie_types_header header;
 	__le16 frame_control;
-	u8 frame_contents[0];
+	u8 frame_contents[];
 };
 
 struct mwifiex_ie_types_wmm_queue_status {
@@ -1861,7 +1870,7 @@ struct mwifiex_ie_types_2040bssco {
 
 struct mwifiex_ie_types_extcap {
 	struct mwifiex_ie_types_header header;
-	u8 ext_capab[0];
+	u8 ext_capab[];
 } __packed;
 
 struct host_cmd_ds_mem_access {
@@ -1918,12 +1927,12 @@ struct mwifiex_assoc_event {
 	__le16 frame_control;
 	__le16 cap_info;
 	__le16 listen_interval;
-	u8 data[0];
+	u8 data[];
 } __packed;
 
 struct host_cmd_ds_sys_config {
 	__le16 action;
-	u8 tlv[0];
+	u8 tlv[];
 };
 
 struct host_cmd_11ac_vht_cfg {
@@ -1956,7 +1965,7 @@ struct host_cmd_tlv_gwk_cipher {
 
 struct host_cmd_tlv_passphrase {
 	struct mwifiex_ie_types_header header;
-	u8 passphrase[0];
+	u8 passphrase[];
 } __packed;
 
 struct host_cmd_tlv_wep_key {
@@ -1978,12 +1987,12 @@ struct host_cmd_tlv_encrypt_protocol {
 
 struct host_cmd_tlv_ssid {
 	struct mwifiex_ie_types_header header;
-	u8 ssid[0];
+	u8 ssid[];
 } __packed;
 
 struct host_cmd_tlv_rates {
 	struct mwifiex_ie_types_header header;
-	u8 rates[0];
+	u8 rates[];
 } __packed;
 
 struct mwifiex_ie_types_bssid_list {
@@ -2100,13 +2109,13 @@ struct mwifiex_fw_mef_entry {
 	u8 mode;
 	u8 action;
 	__le16 exprsize;
-	u8 expr[0];
+	u8 expr[];
 } __packed;
 
 struct host_cmd_ds_mef_cfg {
 	__le32 criteria;
 	__le16 num_entries;
-	struct mwifiex_fw_mef_entry mef_entry[0];
+	struct mwifiex_fw_mef_entry mef_entry[];
 } __packed;
 
 #define CONNECTION_TYPE_INFRA   0
@@ -2169,7 +2178,7 @@ struct mwifiex_radar_det_event {
 struct mwifiex_ie_types_multi_chan_info {
 	struct mwifiex_ie_types_header header;
 	__le16 status;
-	u8 tlv_buffer[0];
+	u8 tlv_buffer[];
 } __packed;
 
 struct mwifiex_ie_types_mc_group_info {
@@ -2185,7 +2194,7 @@ struct mwifiex_ie_types_mc_group_info {
 		u8 usb_ep_num;
 	} hid_num;
 	u8 intf_num;
-	u8 bss_type_numlist[0];
+	u8 bss_type_numlist[];
 } __packed;
 
 struct meas_rpt_map {
@@ -2250,13 +2259,13 @@ struct coalesce_receive_filt_rule {
 	u8 num_of_fields;
 	u8 pkt_type;
 	__le16 max_coalescing_delay;
-	struct coalesce_filt_field_param params[0];
+	struct coalesce_filt_field_param params[];
 } __packed;
 
 struct host_cmd_ds_coalesce_cfg {
 	__le16 action;
 	__le16 num_of_rules;
-	struct coalesce_receive_filt_rule rule[0];
+	struct coalesce_receive_filt_rule rule[];
 } __packed;
 
 struct host_cmd_ds_multi_chan_policy {
@@ -2295,7 +2304,7 @@ struct host_cmd_ds_pkt_aggr_ctrl {
 
 struct host_cmd_ds_sta_configure {
 	__le16 action;
-	u8 tlv_buffer[0];
+	u8 tlv_buffer[];
 } __packed;
 
 struct host_cmd_ds_command {
@@ -2344,6 +2353,7 @@ struct host_cmd_ds_command {
 		struct host_cmd_ds_wmm_get_status get_wmm_status;
 		struct host_cmd_ds_802_11_key_material key_material;
 		struct host_cmd_ds_802_11_key_material_v2 key_material_v2;
+		struct host_cmd_ds_802_11_key_material_wep key_material_wep;
 		struct host_cmd_ds_version_ext verext;
 		struct host_cmd_ds_mgmt_frame_reg reg_mask;
 		struct host_cmd_ds_remain_on_chan roc_cfg;
@@ -2386,4 +2396,11 @@ struct mwifiex_opt_sleep_confirm {
 	__le16 action;
 	__le16 resp_ctrl;
 } __packed;
+
+struct hw_spec_max_conn {
+	struct mwifiex_ie_types_header header;
+	u8 max_p2p_conn;
+	u8 max_sta_conn;
+} __packed;
+
 #endif /* !_MWIFIEX_FW_H_ */

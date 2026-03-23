@@ -24,9 +24,12 @@
 #include <linux/random.h>
 #include <linux/sched.h>
 #include <linux/slab.h>
+#include <linux/string.h>
 #include <linux/uaccess.h>
 
 #define RNG_MODULE_NAME		"hw_random"
+
+#define RNG_BUFFER_SIZE (SMP_CACHE_BYTES < 32 ? 32 : SMP_CACHE_BYTES)
 
 static struct hwrng *current_rng;
 /* the current rng has been explicitly chosen by user via sysfs */
@@ -59,7 +62,7 @@ static inline int rng_get_data(struct hwrng *rng, u8 *buffer, size_t size,
 
 static size_t rng_buffer_size(void)
 {
-	return SMP_CACHE_BYTES < 32 ? 32 : SMP_CACHE_BYTES;
+	return RNG_BUFFER_SIZE;
 }
 
 static void add_early_randomness(struct hwrng *rng)
@@ -112,6 +115,14 @@ static void drop_current_rng(void)
 }
 
 /* Returns ERR_PTR(), NULL or refcounted hwrng */
+static struct hwrng *get_current_rng_nolock(void)
+{
+	if (current_rng)
+		kref_get(&current_rng->ref);
+
+	return current_rng;
+}
+
 static struct hwrng *get_current_rng(void)
 {
 	struct hwrng *rng;
@@ -119,9 +130,7 @@ static struct hwrng *get_current_rng(void)
 	if (mutex_lock_interruptible(&rng_mutex))
 		return ERR_PTR(-ERESTARTSYS);
 
-	rng = current_rng;
-	if (rng)
-		kref_get(&rng->ref);
+	rng = get_current_rng_nolock();
 
 	mutex_unlock(&rng_mutex);
 	return rng;
@@ -156,8 +165,6 @@ static int hwrng_init(struct hwrng *rng)
 	reinit_completion(&rng->cleanup_done);
 
 skip_init:
-	add_early_randomness(rng);
-
 	current_quality = rng->quality ? : default_quality;
 	if (current_quality > 1024)
 		current_quality = 1024;
@@ -202,6 +209,7 @@ static inline int rng_get_data(struct hwrng *rng, u8 *buffer, size_t size,
 static ssize_t rng_dev_read(struct file *filp, char __user *buf,
 			    size_t size, loff_t *offp)
 {
+	u8 buffer[RNG_BUFFER_SIZE];
 	ssize_t ret = 0;
 	int err = 0;
 	int bytes_read, len;
@@ -229,34 +237,37 @@ static ssize_t rng_dev_read(struct file *filp, char __user *buf,
 			if (bytes_read < 0) {
 				err = bytes_read;
 				goto out_unlock_reading;
-			}
-			data_avail = bytes_read;
-		}
-
-		if (!data_avail) {
-			if (filp->f_flags & O_NONBLOCK) {
+			} else if (bytes_read == 0 &&
+				   (filp->f_flags & O_NONBLOCK)) {
 				err = -EAGAIN;
 				goto out_unlock_reading;
 			}
-		} else {
-			len = data_avail;
+
+			data_avail = bytes_read;
+		}
+
+		len = data_avail;
+		if (len) {
 			if (len > size)
 				len = size;
 
 			data_avail -= len;
 
-			if (copy_to_user(buf + ret, rng_buffer + data_avail,
-								len)) {
+			memcpy(buffer, rng_buffer + data_avail, len);
+		}
+		mutex_unlock(&reading_mutex);
+		put_rng(rng);
+
+		if (len) {
+			if (copy_to_user(buf + ret, buffer, len)) {
 				err = -EFAULT;
-				goto out_unlock_reading;
+				goto out;
 			}
 
 			size -= len;
 			ret += len;
 		}
 
-		mutex_unlock(&reading_mutex);
-		put_rng(rng);
 
 		if (need_resched())
 			schedule_timeout_interruptible(1);
@@ -267,6 +278,7 @@ static ssize_t rng_dev_read(struct file *filp, char __user *buf,
 		}
 	}
 out:
+	memzero_explicit(buffer, sizeof(buffer));
 	return ret ? : err;
 
 out_unlock_reading:
@@ -316,17 +328,18 @@ static int enable_best_rng(void)
 	return ret;
 }
 
-static ssize_t hwrng_attr_current_store(struct device *dev,
-					struct device_attribute *attr,
-					const char *buf, size_t len)
+static ssize_t rng_current_store(struct device *dev,
+				 struct device_attribute *attr,
+				 const char *buf, size_t len)
 {
-	int err = -ENODEV;
-	struct hwrng *rng;
+	int err;
+	struct hwrng *rng, *old_rng, *new_rng;
 
 	err = mutex_lock_interruptible(&rng_mutex);
 	if (err)
 		return -ERESTARTSYS;
 
+	old_rng = current_rng;
 	if (sysfs_streq(buf, "")) {
 		err = enable_best_rng();
 	} else {
@@ -338,15 +351,21 @@ static ssize_t hwrng_attr_current_store(struct device *dev,
 			}
 		}
 	}
-
+	new_rng = get_current_rng_nolock();
 	mutex_unlock(&rng_mutex);
+
+	if (new_rng) {
+		if (new_rng != old_rng)
+			add_early_randomness(new_rng);
+		put_rng(new_rng);
+	}
 
 	return err ? : len;
 }
 
-static ssize_t hwrng_attr_current_show(struct device *dev,
-				       struct device_attribute *attr,
-				       char *buf)
+static ssize_t rng_current_show(struct device *dev,
+				struct device_attribute *attr,
+				char *buf)
 {
 	ssize_t ret;
 	struct hwrng *rng;
@@ -361,9 +380,9 @@ static ssize_t hwrng_attr_current_show(struct device *dev,
 	return ret;
 }
 
-static ssize_t hwrng_attr_available_show(struct device *dev,
-					 struct device_attribute *attr,
-					 char *buf)
+static ssize_t rng_available_show(struct device *dev,
+				  struct device_attribute *attr,
+				  char *buf)
 {
 	int err;
 	struct hwrng *rng;
@@ -382,22 +401,16 @@ static ssize_t hwrng_attr_available_show(struct device *dev,
 	return strlen(buf);
 }
 
-static ssize_t hwrng_attr_selected_show(struct device *dev,
-					struct device_attribute *attr,
-					char *buf)
+static ssize_t rng_selected_show(struct device *dev,
+				 struct device_attribute *attr,
+				 char *buf)
 {
-	return snprintf(buf, PAGE_SIZE, "%d\n", cur_rng_set_by_user);
+	return sysfs_emit(buf, "%d\n", cur_rng_set_by_user);
 }
 
-static DEVICE_ATTR(rng_current, S_IRUGO | S_IWUSR,
-		   hwrng_attr_current_show,
-		   hwrng_attr_current_store);
-static DEVICE_ATTR(rng_available, S_IRUGO,
-		   hwrng_attr_available_show,
-		   NULL);
-static DEVICE_ATTR(rng_selected, S_IRUGO,
-		   hwrng_attr_selected_show,
-		   NULL);
+static DEVICE_ATTR_RW(rng_current);
+static DEVICE_ATTR_RO(rng_available);
+static DEVICE_ATTR_RO(rng_selected);
 
 static struct attribute *rng_dev_attrs[] = {
 	&dev_attr_rng_current.attr,
@@ -458,13 +471,15 @@ static void start_khwrngd(void)
 int hwrng_register(struct hwrng *rng)
 {
 	int err = -EINVAL;
-	struct hwrng *old_rng, *tmp;
+	struct hwrng *tmp;
 	struct list_head *rng_list_ptr;
+	bool is_new_current = false;
 
 	if (!rng->name || (!rng->data_read && !rng->read))
 		goto out;
 
 	mutex_lock(&rng_mutex);
+
 	/* Must not register two RNGs with the same name. */
 	err = -EEXIST;
 	list_for_each_entry(tmp, &rng_list, list) {
@@ -483,10 +498,8 @@ int hwrng_register(struct hwrng *rng)
 	}
 	list_add_tail(&rng->list, rng_list_ptr);
 
-	old_rng = current_rng;
-	err = 0;
-	if (!old_rng ||
-	    (!cur_rng_set_by_user && rng->quality > old_rng->quality)) {
+	if (!current_rng ||
+	    (!cur_rng_set_by_user && rng->quality > current_rng->quality)) {
 		/*
 		 * Set new rng as current as the new rng source
 		 * provides better entropy quality and was not
@@ -495,19 +508,26 @@ int hwrng_register(struct hwrng *rng)
 		err = set_current_rng(rng);
 		if (err)
 			goto out_unlock;
+		/* to use current_rng in add_early_randomness() we need
+		 * to take a ref
+		 */
+		is_new_current = true;
+		kref_get(&rng->ref);
 	}
-
-	if (old_rng && !rng->init) {
+	mutex_unlock(&rng_mutex);
+	if (is_new_current || !rng->init) {
 		/*
 		 * Use a new device's input to add some randomness to
 		 * the system.  If this rng device isn't going to be
 		 * used right away, its init function hasn't been
-		 * called yet; so only use the randomness from devices
-		 * that don't need an init callback.
+		 * called yet by set_current_rng(); so only use the
+		 * randomness from devices that don't need an init callback
 		 */
 		add_early_randomness(rng);
 	}
-
+	if (is_new_current)
+		put_rng(rng);
+	return 0;
 out_unlock:
 	mutex_unlock(&rng_mutex);
 out:
@@ -517,10 +537,12 @@ EXPORT_SYMBOL_GPL(hwrng_register);
 
 void hwrng_unregister(struct hwrng *rng)
 {
+	struct hwrng *old_rng, *new_rng;
 	int err;
 
 	mutex_lock(&rng_mutex);
 
+	old_rng = current_rng;
 	list_del(&rng->list);
 	if (current_rng == rng) {
 		err = enable_best_rng();
@@ -530,12 +552,19 @@ void hwrng_unregister(struct hwrng *rng)
 		}
 	}
 
+	new_rng = get_current_rng_nolock();
 	if (list_empty(&rng_list)) {
 		mutex_unlock(&rng_mutex);
 		if (hwrng_fill)
 			kthread_stop(hwrng_fill);
 	} else
 		mutex_unlock(&rng_mutex);
+
+	if (new_rng) {
+		if (old_rng != new_rng)
+			add_early_randomness(new_rng);
+		put_rng(new_rng);
+	}
 
 	wait_for_completion(&rng->cleanup_done);
 }
@@ -585,7 +614,7 @@ EXPORT_SYMBOL_GPL(devm_hwrng_unregister);
 
 static int __init hwrng_modinit(void)
 {
-	int ret = -ENOMEM;
+	int ret;
 
 	/* kmalloc makes this safe for virt_to_page() in virtio_rng.c */
 	rng_buffer = kmalloc(rng_buffer_size(), GFP_KERNEL);

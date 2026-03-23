@@ -23,6 +23,7 @@
 #include <linux/poll.h>
 #include <linux/semaphore.h>
 #include <linux/module.h>
+#include <linux/nospec.h>
 #include <linux/list.h>
 #include <linux/freezer.h>
 #include <linux/jiffies.h>
@@ -41,17 +42,6 @@ static int dvb_force_auto_inversion;
 static int dvb_override_tune_delay;
 static int dvb_powerdown_on_sleep = 1;
 static int dvb_mfe_wait_time = 5;
-
-#if CONFIG_MEDIATEK_DVB
-// DVB_FE_DRIVER_ATSC30 start
-#define DVB_AVAILABLE_PLD_ID_NUM 4
-#define DVB_VALID_PLP_ID 0xFFFF0F01FFFF80F0
-#define DVB_LLS_FLAGS 0xF0F00F01F0F080F0
-static u32 dvb_plb_ber[4] = {1, 1, 1, 1};
-u8 dvb_plp_lock_target_global[] = {0xFF, 0xFF, 0xFF, 0xFF};
-fe_status_t dvb_plp_lock_status_global[] = {0, 0, 0, 0};
-// DVB_FE_DRIVER_ATSC30 end
-#endif
 
 module_param_named(frontend_debug, dvb_frontend_debug, int, 0644);
 MODULE_PARM_DESC(frontend_debug, "Turn on/off frontend core debugging (default:off).");
@@ -146,7 +136,7 @@ static void __dvb_frontend_free(struct dvb_frontend *fe)
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
 
 	if (fepriv)
-		dvb_free_device(fepriv->dvbdev);
+		dvb_device_put(fepriv->dvbdev);
 
 	dvb_frontend_invoke_release(fe, fe->ops.release);
 
@@ -219,17 +209,11 @@ static enum dvbv3_emulation_type dvbv3_type(u32 delivery_system)
 	case SYS_TURBO:
 	case SYS_ISDBS:
 	case SYS_DSS:
-#if CONFIG_MEDIATEK_DVB
-	case SYS_ISDBS3:
-#endif
 		return DVBV3_QPSK;
 	case SYS_DVBT:
 	case SYS_DVBT2:
 	case SYS_ISDBT:
 	case SYS_DTMB:
-#if CONFIG_MEDIATEK_DVB
-	case SYS_ATSC30:
-#endif
 		return DVBV3_OFDM;
 	case SYS_ATSC:
 	case SYS_ATSCMH:
@@ -247,10 +231,6 @@ static enum dvbv3_emulation_type dvbv3_type(u32 delivery_system)
 		 * to handle them, or they're not compatible with a DVBv3 call.
 		 */
 		return DVBV3_UNKNOWN;
-#if CONFIG_MEDIATEK_DVB
-	case SYS_ANALOG:
-		return DVBV3_UNKNOWN;
-#endif
 	}
 }
 
@@ -313,20 +293,28 @@ static int dvb_frontend_get_event(struct dvb_frontend *fe,
 	}
 
 	if (events->eventw == events->eventr) {
-		int ret;
+		struct wait_queue_entry wait;
+		int ret = 0;
 
 		if (flags & O_NONBLOCK)
 			return -EWOULDBLOCK;
 
-		ret = wait_event_interruptible(events->wait_queue,
-					       dvb_frontend_test_event(fepriv, events));
-
+		init_waitqueue_entry(&wait, current);
+		add_wait_queue(&events->wait_queue, &wait);
+		while (!dvb_frontend_test_event(fepriv, events)) {
+			wait_woken(&wait, TASK_INTERRUPTIBLE, 0);
+			if (signal_pending(current)) {
+				ret = -ERESTARTSYS;
+				break;
+			}
+		}
+		remove_wait_queue(&events->wait_queue, &wait);
 		if (ret < 0)
 			return ret;
 	}
 
 	mutex_lock(&events->mtx);
-	*event = events->events[(unsigned int)(events->eventr)];
+	*event = events->events[events->eventr];
 	events->eventr = (events->eventr + 1) % MAX_EVENT;
 	mutex_unlock(&events->mtx);
 
@@ -408,19 +396,8 @@ static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wra
 	u32 original_frequency = c->frequency;
 
 	/* are we using autoinversion? */
-
 	autoinversion = ((!(fe->ops.info.caps & FE_CAN_INVERSION_AUTO)) &&
 			 (c->inversion == INVERSION_AUTO));
-/*
-autoinversion = 0;
-fepriv->step_size = 1*1000000;
-fepriv->max_drift = 1*1000000 + 1000;
-*/
-
- pr_info("[%s][%d], ckang autoinversion is %d\n", __func__, __LINE__, autoinversion);
- pr_info("[%s][%d], ckang step_size is %d\n", __func__, __LINE__, fepriv->step_size);
- pr_info("[%s][%d], ckang max_drift is %d\n", __func__, __LINE__, fepriv->max_drift);
-
 
 	/* setup parameters correctly */
 	while (!ready) {
@@ -466,8 +443,8 @@ fepriv->max_drift = 1*1000000 + 1000;
 
 		default:
 			fepriv->auto_step++;
-			fepriv->auto_sub_step = -1; /* it'll be incremented to 0 in a moment */
-			break;
+			fepriv->auto_sub_step = 0;
+			continue;
 		}
 
 		if (!ready) fepriv->auto_sub_step++;
@@ -509,28 +486,18 @@ fepriv->max_drift = 1*1000000 + 1000;
 static void dvb_frontend_swzigzag(struct dvb_frontend *fe)
 {
 	enum fe_status s = FE_NONE;
-	bool re_tune = false;
 	int retval = 0;
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache, tmp;
+
+	if (fepriv->max_drift)
+		dev_warn_once(fe->dvb->device,
+			      "Frontend requested software zigzag, but didn't set the frequency step size\n");
 
 	/* if we've got no parameters, just keep idling */
 	if (fepriv->state & FESTATE_IDLE) {
 		fepriv->delay = 3 * HZ;
 		fepriv->quality = 0;
-		return;
-	}
-
-	if(fepriv->tune_mode_flags & FE_TUNE_MODE_STOPTUNE)
-	{
-		pr_info("[%s][%d] tune_mode_flags:0x%lx state:%d\n", __func__, __LINE__, fepriv->tune_mode_flags, fepriv->state);
-
-		// the frontend is no longer tuned refered to google defined
-		re_tune = false;
-
-		if (fe->ops.tune)
-			fe->ops.tune(fe, re_tune, fepriv->tune_mode_flags, &fepriv->delay, &s);
-
 		return;
 	}
 
@@ -724,33 +691,22 @@ restart:
 			if (!down_interruptible(&fepriv->sem))
 				semheld = true;
 			fe->exit = DVB_FE_NORMAL_EXIT;
-			#if CONFIG_MEDIATEK_DVB
-			dev_err(fe->dvb->device, "%s: !!!!!!DVB_FE_NORMAL_EXIT\n", __func__);
-			#endif
 			break;
 		}
 
-		if (try_to_freeze()) {
-			pr_info("[%s][%d] try_to_freeze and go to restart.\n", __func__, __LINE__);
+		if (try_to_freeze())
 			goto restart;
-		}
 
-		if (down_interruptible(&fepriv->sem)) {
-			#if CONFIG_MEDIATEK_DVB
-			dev_err(fe->dvb->device, "%s: !!!!!!down_interruptible\n", __func__);
-			#endif
+		if (down_interruptible(&fepriv->sem))
 			break;
-		}
 
 		if (fepriv->reinitialise) {
-			pr_info("[%s][%d] go to dvb_frontend_init() begins.\n", __func__, __LINE__);
 			dvb_frontend_init(fe);
 			if (fe->ops.set_tone && fepriv->tone != -1)
 				fe->ops.set_tone(fe, fepriv->tone);
 			if (fe->ops.set_voltage && fepriv->voltage != -1)
 				fe->ops.set_voltage(fe, fepriv->voltage);
 			fepriv->reinitialise = 0;
-			pr_info("[%s][%d] go to dvb_frontend_init() ends.\n", __func__, __LINE__);
 		}
 
 		/* do an iteration of the tuning loop */
@@ -765,14 +721,6 @@ restart:
 					re_tune = true;
 					fepriv->state = FESTATE_TUNED;
 				} else {
-					re_tune = false;
-				}
-
-				if(fepriv->tune_mode_flags & FE_TUNE_MODE_STOPTUNE)
-				{
-					pr_info("[%s][%d] tune_mode_flags:0x%lx state:%d\n", __func__, __LINE__, fepriv->tune_mode_flags, fepriv->state);
-
-					// the frontend is no longer tuned refered to google defined
 					re_tune = false;
 				}
 
@@ -1049,6 +997,7 @@ static int dvb_frontend_check_parameters(struct dvb_frontend *fe)
 				 fe->ops.info.symbol_rate_max);
 			return -EINVAL;
 		}
+		break;
 	default:
 		break;
 	}
@@ -1098,200 +1047,121 @@ static int dvb_frontend_clear_cache(struct dvb_frontend *fe)
 	c->stream_id = NO_STREAM_ID_FILTER;
 	c->scrambling_sequence_index = 0;/* default sequence */
 
-	#if CONFIG_MEDIATEK_DVB
-	if (c->delivery_system == SYS_ATSC30) {
-		for (i = 0; i < 8 ; i++)  /* 64 plp at most. */
-			c->plp_array[i] = 0;
-	} else if (c->delivery_system == SYS_ISDBS3) {
-		c->symbol_rate = 33756100;
-		c->rolloff = (int)ROLLOFF_3;
-		c->bandwidth_hz = c->symbol_rate / 100 * 103;
-	} else
-	#endif
-	{
-		switch (c->delivery_system) {
-		case SYS_DVBS:
-		case SYS_DVBS2:
-		case SYS_TURBO:
-			c->modulation = QPSK;   /* implied for DVB-S in legacy API */
-			c->rolloff = ROLLOFF_35;/* implied for DVB-S */
-			break;
-		case SYS_ATSC:
-			c->modulation = VSB_8;
-			break;
-		case SYS_ISDBS:
-			c->symbol_rate = 28860000;
-			c->rolloff = ROLLOFF_35;
-			c->bandwidth_hz = c->symbol_rate / 100 * 135;
-			break;
-		default:
-			c->modulation = QAM_AUTO;
-			break;
-		}
+	switch (c->delivery_system) {
+	case SYS_DVBS:
+	case SYS_DVBS2:
+	case SYS_TURBO:
+		c->modulation = QPSK;   /* implied for DVB-S in legacy API */
+		c->rolloff = ROLLOFF_35;/* implied for DVB-S */
+		break;
+	case SYS_ATSC:
+		c->modulation = VSB_8;
+		break;
+	case SYS_ISDBS:
+		c->symbol_rate = 28860000;
+		c->rolloff = ROLLOFF_35;
+		c->bandwidth_hz = c->symbol_rate / 100 * 135;
+		break;
+	default:
+		c->modulation = QAM_AUTO;
+		break;
 	}
+
 	c->lna = LNA_AUTO;
 
 	return 0;
 }
 
-#define _DTV_CMD(n, s, b) \
-[n] = { \
-	.name = #n, \
-	.cmd  = n, \
-	.set  = s,\
-	.buffer = b \
-}
+#define _DTV_CMD(n) \
+	[n] =  #n
 
-struct dtv_cmds_h {
-	char	*name;		/* A display name for debugging purposes */
-
-	__u32	cmd;		/* A unique ID */
-
-	/* Flags */
-	__u32	set:1;		/* Either a set or get property */
-	__u32	buffer:1;	/* Does this property use the buffer? */
-	__u32	reserved:30;	/* Align */
-};
-#if CONFIG_MEDIATEK_DVB //uapi
-static struct dtv_cmds_h dtv_cmds[MTK_DTV_MAX_COMMAND + 1] = {
-#else
-static struct dtv_cmds_h dtv_cmds[DTV_MAX_COMMAND + 1] = {
-#endif
-	_DTV_CMD(DTV_TUNE, 1, 0),
-	_DTV_CMD(DTV_CLEAR, 1, 0),
+static char *dtv_cmds[DTV_MAX_COMMAND + 1] = {
+	_DTV_CMD(DTV_TUNE),
+	_DTV_CMD(DTV_CLEAR),
 
 	/* Set */
-	_DTV_CMD(DTV_FREQUENCY, 1, 0),
-	_DTV_CMD(DTV_BANDWIDTH_HZ, 1, 0),
-	_DTV_CMD(DTV_MODULATION, 1, 0),
-	_DTV_CMD(DTV_INVERSION, 1, 0),
-	_DTV_CMD(DTV_DISEQC_MASTER, 1, 1),
-	_DTV_CMD(DTV_SYMBOL_RATE, 1, 0),
-	_DTV_CMD(DTV_INNER_FEC, 1, 0),
-	_DTV_CMD(DTV_VOLTAGE, 1, 0),
-	_DTV_CMD(DTV_TONE, 1, 0),
-	_DTV_CMD(DTV_PILOT, 1, 0),
-	_DTV_CMD(DTV_ROLLOFF, 1, 0),
-	_DTV_CMD(DTV_DELIVERY_SYSTEM, 1, 0),
-	_DTV_CMD(DTV_HIERARCHY, 1, 0),
-	_DTV_CMD(DTV_CODE_RATE_HP, 1, 0),
-	_DTV_CMD(DTV_CODE_RATE_LP, 1, 0),
-	_DTV_CMD(DTV_GUARD_INTERVAL, 1, 0),
-	_DTV_CMD(DTV_TRANSMISSION_MODE, 1, 0),
-	_DTV_CMD(DTV_INTERLEAVING, 1, 0),
+	_DTV_CMD(DTV_FREQUENCY),
+	_DTV_CMD(DTV_BANDWIDTH_HZ),
+	_DTV_CMD(DTV_MODULATION),
+	_DTV_CMD(DTV_INVERSION),
+	_DTV_CMD(DTV_DISEQC_MASTER),
+	_DTV_CMD(DTV_SYMBOL_RATE),
+	_DTV_CMD(DTV_INNER_FEC),
+	_DTV_CMD(DTV_VOLTAGE),
+	_DTV_CMD(DTV_TONE),
+	_DTV_CMD(DTV_PILOT),
+	_DTV_CMD(DTV_ROLLOFF),
+	_DTV_CMD(DTV_DELIVERY_SYSTEM),
+	_DTV_CMD(DTV_HIERARCHY),
+	_DTV_CMD(DTV_CODE_RATE_HP),
+	_DTV_CMD(DTV_CODE_RATE_LP),
+	_DTV_CMD(DTV_GUARD_INTERVAL),
+	_DTV_CMD(DTV_TRANSMISSION_MODE),
+	_DTV_CMD(DTV_INTERLEAVING),
 
-	_DTV_CMD(DTV_ISDBT_PARTIAL_RECEPTION, 1, 0),
-	_DTV_CMD(DTV_ISDBT_SOUND_BROADCASTING, 1, 0),
-	_DTV_CMD(DTV_ISDBT_SB_SUBCHANNEL_ID, 1, 0),
-	_DTV_CMD(DTV_ISDBT_SB_SEGMENT_IDX, 1, 0),
-	_DTV_CMD(DTV_ISDBT_SB_SEGMENT_COUNT, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYER_ENABLED, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERA_FEC, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERA_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERA_SEGMENT_COUNT, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERA_TIME_INTERLEAVING, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERB_FEC, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERB_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERB_SEGMENT_COUNT, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERB_TIME_INTERLEAVING, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERC_FEC, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERC_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERC_SEGMENT_COUNT, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERC_TIME_INTERLEAVING, 1, 0),
+	_DTV_CMD(DTV_ISDBT_PARTIAL_RECEPTION),
+	_DTV_CMD(DTV_ISDBT_SOUND_BROADCASTING),
+	_DTV_CMD(DTV_ISDBT_SB_SUBCHANNEL_ID),
+	_DTV_CMD(DTV_ISDBT_SB_SEGMENT_IDX),
+	_DTV_CMD(DTV_ISDBT_SB_SEGMENT_COUNT),
+	_DTV_CMD(DTV_ISDBT_LAYER_ENABLED),
+	_DTV_CMD(DTV_ISDBT_LAYERA_FEC),
+	_DTV_CMD(DTV_ISDBT_LAYERA_MODULATION),
+	_DTV_CMD(DTV_ISDBT_LAYERA_SEGMENT_COUNT),
+	_DTV_CMD(DTV_ISDBT_LAYERA_TIME_INTERLEAVING),
+	_DTV_CMD(DTV_ISDBT_LAYERB_FEC),
+	_DTV_CMD(DTV_ISDBT_LAYERB_MODULATION),
+	_DTV_CMD(DTV_ISDBT_LAYERB_SEGMENT_COUNT),
+	_DTV_CMD(DTV_ISDBT_LAYERB_TIME_INTERLEAVING),
+	_DTV_CMD(DTV_ISDBT_LAYERC_FEC),
+	_DTV_CMD(DTV_ISDBT_LAYERC_MODULATION),
+	_DTV_CMD(DTV_ISDBT_LAYERC_SEGMENT_COUNT),
+	_DTV_CMD(DTV_ISDBT_LAYERC_TIME_INTERLEAVING),
 
-	_DTV_CMD(DTV_STREAM_ID, 1, 0),
-	_DTV_CMD(DTV_DVBT2_PLP_ID_LEGACY, 1, 0),
-	_DTV_CMD(DTV_SCRAMBLING_SEQUENCE_INDEX, 1, 0),
-	_DTV_CMD(DTV_LNA, 1, 0),
-#if CONFIG_MEDIATEK_DVB
-	_DTV_CMD(ATV_SOUND_SYSTEM, 1, 0),
+	_DTV_CMD(DTV_STREAM_ID),
+	_DTV_CMD(DTV_DVBT2_PLP_ID_LEGACY),
+	_DTV_CMD(DTV_SCRAMBLING_SEQUENCE_INDEX),
+	_DTV_CMD(DTV_LNA),
 
-	_DTV_CMD(DTV_ISDBT_EWBS_FLAG, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERA_POST_BER, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERB_POST_BER, 1, 0),
-	_DTV_CMD(DTV_ISDBT_LAYERC_POST_BER, 1, 0),
-
-	_DTV_CMD(DTV_POST_BER, 1, 0),
-	_DTV_CMD(DTV_STREAM_ID_TYPE, 1, 0),
-	_DTV_CMD(DTV_SYSTEM_ID, 1, 0),
-	_DTV_CMD(DTV_PRE_BER, 1, 0),
-
-	// DVB_FE_DRIVER_ATSC30 start
-	_DTV_CMD(DTV_ATSC3T_PLP_ID1, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP_ID2, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP_ID3, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP_ID4, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_DEMOD_OUTPUT_FORMAT, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP1_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP2_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP3_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP4_MODULATION, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP1_FEC, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP2_FEC, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP3_FEC, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP4_FEC, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP1_TIME_INTERLEAVE_MODE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP2_TIME_INTERLEAVE_MODE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP3_TIME_INTERLEAVE_MODE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP4_TIME_INTERLEAVE_MODE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP1_CODE_RATE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP2_CODE_RATE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP3_CODE_RATE, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP4_CODE_RATE, 1, 0),
-	// DVB_FE_DRIVER_ATSC30 end
-	_DTV_CMD(DTV_SATELLITE_SINGLE_MODE, 1, 0),
-#endif
 	/* Get */
-	_DTV_CMD(DTV_DISEQC_SLAVE_REPLY, 0, 1),
-	_DTV_CMD(DTV_API_VERSION, 0, 0),
+	_DTV_CMD(DTV_DISEQC_SLAVE_REPLY),
+	_DTV_CMD(DTV_API_VERSION),
 
-	_DTV_CMD(DTV_ENUM_DELSYS, 0, 0),
-#if CONFIG_MEDIATEK_DVB
-	_DTV_CMD(DTV_DVBT2_PLP_ARRAY, 0, 0),
+	_DTV_CMD(DTV_ENUM_DELSYS),
 
-	_DTV_CMD(DTV_FREQUENCY_OFFSET, 0, 0),
-#endif
-	_DTV_CMD(DTV_ATSCMH_PARADE_ID, 1, 0),
-	_DTV_CMD(DTV_ATSCMH_RS_FRAME_ENSEMBLE, 1, 0),
+	_DTV_CMD(DTV_ATSCMH_PARADE_ID),
+	_DTV_CMD(DTV_ATSCMH_RS_FRAME_ENSEMBLE),
 
-	_DTV_CMD(DTV_ATSCMH_FIC_VER, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_NOG, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_TNOG, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_SGN, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_PRC, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_RS_FRAME_MODE, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_RS_CODE_MODE_PRI, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_RS_CODE_MODE_SEC, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_SCCC_BLOCK_MODE, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_A, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_B, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_C, 0, 0),
-	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_D, 0, 0),
-#if CONFIG_MEDIATEK_DVB
-	_DTV_CMD(DTV_AGC, 0, 0),
-#endif
+	_DTV_CMD(DTV_ATSCMH_FIC_VER),
+	_DTV_CMD(DTV_ATSCMH_NOG),
+	_DTV_CMD(DTV_ATSCMH_TNOG),
+	_DTV_CMD(DTV_ATSCMH_SGN),
+	_DTV_CMD(DTV_ATSCMH_PRC),
+	_DTV_CMD(DTV_ATSCMH_RS_FRAME_MODE),
+	_DTV_CMD(DTV_ATSCMH_RS_CODE_MODE_PRI),
+	_DTV_CMD(DTV_ATSCMH_RS_CODE_MODE_SEC),
+	_DTV_CMD(DTV_ATSCMH_SCCC_BLOCK_MODE),
+	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_A),
+	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_B),
+	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_C),
+	_DTV_CMD(DTV_ATSCMH_SCCC_CODE_MODE_D),
+
 	/* Statistics API */
-	_DTV_CMD(DTV_STAT_SIGNAL_STRENGTH, 0, 0),
-#if CONFIG_MEDIATEK_DVB
-	_DTV_CMD(DTV_STAT_SIGNAL_QUALITY, 0, 0),
-#endif
-	_DTV_CMD(DTV_STAT_CNR, 0, 0),
-	_DTV_CMD(DTV_STAT_PRE_ERROR_BIT_COUNT, 0, 0),
-	_DTV_CMD(DTV_STAT_PRE_TOTAL_BIT_COUNT, 0, 0),
-	_DTV_CMD(DTV_STAT_POST_ERROR_BIT_COUNT, 0, 0),
-	_DTV_CMD(DTV_STAT_POST_TOTAL_BIT_COUNT, 0, 0),
-	_DTV_CMD(DTV_STAT_ERROR_BLOCK_COUNT, 0, 0),
-	_DTV_CMD(DTV_STAT_TOTAL_BLOCK_COUNT, 0, 0),
-#if CONFIG_MEDIATEK_DVB
-	// DVB_FE_DRIVER_ATSC30 start
-	_DTV_CMD(DTV_ATSC3T_VALID_PLP_IDS, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_LLS_FLAG, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP_STATUS, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_FREQUENCY_OFFSET, 1, 0),
-	_DTV_CMD(DTV_ATSC3T_PLP_BER, 1, 0),
-	// DVB_FE_DRIVER_ATSC30 end
-#endif
+	_DTV_CMD(DTV_STAT_SIGNAL_STRENGTH),
+	_DTV_CMD(DTV_STAT_CNR),
+	_DTV_CMD(DTV_STAT_PRE_ERROR_BIT_COUNT),
+	_DTV_CMD(DTV_STAT_PRE_TOTAL_BIT_COUNT),
+	_DTV_CMD(DTV_STAT_POST_ERROR_BIT_COUNT),
+	_DTV_CMD(DTV_STAT_POST_TOTAL_BIT_COUNT),
+	_DTV_CMD(DTV_STAT_ERROR_BLOCK_COUNT),
+	_DTV_CMD(DTV_STAT_TOTAL_BLOCK_COUNT),
 };
+
+static char *dtv_cmd_name(u32 cmd)
+{
+	cmd = array_index_nospec(cmd, DTV_MAX_COMMAND);
+	return dtv_cmds[cmd];
+}
 
 /* Synchronise the legacy tuning parameters into the cache, so that demodulator
  * drivers can use a single set_frontend tuning function, regardless of whether
@@ -1475,12 +1345,8 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 				    struct file *file)
 {
 	int ncaps;
+	unsigned int len = 1;
 
-#if CONFIG_MEDIATEK_DVB
-	int i = 0;
-	struct atsc3t_plp_bitmap valid_bitmap;
-	unsigned long llsFlag = 0;
-#endif
 	switch (tvp->cmd) {
 	case DTV_ENUM_DELSYS:
 		ncaps = 0;
@@ -1489,6 +1355,7 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 			ncaps++;
 		}
 		tvp->u.buffer.len = ncaps;
+		len = ncaps;
 		break;
 	case DTV_FREQUENCY:
 		tvp->u.data = c->frequency;
@@ -1606,21 +1473,6 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 	case DTV_DVBT2_PLP_ID_LEGACY:
 		tvp->u.data = c->stream_id;
 		break;
-#if CONFIG_MEDIATEK_DVB
-	case DTV_DVBT2_PLP_ARRAY:
-		ncaps = 0;
-		while (ncaps < NUM_PLP_ARRAY) {
-			tvp->u.buffer.data[ncaps] = c->plp_array[ncaps];
-			ncaps++;
-		}
-		break;
-
-	case DTV_FREQUENCY_OFFSET:
-		tvp->u.data = c->frequency_offset;
-		break;
-	case DTV_STREAM_ID_TYPE:
-		break;
-#endif
 
 	/* Physical layer scrambling support */
 	case DTV_SCRAMBLING_SEQUENCE_INDEX:
@@ -1677,147 +1529,56 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 	case DTV_LNA:
 		tvp->u.data = c->lna;
 		break;
-#if CONFIG_MEDIATEK_DVB
-	case DTV_AGC:
-		tvp->u.data = c->agc_val;
-		break;
-	case DTV_ISDBT_EWBS_FLAG:
-		tvp->u.data = c->isdbt_ewbs_flag;
-		break;
-	case DTV_ISDBT_LAYERA_POST_BER:
-		tvp->u.data = c->layer[0].post_ber;
-		break;
-	case DTV_ISDBT_LAYERB_POST_BER:
-		tvp->u.data = c->layer[1].post_ber;
-		break;
-	case DTV_ISDBT_LAYERC_POST_BER:
-		tvp->u.data = c->layer[2].post_ber;
-		break;
-	case DTV_POST_BER:
-		tvp->u.data = c->post_ber;
-		break;
-#endif
 
 	/* Fill quality measures */
 	case DTV_STAT_SIGNAL_STRENGTH:
 		tvp->u.st = c->strength;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
-#if CONFIG_MEDIATEK_DVB
-	case DTV_STAT_SIGNAL_QUALITY:
-		tvp->u.st = c->quality;
-		break;
-	case DTV_STAT_MER:
-		tvp->u.st = c->mer;
-		break;
-#endif
 	case DTV_STAT_CNR:
 		tvp->u.st = c->cnr;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
 	case DTV_STAT_PRE_ERROR_BIT_COUNT:
 		tvp->u.st = c->pre_bit_error;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
 	case DTV_STAT_PRE_TOTAL_BIT_COUNT:
 		tvp->u.st = c->pre_bit_count;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
 	case DTV_STAT_POST_ERROR_BIT_COUNT:
 		tvp->u.st = c->post_bit_error;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
 	case DTV_STAT_POST_TOTAL_BIT_COUNT:
 		tvp->u.st = c->post_bit_count;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
 	case DTV_STAT_ERROR_BLOCK_COUNT:
 		tvp->u.st = c->block_error;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
 	case DTV_STAT_TOTAL_BLOCK_COUNT:
 		tvp->u.st = c->block_count;
+		if (tvp->u.buffer.len > MAX_DTV_STATS * sizeof(u32))
+			tvp->u.buffer.len = MAX_DTV_STATS * sizeof(u32);
+		len = tvp->u.buffer.len;
 		break;
-#if CONFIG_MEDIATEK_DVB
-	case DTV_SYSTEM_ID:
-		tvp->u.data = c->system_id;
-		break;
-	case DTV_PRE_BER:
-		tvp->u.data = c->pre_ber;
-		break;
-#endif
-
-#if CONFIG_MEDIATEK_DVB
-	// DVB_FE_DRIVER_ATSC30 start
-	case DTV_ATSC3T_PLP_ID1:
-		break;
-	case DTV_ATSC3T_PLP_ID2:
-		break;
-	case DTV_ATSC3T_PLP_ID3:
-		break;
-	case DTV_ATSC3T_PLP_ID4:
-		break;
-	case DTV_ATSC3T_DEMOD_OUTPUT_FORMAT:
-		break;
-	case DTV_ATSC3T_PLP1_MODULATION:
-		break;
-	case DTV_ATSC3T_PLP2_MODULATION:
-		break;
-	case DTV_ATSC3T_PLP3_MODULATION:
-		break;
-	case DTV_ATSC3T_PLP4_MODULATION:
-		break;
-	case DTV_ATSC3T_PLP1_FEC:
-		break;
-	case DTV_ATSC3T_PLP2_FEC:
-		break;
-	case DTV_ATSC3T_PLP3_FEC:
-		break;
-	case DTV_ATSC3T_PLP4_FEC:
-		break;
-	case DTV_ATSC3T_PLP1_TIME_INTERLEAVE_MODE:
-		break;
-	case DTV_ATSC3T_PLP2_TIME_INTERLEAVE_MODE:
-		break;
-	case DTV_ATSC3T_PLP3_TIME_INTERLEAVE_MODE:
-		break;
-	case DTV_ATSC3T_PLP4_TIME_INTERLEAVE_MODE:
-		break;
-	case DTV_ATSC3T_PLP1_CODE_RATE:
-		break;
-	case DTV_ATSC3T_PLP2_CODE_RATE:
-		break;
-	case DTV_ATSC3T_PLP3_CODE_RATE:
-		break;
-	case DTV_ATSC3T_PLP4_CODE_RATE:
-		break;
-	case DTV_ATSC3T_VALID_PLP_IDS:{
-	valid_bitmap.bitmap = c->plpId_bitmap.bitmap;
-	*((struct atsc3t_plp_bitmap *)&tvp->u.buffer.data) = valid_bitmap;
-	break;
-	}
-	case DTV_ATSC3T_LLS_FLAG:{
-		llsFlag = ((__u64) 1 << tvp->u.buffer.data[0]) & (c->llsFlag_bitmap.bitmap);
-		if (llsFlag != 0)
-			tvp->u.data = 1;
-		else
-			tvp->u.data = 0;
-		break;
-	}
-	case DTV_ATSC3T_PLP_STATUS:{
-		tvp->u.st.len = 0;
-		for (i = 0; i < 4; i++) {
-			tvp->u.st.stat[i].uvalue = c->atsc3_plp_info[i].uec;
-			tvp->u.st.stat[i].scale = c->atsc3_plp_info[i].plp_id;
-
-		if ((c->atsc3_plp_info[i].plp_lock_status & 0x10) == 0x10)
-			tvp->u.st.len |= (1 << i);
-		}
-		break;
-	}
-	case DTV_ATSC3T_FREQUENCY_OFFSET:
-		tvp->u.data = 1;
-		break;
-	case DTV_ATSC3T_PLP_BER:{
-		tvp->u.buffer.len = DVB_AVAILABLE_PLD_ID_NUM;
-		memcpy(&tvp->u.buffer.data[0], dvb_plb_ber, sizeof(dvb_plb_ber));
-		break;
-	}
-	// DVB_FE_DRIVER_ATSC30 end
-#endif
 	default:
 		dev_dbg(fe->dvb->device,
 			"%s: FE property %d doesn't exist\n",
@@ -1825,18 +1586,13 @@ static int dtv_property_process_get(struct dvb_frontend *fe,
 		return -EINVAL;
 	}
 
-	if (!dtv_cmds[tvp->cmd].buffer)
-		dev_dbg(fe->dvb->device,
-			"%s: GET cmd 0x%08x (%s) = 0x%08x\n",
-			__func__, tvp->cmd, dtv_cmds[tvp->cmd].name,
-			tvp->u.data);
-	else
-		dev_dbg(fe->dvb->device,
-			"%s: GET cmd 0x%08x (%s) len %d: %*ph\n",
-			__func__,
-			tvp->cmd, dtv_cmds[tvp->cmd].name,
-			tvp->u.buffer.len,
-			tvp->u.buffer.len, tvp->u.buffer.data);
+	if (len < 1)
+		len = 1;
+
+	dev_dbg(fe->dvb->device,
+		"%s: GET cmd 0x%08x (%s) len %d: %*ph\n",
+		__func__, tvp->cmd, dtv_cmd_name(tvp->cmd),
+		tvp->u.buffer.len, tvp->u.buffer.len, tvp->u.buffer.data);
 
 	return 0;
 }
@@ -2059,6 +1815,53 @@ static int dvbv3_set_delivery_system(struct dvb_frontend *fe)
 	return emulate_delivery_system(fe, delsys);
 }
 
+static void prepare_tuning_algo_parameters(struct dvb_frontend *fe)
+{
+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+	struct dvb_frontend_tune_settings fetunesettings = { 0 };
+
+	/* get frontend-specific tuning settings */
+	if (fe->ops.get_tune_settings && (fe->ops.get_tune_settings(fe, &fetunesettings) == 0)) {
+		fepriv->min_delay = (fetunesettings.min_delay_ms * HZ) / 1000;
+		fepriv->max_drift = fetunesettings.max_drift;
+		fepriv->step_size = fetunesettings.step_size;
+	} else {
+		/* default values */
+		switch (c->delivery_system) {
+		case SYS_DVBS:
+		case SYS_DVBS2:
+		case SYS_ISDBS:
+		case SYS_TURBO:
+		case SYS_DVBC_ANNEX_A:
+		case SYS_DVBC_ANNEX_C:
+			fepriv->min_delay = HZ / 20;
+			fepriv->step_size = c->symbol_rate / 16000;
+			fepriv->max_drift = c->symbol_rate / 2000;
+			break;
+		case SYS_DVBT:
+		case SYS_DVBT2:
+		case SYS_ISDBT:
+		case SYS_DTMB:
+			fepriv->min_delay = HZ / 20;
+			fepriv->step_size = dvb_frontend_get_stepsize(fe) * 2;
+			fepriv->max_drift = fepriv->step_size + 1;
+			break;
+		default:
+			/*
+			 * FIXME: This sounds wrong! if freqency_stepsize is
+			 * defined by the frontend, why not use it???
+			 */
+			fepriv->min_delay = HZ / 20;
+			fepriv->step_size = 0; /* no zigzag */
+			fepriv->max_drift = 0;
+			break;
+		}
+	}
+	if (dvb_override_tune_delay > 0)
+		fepriv->min_delay = (dvb_override_tune_delay * HZ) / 1000;
+}
+
 /**
  * dtv_property_process_set -  Sets a single DTV property
  * @fe:		Pointer to &struct dvb_frontend
@@ -2078,22 +1881,16 @@ static int dtv_property_process_set(struct dvb_frontend *fe,
 				    u32 cmd, u32 data)
 {
 	int r = 0;
-	int i;
-	__u64 tmp = 0;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 
 	/** Dump DTV command name and value*/
-#if CONFIG_MEDIATEK_DVB //uapi
-	if (!cmd || cmd > MTK_DTV_MAX_COMMAND)
-#else
 	if (!cmd || cmd > DTV_MAX_COMMAND)
-#endif
 		dev_warn(fe->dvb->device, "%s: SET cmd 0x%08x undefined\n",
 			 __func__, cmd);
 	else
 		dev_dbg(fe->dvb->device,
 			"%s: SET cmd 0x%08x (%s) to 0x%08x\n",
-			__func__, cmd, dtv_cmds[cmd].name, data);
+			__func__, cmd, dtv_cmd_name(cmd), data);
 	switch (cmd) {
 	case DTV_CLEAR:
 		/*
@@ -2230,11 +2027,7 @@ static int dtv_property_process_set(struct dvb_frontend *fe,
 	case DTV_DVBT2_PLP_ID_LEGACY:
 		c->stream_id = data;
 		break;
-#if CONFIG_MEDIATEK_DVB
-	case DTV_STREAM_ID_TYPE:
-		c->stream_id_type = data;
-		break;
-#endif
+
 	/* Physical layer scrambling support */
 	case DTV_SCRAMBLING_SEQUENCE_INDEX:
 		c->scrambling_sequence_index = data;
@@ -2256,196 +2049,6 @@ static int dtv_property_process_set(struct dvb_frontend *fe,
 			c->lna = LNA_AUTO;
 		break;
 
-#if CONFIG_MEDIATEK_DVB
-	/* ANALOG */
-	case ATV_SOUND_SYSTEM:
-		c->ana_sound_std = data;
-		break;
-
-	// DVB_FE_DRIVER_ATSC30 start
-	case DTV_ATSC3T_PLP_ID1:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP_ID1 to data:%d success\n",
-			__func__, data);
-
-		if ((data & 0x80) == 0x80) {
-			c->atsc3_scan_flag = 1;
-			data &= ~0x80;
-		}
-		//for (i = 0; i < DVB_AVAILABLE_PLD_ID_NUM; i++) {
-		//	dvb_plp_lock_target_global[i] = 0xFF;
-		//	dvb_plp_lock_status_global[i] = 0x00;
-		//}
-
-		for (i = 0; i < 8 ; i++)    // 64 plp at most.
-			c->plp_array[i] = 0;
-
-		tmp = ((__u64) 1 << data);
-		*((__u64 *)&c->plp_array[0]) |= tmp;
-		//dvb_plp_lock_target_global[0] = data;
-		break;
-	case DTV_ATSC3T_PLP_ID2:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP_ID2 to data:%d success\n",
-			__func__, data);
-
-		tmp = ((__u64) 1 << data);
-		*((__u64 *)&c->plp_array[0]) |= tmp;
-		//dvb_plp_lock_target_global[1] = data;
-		break;
-	case DTV_ATSC3T_PLP_ID3:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP_ID3 to data:%d success\n",
-			__func__, data);
-
-		tmp = ((__u64) 1 << data);
-		*((__u64 *)&c->plp_array[0]) |= tmp;
-		//dvb_plp_lock_target_global[2] = data;
-		break;
-	case DTV_ATSC3T_PLP_ID4:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP_ID4 to data:%d success\n",
-			__func__, data);
-
-		tmp = ((__u64) 1 << data);
-		*((__u64 *)&c->plp_array[0]) |= tmp;
-		//dvb_plp_lock_target_global[3] = data;
-		break;
-	case DTV_ATSC3T_DEMOD_OUTPUT_FORMAT:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_DEMOD_OUTPUT_FORMAT to data:%d success\n",
-			__func__, data);
-		c->atsc3_demod_output_format = data;
-		break;
-	case DTV_ATSC3T_PLP1_MODULATION:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP1_MODULATION to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[0].modulation = data;
-		break;
-	case DTV_ATSC3T_PLP2_MODULATION:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP2_MODULATION to data:%d success\n",
-			__func__, data);
-		 c->atsc3_plp_info[1].modulation = data;
-		break;
-	case DTV_ATSC3T_PLP3_MODULATION:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP3_MODULATION to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[2].modulation = data;
-		break;
-	case DTV_ATSC3T_PLP4_MODULATION:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP4_MODULATION to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[3].modulation = data;
-		break;
-	case DTV_ATSC3T_PLP1_FEC:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP1_FEC to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[0].plp_fec = data;
-		break;
-	case DTV_ATSC3T_PLP2_FEC:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP2_FEC to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[1].plp_fec = data;
-		break;
-	case DTV_ATSC3T_PLP3_FEC:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP3_FEC to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[2].plp_fec = data;
-		break;
-	case DTV_ATSC3T_PLP4_FEC:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP4_FEC to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[3].plp_fec = data;
-		break;
-	case DTV_ATSC3T_PLP1_TIME_INTERLEAVE_MODE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP1_TIME_INTERLEAVE_MODE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[0].time_interleave_mode = data;
-		break;
-	case DTV_ATSC3T_PLP2_TIME_INTERLEAVE_MODE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP2_TIME_INTERLEAVE_MODE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[1].time_interleave_mode = data;
-		break;
-	case DTV_ATSC3T_PLP3_TIME_INTERLEAVE_MODE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP3_TIME_INTERLEAVE_MODE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[2].time_interleave_mode = data;
-		break;
-	case DTV_ATSC3T_PLP4_TIME_INTERLEAVE_MODE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP4_TIME_INTERLEAVE_MODE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[3].time_interleave_mode = data;
-		break;
-	case DTV_ATSC3T_PLP1_CODE_RATE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP1_CODE_RATE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[0].plp_code_rate = data;
-		break;
-	case DTV_ATSC3T_PLP2_CODE_RATE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP2_CODE_RATE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[1].plp_code_rate = data;
-		break;
-	case DTV_ATSC3T_PLP3_CODE_RATE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP3_CODE_RATE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[2].plp_code_rate = data;
-		break;
-	case DTV_ATSC3T_PLP4_CODE_RATE:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP4_CODE_RATE to data:%d success\n",
-			__func__, data);
-		c->atsc3_plp_info[3].plp_code_rate = data;
-		break;
-	case DTV_ATSC3T_VALID_PLP_IDS:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_VALID_PLP_IDS to data:%d success\n",
-			__func__, data);
-		break;
-	case DTV_ATSC3T_LLS_FLAG:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_LLS_FLAG to data:%d success\n",
-			__func__, data);
-		break;
-	case DTV_ATSC3T_PLP_STATUS:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP_STATUS to data:%d success\n",
-			__func__, data);
-		break;
-	case DTV_ATSC3T_FREQUENCY_OFFSET:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_FREQUENCY_OFFSET to data:%d success\n",
-			__func__, data);
-		break;
-	case DTV_ATSC3T_PLP_BER:
-		dev_warn(fe->dvb->device,
-			"%s: SET DTV_ATSC3T_PLP_BER to data:%d success\n",
-			__func__, data);
-		break;
-	// DVB_FE_DRIVER_ATSC30 end
-	case DTV_SATELLITE_SINGLE_MODE:
-		dev_warn(fe->dvb->device,
-			"%s: DTV_SATELLITE_SINGLE_MODE to data:%d success\n",
-			 __func__, data);
-		c->single_mode = data;
-		break;
-#endif
 	default:
 		return -EINVAL;
 	}
@@ -2544,6 +2147,7 @@ static int dvb_frontend_handle_compat_ioctl(struct file *file, unsigned int cmd,
 	if (cmd == COMPAT_FE_SET_PROPERTY) {
 		struct compat_dtv_properties prop, *tvps = NULL;
 		struct compat_dtv_property *tvp = NULL;
+
 		if (copy_from_user(&prop, compat_ptr(arg), sizeof(prop)))
 			return -EFAULT;
 
@@ -2556,7 +2160,8 @@ static int dvb_frontend_handle_compat_ioctl(struct file *file, unsigned int cmd,
 		if (!tvps->num || (tvps->num > DTV_IOCTL_MAX_MSGS))
 			return -EINVAL;
 
-		tvp = memdup_user(compat_ptr(tvps->props), tvps->num * sizeof(*tvp));
+		tvp = memdup_array_user(compat_ptr(tvps->props),
+					tvps->num, sizeof(*tvp));
 		if (IS_ERR(tvp))
 			return PTR_ERR(tvp);
 
@@ -2587,7 +2192,8 @@ static int dvb_frontend_handle_compat_ioctl(struct file *file, unsigned int cmd,
 		if (!tvps->num || (tvps->num > DTV_IOCTL_MAX_MSGS))
 			return -EINVAL;
 
-		tvp = memdup_user(compat_ptr(tvps->props), tvps->num * sizeof(*tvp));
+		tvp = memdup_array_user(compat_ptr(tvps->props),
+					tvps->num, sizeof(*tvp));
 		if (IS_ERR(tvp))
 			return PTR_ERR(tvp);
 
@@ -2598,16 +2204,6 @@ static int dvb_frontend_handle_compat_ioctl(struct file *file, unsigned int cmd,
 		 * before updating the properties cache.
 		 */
 		if (fepriv->state != FESTATE_IDLE) {
-			((u64*)(&getp))[0] = 0;
-			((u64*)(&getp))[1] = 0;
-			for (i = 0; i < tvps->num; i++) {
-				pr_info("[%s][%d]((tvp + %d)->cmd):%d\n", __func__, __LINE__,
-				i, ((tvp + i)->cmd));
-				if (((tvp + i)->cmd) < 64)
-					((u64 *)(&getp))[0] |= ((__u64) 1 << ((tvp + i)->cmd));
-				else
-					((u64 *)(&getp))[1] |= ((__u64) 1 << ((tvp + i)->cmd - 64));
-			}
 			err = dtv_get_frontend(fe, &getp, NULL);
 			if (err < 0) {
 				kfree(tvp);
@@ -2660,7 +2256,6 @@ static int dtv_set_frontend(struct dvb_frontend *fe)
 {
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-	struct dvb_frontend_tune_settings fetunesettings;
 	u32 rolloff = 0;
 
 	if (dvb_frontend_check_parameters(fe) < 0)
@@ -2738,53 +2333,12 @@ static int dtv_set_frontend(struct dvb_frontend *fe)
 	if (c->hierarchy == HIERARCHY_NONE && c->code_rate_LP == FEC_NONE)
 		c->code_rate_LP = FEC_AUTO;
 
-	/* get frontend-specific tuning settings */
-	memset(&fetunesettings, 0, sizeof(struct dvb_frontend_tune_settings));
-	if (fe->ops.get_tune_settings && (fe->ops.get_tune_settings(fe, &fetunesettings) == 0)) {
-		fepriv->min_delay = (fetunesettings.min_delay_ms * HZ) / 1000;
-		fepriv->max_drift = fetunesettings.max_drift;
-		fepriv->step_size = fetunesettings.step_size;
-	} else {
-		/* default values */
-		switch (c->delivery_system) {
-		case SYS_DVBS:
-		case SYS_DVBS2:
-		case SYS_ISDBS:
-		case SYS_TURBO:
-		case SYS_DVBC_ANNEX_A:
-		case SYS_DVBC_ANNEX_C:
-			fepriv->min_delay = HZ / 20;
-			fepriv->step_size = c->symbol_rate / 16000;
-			fepriv->max_drift = c->symbol_rate / 2000;
-			break;
-		case SYS_DVBT:
-		case SYS_DVBT2:
-		case SYS_ISDBT:
-		case SYS_DTMB:
-			fepriv->min_delay = HZ / 20;
-			fepriv->step_size = dvb_frontend_get_stepsize(fe) * 2;
-			fepriv->max_drift = (dvb_frontend_get_stepsize(fe) * 2) + 1;
-			break;
-		default:
-			/*
-			 * FIXME: This sounds wrong! if freqency_stepsize is
-			 * defined by the frontend, why not use it???
-			 */
-			fepriv->min_delay = HZ / 20;
-			fepriv->step_size = 0; /* no zigzag */
-			fepriv->max_drift = 0;
-			break;
-		}
-	}
-	if (dvb_override_tune_delay > 0)
-		fepriv->min_delay = (dvb_override_tune_delay * HZ) / 1000;
+	prepare_tuning_algo_parameters(fe);
 
 	fepriv->state = FESTATE_RETUNE;
 
 	/* Request the search algorithm to search */
 	fepriv->algo_status |= DVBFE_ALGO_SEARCH_AGAIN;
-
-	fepriv->tune_mode_flags &= ~FE_TUNE_MODE_STOPTUNE;
 
 	dvb_frontend_clear_events(fe);
 	dvb_frontend_add_event(fe, 0);
@@ -2816,7 +2370,8 @@ static int dvb_get_property(struct dvb_frontend *fe, struct file *file,
 	if (!tvps->num || tvps->num > DTV_IOCTL_MAX_MSGS)
 		return -EINVAL;
 
-	tvp = memdup_user((void __user *)tvps->props, tvps->num * sizeof(*tvp));
+	tvp = memdup_array_user((void __user *)tvps->props,
+				tvps->num, sizeof(*tvp));
 	if (IS_ERR(tvp))
 		return PTR_ERR(tvp);
 
@@ -2874,9 +2429,9 @@ static int dvb_frontend_handle_ioctl(struct file *file,
 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	int i, err = -ENOTSUPP;
-	u8 *issupport;
 
 	dev_dbg(fe->dvb->device, "%s:\n", __func__);
+
 	switch (cmd) {
 	case FE_SET_PROPERTY: {
 		struct dtv_properties *tvps = parg;
@@ -2894,7 +2449,8 @@ static int dvb_frontend_handle_ioctl(struct file *file,
 		if (!tvps->num || (tvps->num > DTV_IOCTL_MAX_MSGS))
 			return -EINVAL;
 
-		tvp = memdup_user((void __user *)tvps->props, tvps->num * sizeof(*tvp));
+		tvp = memdup_array_user((void __user *)tvps->props,
+					tvps->num, sizeof(*tvp));
 		if (IS_ERR(tvp))
 			return PTR_ERR(tvp);
 
@@ -2974,14 +2530,8 @@ static int dvb_frontend_handle_ioctl(struct file *file,
 
 		/* if retune was requested but hasn't occurred yet, prevent
 		 * that user get signal state from previous tuning */
-
-		if (fepriv->tune_mode_flags & FE_TUNE_MODE_STOPTUNE) {
-			err = 0;
-			*status = 0;
-			break;
-		}
 		if (fepriv->state == FESTATE_RETUNE ||
-			fepriv->state == FESTATE_ERROR) {
+		    fepriv->state == FESTATE_ERROR) {
 			err = 0;
 			*status = 0;
 			break;
@@ -3184,69 +2734,6 @@ static int dvb_frontend_handle_ioctl(struct file *file,
 		err = dvb_get_frontend(fe, parg);
 		break;
 
-#if CONFIG_MEDIATEK_DVB
-	case FE_BLINDSCAN_START: {
-		struct DMD_DVBS_BlindScan_Start_param *Start_param = parg;
-
-		err = fe->ops.blindscan_start(fe, Start_param);
-		break;
-	}
-	case FE_BLINDSCAN_GET_TUNER_FREQ: {
-		struct DMD_DVBS_BlindScan_GetTunerFreq_param *GetTunerFreq_param = parg;
-
-		err = fe->ops.blindscan_get_tuner_freq(fe, GetTunerFreq_param);
-		break;
-	}
-	case FE_BLINDSCAN_NEXT_FREQ: {
-		struct DMD_DVBS_BlindScan_NextFreq_param *NextFreq_param = parg;
-
-		err = fe->ops.blindscan_next_freq(fe, NextFreq_param);
-		break;
-	}
-	case FE_BLINDSCAN_WAIT_CURFREQ_FINISHED: {
-	struct DMD_DVBS_BlindScan_WaitCurFreqFinished_param *WaitCurFreqFinished_param = parg;
-
-		err = fe->ops.blindscan_wait_curfreq_finished(fe, WaitCurFreqFinished_param);
-		break;
-	}
-	case FE_BLINDSCAN_GET_CHANNEL: {
-		struct DMD_DVBS_BlindScan_GetChannel_param *GetChannel_param = parg;
-
-		err = fe->ops.blindscan_get_channel(fe, GetChannel_param);
-		break;
-	}
-	case FE_STOP_TUNE:
-		fepriv->tune_mode_flags |= FE_TUNE_MODE_STOPTUNE;
-		dvb_frontend_wakeup(fe);
-		err = 0;
-		break;
-	case FE_BLINDSCAN_END:
-		err = fe->ops.blindscan_end(fe);
-		break;
-	case FE_BLINDSCAN_CANCEL:
-		err = fe->ops.blindscan_cancel(fe);
-		break;
-	case FE_GET_LNB_OVERLOAD_STATUS: {
-		if (fe->ops.get_lnb_overload_status) {
-			enum lnb_overload_status *overload = parg;
-
-			*overload = fe->ops.get_lnb_overload_status(fe);
-			err = 0;
-		}
-		break;
-	}
-	case FE_GET_LNB_CAPABILITY:
-		issupport = parg;
-		if (fe->ops.set_voltage)
-			*issupport = 1;
-		else
-			*issupport = 0;
-		dev_dbg(fe->dvb->device, "%s: FE_GET_LNB_CAPABILITY  result:[%d]\n",
-						__func__, *issupport);
-		err = 0;
-		break;
-
-#endif
 	default:
 		return -ENOTSUPP;
 	} /* switch */

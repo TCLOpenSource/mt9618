@@ -404,7 +404,6 @@ static void tps65010_work(struct work_struct *work)
 	tps65010_interrupt(tps);
 
 	if (test_and_clear_bit(FLAG_VBUS_CHANGED, &tps->flags)) {
-		int	status;
 		u8	chgconfig, tmp;
 
 		chgconfig = i2c_smbus_read_byte_data(tps->client,
@@ -415,8 +414,8 @@ static void tps65010_work(struct work_struct *work)
 		else if (tps->vbus >= 100)
 			chgconfig |= TPS_VBUS_CHARGING;
 
-		status = i2c_smbus_write_byte_data(tps->client,
-				TPS_CHGCONFIG, chgconfig);
+		i2c_smbus_write_byte_data(tps->client,
+					  TPS_CHGCONFIG, chgconfig);
 
 		/* vbus update fails unless VBUS is connected! */
 		tmp = i2c_smbus_read_byte_data(tps->client, TPS_CHGCONFIG);
@@ -550,17 +549,13 @@ static int tps65010_probe(struct i2c_client *client,
 	 */
 	if (client->irq > 0) {
 		status = request_irq(client->irq, tps65010_irq,
-				     IRQF_TRIGGER_FALLING, DRIVER_NAME, tps);
+				     IRQF_TRIGGER_FALLING | IRQF_NO_AUTOEN,
+				     DRIVER_NAME, tps);
 		if (status < 0) {
 			dev_dbg(&client->dev, "can't get IRQ %d, err %d\n",
 					client->irq, status);
 			return status;
 		}
-		/* annoying race here, ideally we'd have an option
-		 * to claim the irq now and enable it later.
-		 * FIXME genirq IRQF_NOAUTOEN now solves that ...
-		 */
-		disable_irq(client->irq);
 		set_bit(FLAG_IRQ_ENABLE, &tps->flags);
 	} else
 		dev_warn(&client->dev, "IRQ not configured!\n");

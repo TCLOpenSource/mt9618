@@ -356,6 +356,7 @@ static struct inode *romfs_iget(struct super_block *sb, unsigned long pos)
 	}
 
 	i->i_mode = mode;
+	i->i_blocks = (i->i_size + 511) >> 9;
 
 	unlock_new_inode(i);
 	return i;
@@ -415,8 +416,7 @@ static int romfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	buf->f_bfree = buf->f_bavail = buf->f_ffree;
 	buf->f_blocks =
 		(romfs_maxsize(dentry->d_sb) + ROMBSIZE - 1) >> ROMBSBITS;
-	buf->f_fsid.val[0] = (u32)id;
-	buf->f_fsid.val[1] = (u32)(id >> 32);
+	buf->f_fsid = u64_to_fsid(id);
 	return 0;
 }
 
@@ -666,3 +666,4 @@ module_exit(exit_romfs_fs);
 MODULE_DESCRIPTION("Direct-MTD Capable RomFS");
 MODULE_AUTHOR("Red Hat, Inc.");
 MODULE_LICENSE("GPL"); /* Actually dual-licensed, but it doesn't matter for */
+MODULE_IMPORT_NS(ANDROID_GKI_VFS_EXPORT_ONLY);

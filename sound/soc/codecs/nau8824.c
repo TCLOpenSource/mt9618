@@ -835,36 +835,6 @@ static void nau8824_int_status_clear_all(struct regmap *regmap)
 	}
 }
 
-static void nau8824_dapm_disable_pin(struct nau8824 *nau8824, const char *pin)
-{
-	struct snd_soc_dapm_context *dapm = nau8824->dapm;
-	const char *prefix = dapm->component->name_prefix;
-	char prefixed_pin[80];
-
-	if (prefix) {
-		snprintf(prefixed_pin, sizeof(prefixed_pin), "%s %s",
-			 prefix, pin);
-		snd_soc_dapm_disable_pin(dapm, prefixed_pin);
-	} else {
-		snd_soc_dapm_disable_pin(dapm, pin);
-	}
-}
-
-static void nau8824_dapm_enable_pin(struct nau8824 *nau8824, const char *pin)
-{
-	struct snd_soc_dapm_context *dapm = nau8824->dapm;
-	const char *prefix = dapm->component->name_prefix;
-	char prefixed_pin[80];
-
-	if (prefix) {
-		snprintf(prefixed_pin, sizeof(prefixed_pin), "%s %s",
-			 prefix, pin);
-		snd_soc_dapm_force_enable_pin(dapm, prefixed_pin);
-	} else {
-		snd_soc_dapm_force_enable_pin(dapm, pin);
-	}
-}
-
 static void nau8824_eject_jack(struct nau8824 *nau8824)
 {
 	struct snd_soc_dapm_context *dapm = nau8824->dapm;
@@ -873,8 +843,8 @@ static void nau8824_eject_jack(struct nau8824 *nau8824)
 	/* Clear all interruption status */
 	nau8824_int_status_clear_all(regmap);
 
-	nau8824_dapm_disable_pin(nau8824, "SAR");
-	nau8824_dapm_disable_pin(nau8824, "MICBIAS");
+	snd_soc_dapm_disable_pin(dapm, "SAR");
+	snd_soc_dapm_disable_pin(dapm, "MICBIAS");
 	snd_soc_dapm_sync(dapm);
 
 	/* Enable the insertion interruption, disable the ejection
@@ -904,8 +874,8 @@ static void nau8824_jdet_work(struct work_struct *work)
 	struct regmap *regmap = nau8824->regmap;
 	int adc_value, event = 0, event_mask = 0;
 
-	nau8824_dapm_enable_pin(nau8824, "MICBIAS");
-	nau8824_dapm_enable_pin(nau8824, "SAR");
+	snd_soc_dapm_force_enable_pin(dapm, "MICBIAS");
+	snd_soc_dapm_force_enable_pin(dapm, "SAR");
 	snd_soc_dapm_sync(dapm);
 
 	msleep(100);
@@ -916,8 +886,8 @@ static void nau8824_jdet_work(struct work_struct *work)
 	if (adc_value < HEADSET_SARADC_THD) {
 		event |= SND_JACK_HEADPHONE;
 
-		nau8824_dapm_disable_pin(nau8824, "SAR");
-		nau8824_dapm_disable_pin(nau8824, "MICBIAS");
+		snd_soc_dapm_disable_pin(dapm, "SAR");
+		snd_soc_dapm_disable_pin(dapm, "MICBIAS");
 		snd_soc_dapm_sync(dapm);
 	} else {
 		event |= SND_JACK_HEADSET;
@@ -1893,6 +1863,30 @@ static const struct dmi_system_id nau8824_quirk_table[] = {
 			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "Default string"),
 			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
 			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "20170531"),
+		},
+		.driver_data = (void *)(NAU8824_JD_ACTIVE_HIGH),
+	},
+	{
+		/* Positivo CW14Q01P */
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "Positivo Tecnologia SA"),
+			DMI_MATCH(DMI_BOARD_NAME, "CW14Q01P"),
+		},
+		.driver_data = (void *)(NAU8824_JD_ACTIVE_HIGH),
+	},
+	{
+		/* Positivo K1424G */
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "Positivo Tecnologia SA"),
+			DMI_MATCH(DMI_BOARD_NAME, "K1424G"),
+		},
+		.driver_data = (void *)(NAU8824_JD_ACTIVE_HIGH),
+	},
+	{
+		/* Positivo N14ZP74G */
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "Positivo Tecnologia SA"),
+			DMI_MATCH(DMI_BOARD_NAME, "N14ZP74G"),
 		},
 		.driver_data = (void *)(NAU8824_JD_ACTIVE_HIGH),
 	},

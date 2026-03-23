@@ -49,7 +49,7 @@ struct xbc_node {
 /* Maximum size of boot config is 32KB - 1 */
 #define XBC_DATA_MAX	(XBC_VALUE - 1)
 
-#define XBC_NODE_MAX	1024
+#define XBC_NODE_MAX	8192
 #define XBC_KEYLEN_MAX	256
 #define XBC_DEPTH_MAX	16
 
@@ -110,7 +110,7 @@ static inline __init bool xbc_node_is_leaf(struct xbc_node *node)
 }
 
 /* Tree-based key-value access APIs */
-struct xbc_node * __init xbc_node_find_child(struct xbc_node *parent,
+struct xbc_node * __init xbc_node_find_subkey(struct xbc_node *parent,
 					     const char *key);
 
 const char * __init xbc_node_find_value(struct xbc_node *parent,
@@ -148,7 +148,7 @@ xbc_find_value(const char *key, struct xbc_node **vnode)
  */
 static inline struct xbc_node * __init xbc_find_node(const char *key)
 {
-	return xbc_node_find_child(NULL, key);
+	return xbc_node_find_subkey(NULL, key);
 }
 
 /**
@@ -214,10 +214,10 @@ static inline struct xbc_node * __init xbc_node_get_subkey(struct xbc_node *node
  * @value: Iterated value of array entry.
  *
  * Iterate array entries of given @key under @node. Each array entry node
- * is stroed to @anode and @value. If the @node doesn't have @key node,
+ * is stored to @anode and @value. If the @node doesn't have @key node,
  * it does nothing.
  * Note that even if the found key node has only one value (not array)
- * this executes block once. Hoever, if the found key node has no value
+ * this executes block once. However, if the found key node has no value
  * (key-only node), this does nothing. So don't use this for testing the
  * key-value pair existence.
  */

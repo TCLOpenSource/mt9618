@@ -51,13 +51,13 @@ enum blk_zone_type {
  *
  * The Zone Condition state machine in the ZBC/ZAC standards maps the above
  * deinitions as:
- *   - ZC1: Empty         | BLK_ZONE_EMPTY
+ *   - ZC1: Empty         | BLK_ZONE_COND_EMPTY
  *   - ZC2: Implicit Open | BLK_ZONE_COND_IMP_OPEN
  *   - ZC3: Explicit Open | BLK_ZONE_COND_EXP_OPEN
- *   - ZC4: Closed        | BLK_ZONE_CLOSED
- *   - ZC5: Full          | BLK_ZONE_FULL
- *   - ZC6: Read Only     | BLK_ZONE_READONLY
- *   - ZC7: Offline       | BLK_ZONE_OFFLINE
+ *   - ZC4: Closed        | BLK_ZONE_COND_CLOSED
+ *   - ZC5: Full          | BLK_ZONE_COND_FULL
+ *   - ZC6: Read Only     | BLK_ZONE_COND_READONLY
+ *   - ZC7: Offline       | BLK_ZONE_COND_OFFLINE
  *
  * Conditions 0x5 to 0xC are reserved by the current ZBC/ZAC spec and should
  * be considered invalid.
@@ -93,12 +93,15 @@ enum blk_zone_report_flags {
  * @non_seq: Flag indicating that the zone is using non-sequential resources
  *           (for host-aware zoned block devices only).
  * @reset: Flag indicating that a zone reset is recommended.
- * @reserved: Padding to 64 B to match the ZBC/ZAC defined zone descriptor size.
+ * @resv: Padding for 8B alignment.
+ * @capacity: Zone usable capacity in 512 B sector units
+ * @reserved: Padding to 64 B to match the ZBC, ZAC and ZNS defined zone
+ *            descriptor size.
  *
- * start, len and wp use the regular 512 B sector unit, regardless of the
- * device logical block size. The overall structure size is 64 B to match the
- * ZBC/ZAC defined zone descriptor and allow support for future additional
- * zone information.
+ * start, len, capacity and wp use the regular 512 B sector unit, regardless
+ * of the device logical block size. The overall structure size is 64 B to
+ * match the ZBC, ZAC and ZNS defined zone descriptor and allow support for
+ * future additional zone information.
  */
 struct blk_zone {
 	__u64	start;		/* Zone start sector */
@@ -118,7 +121,7 @@ struct blk_zone {
  *
  * @sector: starting sector of report
  * @nr_zones: IN maximum / OUT actual
- * @reserved: padding to 16 byte alignment
+ * @flags: one or more flags as defined by enum blk_zone_report_flags.
  * @zones: Space to hold @nr_zones @zones entries on reply.
  *
  * The array of at most @nr_zones must follow this structure in memory.

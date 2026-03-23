@@ -10,9 +10,8 @@
 #include <asm/simd.h>
 #include <crypto/internal/hash.h>
 #include <crypto/internal/simd.h>
-#include <crypto/sha.h>
+#include <crypto/sha2.h>
 #include <crypto/sha256_base.h>
-#include <linux/cryptohash.h>
 #include <linux/types.h>
 #include <linux/string.h>
 
@@ -30,7 +29,7 @@ EXPORT_SYMBOL(sha256_block_data_order);
 static void __sha256_block_data_order(struct sha256_state *sst, u8 const *src,
 				      int blocks)
 {
-	return sha256_block_data_order(sst->state, src, blocks);
+	sha256_block_data_order(sst->state, src, blocks);
 }
 
 asmlinkage void sha256_block_neon(u32 *digest, const void *data,
@@ -39,7 +38,7 @@ asmlinkage void sha256_block_neon(u32 *digest, const void *data,
 static void __sha256_block_neon(struct sha256_state *sst, u8 const *src,
 				int blocks)
 {
-	return sha256_block_neon(sst->state, src, blocks);
+	sha256_block_neon(sst->state, src, blocks);
 }
 
 static int crypto_sha256_arm64_update(struct shash_desc *desc, const u8 *data,
@@ -108,7 +107,7 @@ static int sha256_update_neon(struct shash_desc *desc, const u8 *data,
 		 * input when running on a preemptible kernel, but process the
 		 * data block by block instead.
 		 */
-		if (IS_ENABLED(CONFIG_PREEMPT) &&
+		if (IS_ENABLED(CONFIG_PREEMPTION) &&
 		    chunk + sctx->count % SHA256_BLOCK_SIZE > SHA256_BLOCK_SIZE)
 			chunk = SHA256_BLOCK_SIZE -
 				sctx->count % SHA256_BLOCK_SIZE;

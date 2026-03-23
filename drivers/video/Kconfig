@@ -30,7 +30,7 @@ config VGASTATE
        default n
 
 config VIDEOMODE_HELPERS
-	bool "VIDEOMODE_HELPERS"
+	bool
 
 config HDMI
 	bool

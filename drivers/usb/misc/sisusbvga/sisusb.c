@@ -1283,7 +1283,7 @@ int sisusb_readb(struct sisusb_usb_data *sisusb, u32 adr, u8 *data)
 	return sisusb_read_memio_byte(sisusb, SISUSB_TYPE_MEM, adr, data);
 }
 
-int sisusb_copy_memory(struct sisusb_usb_data *sisusb, char *src,
+int sisusb_copy_memory(struct sisusb_usb_data *sisusb, u8 *src,
 		u32 dest, int length)
 {
 	size_t dummy;
@@ -1307,7 +1307,7 @@ static int sisusb_read_memory(struct sisusb_usb_data *sisusb, char *dest,
 #ifdef SISUSBENDIANTEST
 static void sisusb_testreadwrite(struct sisusb_usb_data *sisusb)
 {
-	static char srcbuffer[] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77 };
+	static u8 srcbuffer[] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77 };
 	char destbuffer[10];
 	int i, j;
 
@@ -2340,7 +2340,7 @@ int sisusb_reset_text_mode(struct sisusb_usb_data *sisusb, int init)
 		}
 
 	} else if (sisusb->scrbuf) {
-		ret |= sisusb_copy_memory(sisusb, (char *)sisusb->scrbuf,
+		ret |= sisusb_copy_memory(sisusb, (u8 *)sisusb->scrbuf,
 				sisusb->vrambase, sisusb->scrbuf_size);
 	}
 
@@ -3014,6 +3014,20 @@ static int sisusb_probe(struct usb_interface *intf,
 	struct usb_device *dev = interface_to_usbdev(intf);
 	struct sisusb_usb_data *sisusb;
 	int retval = 0, i;
+	static const u8 ep_addresses[] = {
+		SISUSB_EP_GFX_IN | USB_DIR_IN,
+		SISUSB_EP_GFX_OUT | USB_DIR_OUT,
+		SISUSB_EP_GFX_BULK_OUT | USB_DIR_OUT,
+		SISUSB_EP_GFX_LBULK_OUT | USB_DIR_OUT,
+		SISUSB_EP_BRIDGE_IN | USB_DIR_IN,
+		SISUSB_EP_BRIDGE_OUT | USB_DIR_OUT,
+		0};
+
+	/* Are the expected endpoints present? */
+	if (!usb_check_bulk_endpoints(intf, ep_addresses)) {
+		dev_err(&intf->dev, "Invalid USB2VGA device\n");
+		return -EINVAL;
+	}
 
 	dev_info(&dev->dev, "USB2VGA dongle found at address %d\n",
 			dev->devnum);

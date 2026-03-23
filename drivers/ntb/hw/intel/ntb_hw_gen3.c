@@ -215,6 +215,9 @@ static int gen3_init_ntb(struct intel_ntb_dev *ndev)
 	}
 
 	ndev->db_valid_mask = BIT_ULL(ndev->db_count) - 1;
+	/* Make sure we are not using DB's used for link status */
+	if (ndev->hwerr_flags & NTB_HWERR_MSIX_VECTOR32_BAD)
+		ndev->db_valid_mask &= ~ndev->db_link_mask;
 
 	ndev->reg->db_iowrite(ndev->db_valid_mask,
 			      ndev->self_mmio +
@@ -415,9 +418,8 @@ ssize_t ndev_ntb3_debugfs_read(struct file *filp, char __user *ubuf,
 	return ret;
 }
 
-static int intel_ntb3_link_enable(struct ntb_dev *ntb,
-				  enum ntb_speed max_speed,
-				  enum ntb_width max_width)
+int intel_ntb3_link_enable(struct ntb_dev *ntb, enum ntb_speed max_speed,
+		enum ntb_width max_width)
 {
 	struct intel_ntb_dev *ndev;
 	u32 ntb_ctl;
@@ -532,7 +534,7 @@ static int intel_ntb3_mw_set_trans(struct ntb_dev *ntb, int pidx, int idx,
 	return 0;
 }
 
-static int intel_ntb3_peer_db_addr(struct ntb_dev *ntb, phys_addr_t *db_addr,
+int intel_ntb3_peer_db_addr(struct ntb_dev *ntb, phys_addr_t *db_addr,
 				   resource_size_t *db_size,
 				   u64 *db_data, int db_bit)
 {
@@ -563,7 +565,7 @@ static int intel_ntb3_peer_db_addr(struct ntb_dev *ntb, phys_addr_t *db_addr,
 	return 0;
 }
 
-static int intel_ntb3_peer_db_set(struct ntb_dev *ntb, u64 db_bits)
+int intel_ntb3_peer_db_set(struct ntb_dev *ntb, u64 db_bits)
 {
 	struct intel_ntb_dev *ndev = ntb_ndev(ntb);
 	int bit;
@@ -581,7 +583,7 @@ static int intel_ntb3_peer_db_set(struct ntb_dev *ntb, u64 db_bits)
 	return 0;
 }
 
-static u64 intel_ntb3_db_read(struct ntb_dev *ntb)
+u64 intel_ntb3_db_read(struct ntb_dev *ntb)
 {
 	struct intel_ntb_dev *ndev = ntb_ndev(ntb);
 
@@ -590,7 +592,7 @@ static u64 intel_ntb3_db_read(struct ntb_dev *ntb)
 			    ndev->self_reg->db_clear);
 }
 
-static int intel_ntb3_db_clear(struct ntb_dev *ntb, u64 db_bits)
+int intel_ntb3_db_clear(struct ntb_dev *ntb, u64 db_bits)
 {
 	struct intel_ntb_dev *ndev = ntb_ndev(ntb);
 

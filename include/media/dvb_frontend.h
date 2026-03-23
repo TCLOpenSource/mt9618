@@ -43,10 +43,6 @@
 #include <linux/slab.h>
 #include <linux/bitops.h>
 
-#ifdef CONFIG_MEDIATEK_DVB
-#include <linux/dvb/mtk_frontend.h>
-#endif
-
 #include <linux/dvb/frontend.h>
 
 #include <media/dvbdev.h>
@@ -55,15 +51,8 @@
  * Maximum number of Delivery systems per frontend. It
  * should be smaller or equal to 32
  */
-#ifdef CONFIG_MEDIATEK_DVB
-#define MAX_DELSYS	16
-
-/* Number of plp array */
-#define NUM_PLP_ARRAY	32
-#define NUM_ISID_ARRAY	32
-#else
 #define MAX_DELSYS	8
-#endif
+
 /* Helper definitions to be used at frontend drivers */
 #define kHz 1000UL
 #define MHz 1000000UL
@@ -493,21 +482,7 @@ struct dvb_frontend_ops {
 	int (*i2c_gate_ctrl)(struct dvb_frontend* fe, int enable);
 	int (*ts_bus_ctrl)(struct dvb_frontend* fe, int acquire);
 	int (*set_lna)(struct dvb_frontend *);
-#ifdef CONFIG_MEDIATEK_DVB
-	int (*blindscan_start)(struct dvb_frontend *fe,
-		struct DMD_DVBS_BlindScan_Start_param *Start_param);
-	int (*blindscan_get_tuner_freq)(struct dvb_frontend *fe,
-		struct DMD_DVBS_BlindScan_GetTunerFreq_param *GetTunerFreq_param);
-	int (*blindscan_next_freq)(struct dvb_frontend *fe,
-		struct DMD_DVBS_BlindScan_NextFreq_param *NextFreq_param);
-	int (*blindscan_wait_curfreq_finished)(struct dvb_frontend *fe,
-		struct DMD_DVBS_BlindScan_WaitCurFreqFinished_param *WaitCurFreqFinished_param);
-	int (*blindscan_get_channel)(struct dvb_frontend *fe,
-		struct DMD_DVBS_BlindScan_GetChannel_param *GetChannel_param);
-	int (*blindscan_end)(struct dvb_frontend *fe);
-	int (*blindscan_cancel)(struct dvb_frontend *fe);
-	enum lnb_overload_status (*get_lnb_overload_status)(struct dvb_frontend *fe);
-#endif
+
 	/*
 	 * These callbacks are for devices that implement their own
 	 * tuning algorithms, rather than a simple swzigzag
@@ -626,16 +601,9 @@ struct dtv_frontend_properties {
 
 	enum fe_pilot		pilot;
 	enum fe_rolloff		rolloff;
-#ifdef CONFIG_MEDIATEK_DVB //uapi
-	enum mtk_fe_fec_type		fec_type;
-#endif
+
 	enum fe_delivery_system	delivery_system;
-#ifdef CONFIG_MEDIATEK_DVB
-	u32	post_ber;
-	u8 isid_array[32];
-	u8 vcm_enable;
-	u8 single_mode;
-#endif
+
 	enum fe_interleaving	interleaving;
 
 	/* ISDB-T specifics */
@@ -650,21 +618,10 @@ struct dtv_frontend_properties {
 	    enum fe_code_rate	fec;
 	    enum fe_modulation	modulation;
 	    u8			interleaving;
-#ifdef CONFIG_MEDIATEK_DVB
-		u32			post_ber;
-#endif
 	} layer[3];
 
 	/* Multistream specifics */
 	u32			stream_id;
-#ifdef CONFIG_MEDIATEK_DVB //uapi
-	enum mtk_fe_stream_id_type	stream_id_type;
-	u8			plp_array[32];
-
-	s32			frequency_offset;
-	u16			system_id;
-	u32			pre_ber;
-#endif
 
 	/* Physical Layer Scrambling specifics */
 	u32			scrambling_sequence_index;
@@ -676,6 +633,7 @@ struct dtv_frontend_properties {
 	u8			atscmh_tnog;
 	u8			atscmh_sgn;
 	u8			atscmh_prc;
+
 	u8			atscmh_rs_frame_mode;
 	u8			atscmh_rs_frame_ensemble;
 	u8			atscmh_rs_code_mode_pri;
@@ -687,20 +645,9 @@ struct dtv_frontend_properties {
 	u8			atscmh_sccc_code_mode_d;
 
 	u32			lna;
-#ifdef CONFIG_MEDIATEK_DVB //uapi
-	u8			agc_val;
-	u8			isdbt_ewbs_flag;
-
-	/* ANALOG specifics */
-	enum mtk_fe_analog_sound_std	ana_sound_std;
-#endif
 
 	/* statistics data */
 	struct dtv_fe_stats	strength;
-#ifdef CONFIG_MEDIATEK_DVB
-	struct dtv_fe_stats	quality;
-	struct dtv_fe_stats	mer;
-#endif
 	struct dtv_fe_stats	cnr;
 	struct dtv_fe_stats	pre_bit_error;
 	struct dtv_fe_stats	pre_bit_count;
@@ -708,23 +655,6 @@ struct dtv_frontend_properties {
 	struct dtv_fe_stats	post_bit_count;
 	struct dtv_fe_stats	block_error;
 	struct dtv_fe_stats	block_count;
-
-#ifdef CONFIG_MEDIATEK_DVB
-	u8 atsc3_scan_flag;
-	struct atsc3t_plp_bitmap plpId_bitmap;
-	struct atsc3t_plp_bitmap llsFlag_bitmap;
-	enum demod_output_format atsc3_demod_output_format;
-	struct {
-		enum atsc3_plp_modulation modulation;
-		enum atsc3_plp_fec plp_fec;
-		enum atsc3_time_interleave_mode time_interleave_mode;
-		enum atsc3_plp_code_rate plp_code_rate;
-		enum fe_status plp_lock_status;
-		u64 uec;
-		u32 plp_id;
-	} atsc3_plp_info[4];
-#endif
-
 };
 
 #define DVB_FE_NO_EXIT  0

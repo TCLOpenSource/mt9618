@@ -188,7 +188,7 @@ static int appleir_raw_event(struct hid_device *hid, struct hid_report *report,
 	static const u8 flatbattery[] = { 0x25, 0x87, 0xe0 };
 	unsigned long flags;
 
-	if (len != 5)
+	if (len != 5 || !(hid->claimed & HID_CLAIMED_INPUT))
 		goto out;
 
 	if (!memcmp(data, keydown, sizeof(keydown))) {
@@ -283,11 +283,9 @@ static int appleir_probe(struct hid_device *hid, const struct hid_device_id *id)
 	int ret;
 	struct appleir *appleir;
 
-	appleir = kzalloc(sizeof(struct appleir), GFP_KERNEL);
-	if (!appleir) {
-		ret = -ENOMEM;
-		goto allocfail;
-	}
+	appleir = devm_kzalloc(&hid->dev, sizeof(struct appleir), GFP_KERNEL);
+	if (!appleir)
+		return -ENOMEM;
 
 	appleir->hid = hid;
 
@@ -313,8 +311,7 @@ static int appleir_probe(struct hid_device *hid, const struct hid_device_id *id)
 
 	return 0;
 fail:
-	kfree(appleir);
-allocfail:
+	devm_kfree(&hid->dev, appleir);
 	return ret;
 }
 
@@ -323,7 +320,6 @@ static void appleir_remove(struct hid_device *hid)
 	struct appleir *appleir = hid_get_drvdata(hid);
 	hid_hw_stop(hid);
 	del_timer_sync(&appleir->key_up_timer);
-	kfree(appleir);
 }
 
 static const struct hid_device_id appleir_devices[] = {

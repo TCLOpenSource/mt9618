@@ -7,7 +7,7 @@
  * Design
  * ======
  *
- * See http://www.chronox.de/jent.html
+ * See https://www.chronox.de/jent.html
  *
  * License
  * =======
@@ -47,7 +47,7 @@
 
 /*
  * This Jitterentropy RNG is based on the jitterentropy library
- * version 2.2.0 provided at http://www.chronox.de/jent.html
+ * version 2.2.0 provided at https://www.chronox.de/jent.html
  */
 
 #ifdef __OPTIMIZE__
@@ -117,6 +117,22 @@ struct rand_data {
 #define JENT_EHEALTH		9 /* Health test failed during initialization */
 #define JENT_ERCT		10 /* RCT failed during initialization */
 
+/*
+ * The output n bits can receive more than n bits of min entropy, of course,
+ * but the fixed output of the conditioning function can only asymptotically
+ * approach the output size bits of min entropy, not attain that bound. Random
+ * maps will tend to have output collisions, which reduces the creditable
+ * output entropy (that is what SP 800-90B Section 3.1.5.1.2 attempts to bound).
+ *
+ * The value "64" is justified in Appendix A.4 of the current 90C draft,
+ * and aligns with NIST's in "epsilon" definition in this document, which is
+ * that a string can be considered "full entropy" if you can bound the min
+ * entropy in each bit of output to at least 1-epsilon, where epsilon is
+ * required to be <= 2^(-32).
+ */
+#define JENT_ENTROPY_SAFETY_FACTOR	64
+
+#include <linux/fips.h>
 #include "jitterentropy.h"
 
 /***************************************************************************
@@ -265,7 +281,6 @@ static int jent_stuck(struct rand_data *ec, __u64 current_delta)
 {
 	__u64 delta2 = jent_delta(ec->last_delta, current_delta);
 	__u64 delta3 = jent_delta(ec->last_delta2, delta2);
-	unsigned int delta_masked = current_delta & JENT_APT_WORD_MASK;
 
 	ec->last_delta = current_delta;
 	ec->last_delta2 = delta2;
@@ -274,7 +289,7 @@ static int jent_stuck(struct rand_data *ec, __u64 current_delta)
 	 * Insert the result of the comparison of two back-to-back time
 	 * deltas.
 	 */
-	jent_apt_insert(ec, delta_masked);
+	jent_apt_insert(ec, current_delta);
 
 	if (!current_delta || !delta2 || !delta3) {
 		/* RCT with a stuck bit */
@@ -547,7 +562,10 @@ static int jent_measure_jitter(struct rand_data *ec)
  */
 static void jent_gen_entropy(struct rand_data *ec)
 {
-	unsigned int k = 0;
+	unsigned int k = 0, safety_factor = 0;
+
+	if (fips_enabled)
+		safety_factor = JENT_ENTROPY_SAFETY_FACTOR;
 
 	/* priming of the ->prev_time value */
 	jent_measure_jitter(ec);
@@ -561,7 +579,7 @@ static void jent_gen_entropy(struct rand_data *ec)
 		 * We multiply the loop value with ->osr to obtain the
 		 * oversampling rate requested by the caller
 		 */
-		if (++k >= (DATA_SIZE_BITS * ec->osr))
+		if (++k >= ((DATA_SIZE_BITS + safety_factor) * ec->osr))
 			break;
 	}
 }
@@ -597,7 +615,7 @@ int jent_read_entropy(struct rand_data *ec, unsigned char *data,
 	if (!ec)
 		return -1;
 
-	while (0 < len) {
+	while (len > 0) {
 		unsigned int tocopy;
 
 		jent_gen_entropy(ec);
@@ -678,7 +696,7 @@ struct rand_data *jent_entropy_collector_alloc(unsigned int osr,
 	}
 
 	/* verify and set the oversampling rate */
-	if (0 == osr)
+	if (osr == 0)
 		osr = 1; /* minimum sampling rate is 1 */
 	entropy_collector->osr = osr;
 
@@ -769,7 +787,7 @@ int jent_entropy_init(void)
 		 * etc. with the goal to clear it to get the worst case
 		 * measurements.
 		 */
-		if (CLEARCACHE > i)
+		if (i < CLEARCACHE)
 			continue;
 
 		if (stuck)
@@ -826,7 +844,7 @@ int jent_entropy_init(void)
 	 * should not fail. The value of 3 should cover the NTP case being
 	 * performed during our test run.
 	 */
-	if (3 < time_backwards)
+	if (time_backwards > 3)
 		return JENT_ENOMONOTONIC;
 
 	/*

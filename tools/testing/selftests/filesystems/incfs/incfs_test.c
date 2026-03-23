@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/xattr.h>
+#include <sys/statvfs.h>
 
 #include <linux/random.h>
 #include <linux/stat.h>
@@ -34,7 +35,6 @@
 #include <openssl/pem.h>
 #include <openssl/x509.h>
 
-#include <kselftest.h>
 #include <include/uapi/linux/fsverity.h>
 
 #include "utils.h"
@@ -43,6 +43,7 @@
 #define	FS_IOC_GETFLAGS			_IOR('f', 1, long)
 #define FS_VERITY_FL			0x00100000 /* Verity protected inode */
 
+#define TEST_SKIP 2
 #define TEST_FAILURE 1
 #define TEST_SUCCESS 0
 
@@ -58,7 +59,6 @@
 
 struct {
 	int file;
-	int test;
 	bool verbose;
 } options;
 
@@ -933,12 +933,13 @@ static int load_hash_tree(const char *mount_dir, struct test_file *file)
 	struct incfs_fill_blocks fill_blocks = {
 		.count = file->mtree_block_count,
 	};
-	struct incfs_fill_block *fill_block_array =
-		calloc(fill_blocks.count, sizeof(struct incfs_fill_block));
+	struct incfs_fill_block *fill_block_array;
 
 	if (fill_blocks.count == 0)
 		return 0;
 
+	fill_block_array =
+		calloc(fill_blocks.count, sizeof(struct incfs_fill_block));
 	if (!fill_block_array)
 		return -ENOMEM;
 	fill_blocks.fill_blocks = ptr_to_u64(fill_block_array);
@@ -1068,6 +1069,7 @@ static int cant_touch_index_test(const char *mount_dir)
 	free(index_path);
 	free(dst_name);
 	free(filename_in_index);
+	free(file_path);
 	if (umount(mount_dir) != 0) {
 		print_error("Can't unmout FS");
 		goto failure;
@@ -1080,6 +1082,7 @@ failure:
 	free(dst_name);
 	free(index_path);
 	free(filename_in_index);
+	free(file_path);
 	close(cmd_fd);
 	umount(mount_dir);
 	return TEST_FAILURE;
@@ -1351,9 +1354,13 @@ static int basic_file_ops_test(const char *mount_dir)
 		goto failure;
 	}
 
+	free(subdir1);
+	free(subdir2);
 	return TEST_SUCCESS;
 
 failure:
+	free(subdir1);
+	free(subdir2);
 	close(cmd_fd);
 	umount(mount_dir);
 	return TEST_FAILURE;
@@ -1482,7 +1489,7 @@ static int concurrent_reads_and_writes_test(const char *mount_dir)
 		goto failure;
 
 	/* Mount FS and release the backing file. */
-	if (mount_fs(mount_dir, backing_dir, 50) != 0)
+	if (mount_fs(mount_dir, backing_dir, 500) != 0)
 		goto failure;
 	free(backing_dir);
 
@@ -2635,13 +2642,14 @@ static int emit_partial_test_file_hash(const char *mount_dir,
 	struct incfs_fill_blocks fill_blocks = {
 		.count = 1,
 	};
-	struct incfs_fill_block *fill_block_array =
-		calloc(fill_blocks.count, sizeof(struct incfs_fill_block));
+	struct incfs_fill_block *fill_block_array;
 	uint8_t data[INCFS_DATA_FILE_BLOCK_SIZE];
 
 	if (file->size <= 4096 / 32 * 4096)
 		return 0;
 
+	fill_block_array =
+		calloc(fill_blocks.count, sizeof(struct incfs_fill_block));
 	if (!fill_block_array)
 		return -ENOMEM;
 	fill_blocks.fill_blocks = ptr_to_u64(fill_block_array);
@@ -2676,7 +2684,7 @@ failure:
 static int validate_hash_ranges(const char *mount_dir, struct test_file *file)
 {
 	int block_cnt = 1 + (file->size - 1) / INCFS_DATA_FILE_BLOCK_SIZE;
-	char *filename = concat_file_name(mount_dir, file->name);
+	char *filename = NULL;
 	int fd;
 	struct incfs_filled_range ranges[128];
 	struct incfs_get_filled_blocks_args fba = {
@@ -2692,6 +2700,7 @@ static int validate_hash_ranges(const char *mount_dir, struct test_file *file)
 	if (file->size <= 4096 / 32 * 4096)
 		return 0;
 
+	filename = concat_file_name(mount_dir, file->name);
 	fd = open(filename, O_RDONLY | O_CLOEXEC);
 	free(filename);
 	if (fd <= 0)
@@ -2793,22 +2802,36 @@ failure:
 	return TEST_FAILURE;
 }
 
+#define THREE_GB (3LL * 1024 * 1024 * 1024)
+#define FOUR_GB (4LL * 1024 * 1024 * 1024) /* Have 1GB of margin */
 static int large_file_test(const char *mount_dir)
 {
 	char *backing_dir;
 	int cmd_fd = -1;
 	int i;
-	int result = TEST_FAILURE;
+	int result = TEST_FAILURE, ret;
 	uint8_t data[INCFS_DATA_FILE_BLOCK_SIZE] = {};
-	int block_count = 3LL * 1024 * 1024 * 1024 / INCFS_DATA_FILE_BLOCK_SIZE;
-	struct incfs_fill_block *block_buf =
-		calloc(block_count, sizeof(struct incfs_fill_block));
-	struct incfs_fill_blocks fill_blocks = {
-		.count = block_count,
-		.fill_blocks = ptr_to_u64(block_buf),
-	};
+	int block_count = THREE_GB / INCFS_DATA_FILE_BLOCK_SIZE;
+	struct incfs_fill_block *block_buf = NULL;
+	struct incfs_fill_blocks fill_blocks;
 	incfs_uuid_t id;
 	int fd = -1;
+	struct statvfs svfs;
+	unsigned long long free_disksz;
+
+	ret = statvfs(mount_dir, &svfs);
+	if (ret) {
+		ksft_print_msg("Can't get disk size. Skipping %s...\n", __func__);
+		return TEST_SKIP;
+	}
+
+	free_disksz = (unsigned long long)svfs.f_bavail * svfs.f_bsize;
+
+	if (FOUR_GB > free_disksz) {
+		ksft_print_msg("Not enough free disk space (%lldMB). Skipping %s...\n",
+				free_disksz >> 20, __func__);
+		return TEST_SKIP;
+	}
 
 	backing_dir = create_backing_dir(mount_dir);
 	if (!backing_dir)
@@ -2825,6 +2848,14 @@ static int large_file_test(const char *mount_dir)
 		      (uint64_t)block_count * INCFS_DATA_FILE_BLOCK_SIZE,
 		      NULL) < 0)
 		goto failure;
+
+	block_buf = calloc(block_count, sizeof(struct incfs_fill_block));
+	if (!block_buf)
+		goto failure;
+	fill_blocks = (struct incfs_fill_blocks) {
+		.count = block_count,
+		.fill_blocks = ptr_to_u64(block_buf),
+	};
 
 	for (i = 0; i < block_count; i++) {
 		block_buf[i].compression = COMPRESSION_NONE;
@@ -2849,8 +2880,10 @@ static int large_file_test(const char *mount_dir)
 failure:
 	close(fd);
 	close(cmd_fd);
+	unlink("very_large_file");
 	umount(mount_dir);
 	free(backing_dir);
+	free(block_buf);
 	return result;
 }
 
@@ -3408,7 +3441,7 @@ out:
 
 static int is_close(struct timespec *start, int expected_ms)
 {
-	const int allowed_variance = 100;
+	const int allowed_variance = 500;
 	int result = TEST_FAILURE;
 	struct timespec finish;
 	int diff;
@@ -3417,7 +3450,11 @@ static int is_close(struct timespec *start, int expected_ms)
 	diff = (finish.tv_sec - start->tv_sec) * 1000 +
 		(finish.tv_nsec - start->tv_nsec) / 1000000;
 
-	TESTCOND(diff >= expected_ms - allowed_variance);
+	if(diff < expected_ms - allowed_variance || diff > expected_ms + allowed_variance) {
+		printf("%d %d %d\n", diff, expected_ms, allowed_variance);
+	}
+
+	TESTCOND(diff >= expected_ms);
 	TESTCOND(diff <= expected_ms + allowed_variance);
 	result = TEST_SUCCESS;
 out:
@@ -3498,13 +3535,13 @@ static int per_uid_read_timeouts_test(const char *mount_dir)
 		  purt_set[0].max_pending_time_us);
 
 	/* Still 1000 in UID 2 */
-	TESTEQUAL(clock_gettime(CLOCK_MONOTONIC, &start), 0);
 	TEST(pid = fork(), pid != -1);
 	if (pid == 0) {
 		TESTEQUAL(setuid(2), 0);
 		TESTEQUAL(pread(fd, buffer, sizeof(buffer), 0), -1);
 		exit(0);
 	}
+	TESTEQUAL(clock_gettime(CLOCK_MONOTONIC, &start), 0);
 	TESTNE(wait(&status), -1);
 	TESTEQUAL(WEXITSTATUS(status), 0);
 	TESTEQUAL(is_close(&start, 1000), 0);
@@ -3944,7 +3981,7 @@ static int memzero(const unsigned char *buf, size_t size)
 static int validate_verity(const char *mount_dir, struct test_file *file)
 {
 	int result = TEST_FAILURE;
-	char *filename = concat_file_name(mount_dir, file->name);
+	char *filename = 0;
 	int fd = -1;
 	uint64_t flags;
 	struct fsverity_digest *digest;
@@ -4205,6 +4242,8 @@ static int mmap_test(const char *mount_dir)
 	char *filename = NULL;
 	int fd = -1;
 	char *addr = (void *)-1;
+	int pid = -1;
+	int status;
 
 	TEST(backing_dir = create_backing_dir(mount_dir), backing_dir);
 	TESTEQUAL(mount_fs(mount_dir, backing_dir, 0), 0);
@@ -4221,23 +4260,26 @@ static int mmap_test(const char *mount_dir)
 	TEST(fd = open(filename, O_RDONLY | O_CLOEXEC), fd != -1);
 	TEST(addr = mmap(NULL, file.size, PROT_READ, MAP_PRIVATE, fd, 0),
 	     addr != (void *) -1);
-	TESTEQUAL(mlock(addr, INCFS_DATA_FILE_BLOCK_SIZE), 0);
-	TESTEQUAL(munlock(addr, INCFS_DATA_FILE_BLOCK_SIZE), 0);
-	TESTEQUAL(mlock(addr + shas_per_block * INCFS_DATA_FILE_BLOCK_SIZE,
-			INCFS_DATA_FILE_BLOCK_SIZE), -1);
-	TESTEQUAL(mlock(addr + (shas_per_block - 1) *
-			       INCFS_DATA_FILE_BLOCK_SIZE,
-			INCFS_DATA_FILE_BLOCK_SIZE), 0);
-	TESTEQUAL(munlock(addr + (shas_per_block - 1) *
-				 INCFS_DATA_FILE_BLOCK_SIZE,
-			  INCFS_DATA_FILE_BLOCK_SIZE), 0);
-	TESTEQUAL(mlock(addr + (shas_per_block - 1) *
-			       INCFS_DATA_FILE_BLOCK_SIZE,
-			INCFS_DATA_FILE_BLOCK_SIZE * 2), -1);
+	TESTEQUAL(addr[0], 57);
+
+	TEST(pid = fork(), pid != -1);
+	if (pid == 0) {
+		fclose(stderr);
+		TESTEQUAL(addr[shas_per_block * INCFS_DATA_FILE_BLOCK_SIZE],
+			  -71);
+		exit(0);
+	}
+	TESTNE(wait(&status), -1);
+	TESTEQUAL(status, 256);
+
+	TESTEQUAL(addr[(shas_per_block - 1) * INCFS_DATA_FILE_BLOCK_SIZE], 76);
 	TESTEQUAL(munmap(addr, file.size), 0);
+	addr = (void *) -1;
 
 	result = TEST_SUCCESS;
 out:
+	if (addr != (void *) -1)
+		munmap(addr, file.size);
 	free(file.mtree);
 	close(fd);
 	free(filename);
@@ -4610,6 +4652,168 @@ out:
 	return result;
 }
 
+static int stacked_mount_test(const char *mount_dir)
+{
+	int result = TEST_FAILURE;
+	char *backing_dir = NULL;
+
+	/* Mount with no node */
+	TEST(backing_dir = create_backing_dir(mount_dir), backing_dir);
+	TESTEQUAL(mount_fs(mount_dir, backing_dir, 0), 0);
+	/* Try mounting another instance with same name */
+	TESTEQUAL(mount_fs(mount_dir, backing_dir, 0), 0);
+	/* Try unmounting the first instance */
+	TESTEQUAL(umount_fs(mount_dir), 0);
+	/* Try unmounting the second instance */
+	TESTEQUAL(umount_fs(mount_dir), 0);
+	result = TEST_SUCCESS;
+out:
+	/* Cleanup */
+	rmdir(backing_dir);
+	free(backing_dir);
+	return result;
+}
+
+static int throttled_read_doesnt_block_read_test(const char *mount_dir)
+{
+	struct test_file file = {
+		  .name = "file",
+		  .size = INCFS_DATA_FILE_BLOCK_SIZE,
+	};
+	int result = TEST_FAILURE;
+	char *backing_dir = NULL;
+	int cmd_fd = -1;
+	char *filename = NULL;
+	int fd = -1;
+	int pid = -1;
+	int status;
+	struct timespec start;
+	struct incfs_per_uid_read_timeouts purt_set[] = {
+		{
+			.uid = 2,
+			.min_time_us = 0,
+			.min_pending_time_us = 2000000,
+			.max_pending_time_us = 2000000,
+		},
+	};
+	struct incfs_set_read_timeouts_args srt = {
+		ptr_to_u64(purt_set),
+		sizeof(purt_set)
+	};
+	char buffer[4096];
+
+	TEST(backing_dir = create_backing_dir(mount_dir), backing_dir);
+	TESTSYSCALL(mount_fs_opt(mount_dir, backing_dir,
+			 "read_timeout_ms=10000,report_uid", false));
+	TEST(cmd_fd = open_commands_file(mount_dir), cmd_fd != -1);
+	TESTEQUAL(emit_file(cmd_fd, NULL, file.name, &file.id,
+				    file.size, NULL), 0);
+
+	TESTEQUAL(ioctl(cmd_fd, INCFS_IOC_SET_READ_TIMEOUTS, &srt), 0);
+
+	TEST(filename = concat_file_name(mount_dir, file.name), filename);
+	TEST(fd = open(filename, O_RDONLY | O_CLOEXEC), fd != -1);
+
+	TEST(pid = fork(), pid != -1);
+	if (pid == 0) {
+		TESTEQUAL(setuid(2), 0);
+		TESTEQUAL(pread(fd, buffer, sizeof(buffer), 0), sizeof(buffer));
+		exit(0);
+	}
+
+	sleep(1);
+	TESTEQUAL(emit_test_file_data(mount_dir, &file), 0);
+	TESTEQUAL(clock_gettime(CLOCK_MONOTONIC, &start), 0);
+	TESTEQUAL(pread(fd, buffer, sizeof(buffer), 0), sizeof(buffer));
+	TESTEQUAL(is_close(&start, 0), 0);
+
+	TESTNE(wait(&status), -1);
+	TESTEQUAL(status, 0);
+	TESTEQUAL(is_close(&start, 1000), 0);
+	result = TEST_SUCCESS;
+out:
+	close(fd);
+	free(filename);
+	close(cmd_fd);
+	umount(mount_dir);
+	rmdir(backing_dir);
+	free(backing_dir);
+	return result;
+}
+
+static int throttled_mmap_doesnt_block_mmap_test(const char *mount_dir)
+{
+	struct test_file file = {
+		  .name = "file",
+		  .size = INCFS_DATA_FILE_BLOCK_SIZE,
+	};
+	int result = TEST_FAILURE;
+	char *backing_dir = NULL;
+	int cmd_fd = -1;
+	char *filename = NULL;
+	int fd = -1;
+	char *addr = (void *)-1;
+	int pid = -1;
+	int status;
+	struct timespec start;
+	struct incfs_per_uid_read_timeouts purt_set[] = {
+		{
+			.uid = 2,
+			.min_time_us = 0,
+			.min_pending_time_us = 2000000,
+			.max_pending_time_us = 2000000,
+		},
+	};
+	struct incfs_set_read_timeouts_args srt = {
+		ptr_to_u64(purt_set),
+		sizeof(purt_set)
+	};
+
+	TEST(backing_dir = create_backing_dir(mount_dir), backing_dir);
+	TESTSYSCALL(mount_fs_opt(mount_dir, backing_dir,
+			 "read_timeout_ms=10000,report_uid", false));
+	TEST(cmd_fd = open_commands_file(mount_dir), cmd_fd != -1);
+	TESTEQUAL(emit_file(cmd_fd, NULL, file.name, &file.id,
+				    file.size, NULL), 0);
+
+	TESTEQUAL(ioctl(cmd_fd, INCFS_IOC_SET_READ_TIMEOUTS, &srt), 0);
+
+	TEST(filename = concat_file_name(mount_dir, file.name), filename);
+	TEST(fd = open(filename, O_RDONLY | O_CLOEXEC), fd != -1);
+	TEST(addr = mmap(NULL, file.size, PROT_READ, MAP_PRIVATE, fd, 0),
+	     addr != (void *) -1);
+
+	TEST(pid = fork(), pid != -1);
+	if (pid == 0) {
+		TESTEQUAL(setuid(2), 0);
+		TESTEQUAL(addr[0], 57);
+		exit(0);
+	}
+
+	sleep(1);
+	TESTEQUAL(emit_test_file_data(mount_dir, &file), 0);
+	TESTEQUAL(clock_gettime(CLOCK_MONOTONIC, &start), 0);
+	TESTEQUAL(addr[0], 57);
+	TESTEQUAL(is_close(&start, 0), 0);
+
+	TESTNE(wait(&status), -1);
+	TESTEQUAL(status, 0);
+	TESTEQUAL(is_close(&start, 1000), 0);
+
+	result = TEST_SUCCESS;
+out:
+	if (addr != (void *) -1)
+		munmap(addr, file.size);
+	close(fd);
+	free(filename);
+	close(cmd_fd);
+	umount(mount_dir);
+	rmdir(backing_dir);
+	free(backing_dir);
+	return result;
+}
+
+
 static char *setup_mount_dir()
 {
 	struct stat st;
@@ -4633,7 +4837,50 @@ static char *setup_mount_dir()
 	return mount_dir;
 }
 
-int parse_options(int argc, char *const *argv)
+static void parse_range(const char *ranges, bool *run_test, size_t tests)
+{
+	size_t i;
+	char *range;
+
+	for (i = 0; i < tests; ++i)
+		run_test[i] = false;
+
+	range = strtok(optarg, ",");
+	while (range) {
+		char *dash = strchr(range, '-');
+
+		if (dash) {
+			size_t start = 1, end = tests;
+			char *end_ptr;
+
+			if (dash > range) {
+				start = strtol(range, &end_ptr, 10);
+				if (*end_ptr != '-' || start <= 0 || start > tests)
+					ksft_exit_fail_msg("Bad range\n");
+			}
+
+			if (dash[1]) {
+				end = strtol(dash + 1, &end_ptr, 10);
+				if (*end_ptr || end <= start || end > tests)
+					ksft_exit_fail_msg("Bad range\n");
+			}
+
+			for (i = start; i <= end; ++i)
+				run_test[i - 1] = true;
+		} else {
+			char *end;
+			long value = strtol(range, &end, 10);
+
+			if (*end || value <= 0 || value > tests)
+				ksft_exit_fail_msg("Bad range\n");
+			run_test[value - 1] = true;
+		}
+		range = strtok(NULL, ",");
+	}
+}
+
+int parse_options(int argc, char *const *argv, bool *run_test,
+		  size_t tests)
 {
 	signed char c;
 
@@ -4644,7 +4891,7 @@ int parse_options(int argc, char *const *argv)
 			break;
 
 		case 't':
-			options.test = strtol(optarg, NULL, 10);
+			parse_range(optarg, run_test, tests);
 			break;
 
 		case 'v':
@@ -4665,9 +4912,15 @@ struct test_case {
 
 void run_one_test(const char *mount_dir, struct test_case *test_case)
 {
+	int ret;
+
 	ksft_print_msg("Running %s\n", test_case->name);
-	if (test_case->pfunc(mount_dir) == TEST_SUCCESS)
+	ret = test_case->pfunc(mount_dir);
+
+	if (ret == TEST_SUCCESS)
 		ksft_test_result_pass("%s\n", test_case->name);
+	else if (ret == TEST_SKIP)
+		ksft_test_result_skip("%s\n", test_case->name);
 	else
 		ksft_test_result_fail("%s\n", test_case->name);
 }
@@ -4677,9 +4930,6 @@ int main(int argc, char *argv[])
 	char *mount_dir = NULL;
 	int i;
 	int fd, count;
-
-	if (parse_options(argc, argv))
-		ksft_exit_fail_msg("Bad options\n");
 
 	// Seed randomness pool for testing on QEMU
 	// NOTE - this abuses the concept of randomness - do *not* ever do this
@@ -4731,20 +4981,25 @@ int main(int argc, char *argv[])
 		MAKE_TEST(stat_test),
 		MAKE_TEST(sysfs_test),
 		MAKE_TEST(sysfs_rename_test),
+		MAKE_TEST(stacked_mount_test),
+		MAKE_TEST(throttled_read_doesnt_block_read_test),
+		MAKE_TEST(throttled_mmap_doesnt_block_mmap_test),
 	};
 #undef MAKE_TEST
+	bool run_test[ARRAY_SIZE(cases)];
 
-	if (options.test) {
-		if (options.test <= 0 || options.test > ARRAY_SIZE(cases))
-			ksft_exit_fail_msg("Invalid test\n");
+	for (int i = 0; i < ARRAY_SIZE(cases); ++i)
+		run_test[i] = true;
 
-		ksft_set_plan(1);
-		run_one_test(mount_dir, &cases[options.test - 1]);
-	} else {
-		ksft_set_plan(ARRAY_SIZE(cases));
-		for (i = 0; i < ARRAY_SIZE(cases); ++i)
+	if (parse_options(argc, argv, run_test, ARRAY_SIZE(cases)))
+		ksft_exit_fail_msg("Bad options\n");
+
+	ksft_set_plan(ARRAY_SIZE(cases));
+	for (i = 0; i < ARRAY_SIZE(run_test); ++i)
+		if (run_test[i])
 			run_one_test(mount_dir, &cases[i]);
-	}
+		else
+			ksft_cnt.ksft_xskip++;
 
 	umount2(mount_dir, MNT_FORCE);
 	rmdir(mount_dir);

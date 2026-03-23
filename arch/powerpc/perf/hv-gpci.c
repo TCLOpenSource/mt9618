@@ -48,6 +48,8 @@ EVENT_DEFINE_RANGE_FORMAT(length, config1, 24, 31);
 /* u32, byte offset */
 EVENT_DEFINE_RANGE_FORMAT(offset, config1, 32, 63);
 
+static cpumask_t hv_gpci_cpumask;
+
 static struct attribute *format_attrs[] = {
 	&format_attr_request.attr,
 	&format_attr_starting_index.attr,
@@ -94,7 +96,15 @@ static ssize_t kernel_version_show(struct device *dev,
 	return sprintf(page, "0x%x\n", COUNTER_INFO_VERSION_CURRENT);
 }
 
+static ssize_t cpumask_show(struct device *dev,
+			    struct device_attribute *attr, char *buf)
+{
+	return cpumap_print_to_pagebuf(true, buf, &hv_gpci_cpumask);
+}
+
 static DEVICE_ATTR_RO(kernel_version);
+static DEVICE_ATTR_RO(cpumask);
+
 HV_CAPS_ATTR(version, "0x%x\n");
 HV_CAPS_ATTR(ga, "%d\n");
 HV_CAPS_ATTR(expanded, "%d\n");
@@ -111,6 +121,15 @@ static struct attribute *interface_attrs[] = {
 	NULL,
 };
 
+static struct attribute *cpumask_attrs[] = {
+	&dev_attr_cpumask.attr,
+	NULL,
+};
+
+static struct attribute_group cpumask_attr_group = {
+	.attrs = cpumask_attrs,
+};
+
 static struct attribute_group interface_group = {
 	.name = "interface",
 	.attrs = interface_attrs,
@@ -120,19 +139,11 @@ static const struct attribute_group *attr_groups[] = {
 	&format_group,
 	&event_group,
 	&interface_group,
+	&cpumask_attr_group,
 	NULL,
 };
 
-#define HGPCI_REQ_BUFFER_SIZE	4096
-#define HGPCI_MAX_DATA_BYTES \
-	(HGPCI_REQ_BUFFER_SIZE - sizeof(struct hv_get_perf_counter_info_params))
-
 static DEFINE_PER_CPU(char, hv_gpci_reqb[HGPCI_REQ_BUFFER_SIZE]) __aligned(sizeof(uint64_t));
-
-struct hv_gpci_request_buffer {
-	struct hv_get_perf_counter_info_params params;
-	uint8_t bytes[HGPCI_MAX_DATA_BYTES];
-} __packed;
 
 static unsigned long single_gpci_request(u32 req, u32 starting_index,
 		u16 secondary_index, u8 version_in, u32 offset, u8 length,
@@ -153,6 +164,20 @@ static unsigned long single_gpci_request(u32 req, u32 starting_index,
 
 	ret = plpar_hcall_norets(H_GET_PERF_COUNTER_INFO,
 			virt_to_phys(arg), HGPCI_REQ_BUFFER_SIZE);
+
+	/*
+	 * ret value as 'H_PARAMETER' with detail_rc as 'GEN_BUF_TOO_SMALL',
+	 * specifies that the current buffer size cannot accommodate
+	 * all the information and a partial buffer returned.
+	 * Since in this function we are only accessing data for a given starting index,
+	 * we don't need to accommodate whole data and can get required count by
+	 * accessing first entry data.
+	 * Hence hcall fails only incase the ret value is other than H_SUCCESS or
+	 * H_PARAMETER with detail_rc value as GEN_BUF_TOO_SMALL(0x1B).
+	 */
+	if (ret == H_PARAMETER && be32_to_cpu(arg->params.detail_rc) == 0x1B)
+		ret = 0;
+
 	if (ret) {
 		pr_devel("hcall failed: 0x%lx\n", ret);
 		goto out;
@@ -217,6 +242,7 @@ static int h_gpci_event_init(struct perf_event *event)
 {
 	u64 count;
 	u8 length;
+	unsigned long ret;
 
 	/* Not our event */
 	if (event->attr.type != event->pmu->type)
@@ -247,13 +273,23 @@ static int h_gpci_event_init(struct perf_event *event)
 	}
 
 	/* check if the request works... */
-	if (single_gpci_request(event_get_request(event),
+	ret = single_gpci_request(event_get_request(event),
 				event_get_starting_index(event),
 				event_get_secondary_index(event),
 				event_get_counter_info_version(event),
 				event_get_offset(event),
 				length,
-				&count)) {
+				&count);
+
+	/*
+	 * ret value as H_AUTHORITY implies that partition is not permitted to retrieve
+	 * performance information, and required to set
+	 * "Enable Performance Information Collection" option.
+	 */
+	if (ret == H_AUTHORITY)
+		return -EPERM;
+
+	if (ret) {
 		pr_devel("gpci hcall failed\n");
 		return -EINVAL;
 	}
@@ -275,6 +311,45 @@ static struct pmu h_gpci_pmu = {
 	.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
 };
 
+static int ppc_hv_gpci_cpu_online(unsigned int cpu)
+{
+	if (cpumask_empty(&hv_gpci_cpumask))
+		cpumask_set_cpu(cpu, &hv_gpci_cpumask);
+
+	return 0;
+}
+
+static int ppc_hv_gpci_cpu_offline(unsigned int cpu)
+{
+	int target;
+
+	/* Check if exiting cpu is used for collecting gpci events */
+	if (!cpumask_test_and_clear_cpu(cpu, &hv_gpci_cpumask))
+		return 0;
+
+	/* Find a new cpu to collect gpci events */
+	target = cpumask_last(cpu_active_mask);
+
+	if (target < 0 || target >= nr_cpu_ids) {
+		pr_err("hv_gpci: CPU hotplug init failed\n");
+		return -1;
+	}
+
+	/* Migrate gpci events to the new target */
+	cpumask_set_cpu(target, &hv_gpci_cpumask);
+	perf_pmu_migrate_context(&h_gpci_pmu, cpu, target);
+
+	return 0;
+}
+
+static int hv_gpci_cpu_hotplug_init(void)
+{
+	return cpuhp_setup_state(CPUHP_AP_PERF_POWERPC_HV_GPCI_ONLINE,
+			  "perf/powerpc/hv_gcpi:online",
+			  ppc_hv_gpci_cpu_online,
+			  ppc_hv_gpci_cpu_offline);
+}
+
 static int hv_gpci_init(void)
 {
 	int r;
@@ -295,6 +370,11 @@ static int hv_gpci_init(void)
 				hret);
 		return -ENODEV;
 	}
+
+	/* init cpuhotplug */
+	r = hv_gpci_cpu_hotplug_init();
+	if (r)
+		return r;
 
 	/* sampling not supported */
 	h_gpci_pmu.capabilities |= PERF_PMU_CAP_NO_INTERRUPT;

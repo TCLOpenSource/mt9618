@@ -226,7 +226,7 @@ static ssize_t ltc2945_value_show(struct device *dev,
 	value = ltc2945_reg_to_val(dev, attr->index);
 	if (value < 0)
 		return value;
-	return snprintf(buf, PAGE_SIZE, "%lld\n", value);
+	return sysfs_emit(buf, "%lld\n", value);
 }
 
 static ssize_t ltc2945_value_store(struct device *dev,
@@ -248,6 +248,8 @@ static ssize_t ltc2945_value_store(struct device *dev,
 
 	/* convert to register value, then clamp and write result */
 	regval = ltc2945_val_to_reg(dev, reg, val);
+	if (regval < 0)
+		return regval;
 	if (is_power_reg(reg)) {
 		regval = clamp_val(regval, 0, 0xffffff);
 		regbuf[0] = regval >> 16;
@@ -333,7 +335,7 @@ static ssize_t ltc2945_bool_show(struct device *dev,
 	if (fault)		/* Clear reported faults in chip register */
 		regmap_update_bits(regmap, LTC2945_FAULT, attr->index, 0);
 
-	return snprintf(buf, PAGE_SIZE, "%d\n", !!fault);
+	return sysfs_emit(buf, "%d\n", !!fault);
 }
 
 /* Input voltages */
@@ -445,8 +447,7 @@ static const struct regmap_config ltc2945_regmap_config = {
 	.max_register = LTC2945_MIN_ADIN_THRES_L,
 };
 
-static int ltc2945_probe(struct i2c_client *client,
-			 const struct i2c_device_id *id)
+static int ltc2945_probe(struct i2c_client *client)
 {
 	struct device *dev = &client->dev;
 	struct device *hwmon_dev;
@@ -478,7 +479,7 @@ static struct i2c_driver ltc2945_driver = {
 	.driver = {
 		   .name = "ltc2945",
 		   },
-	.probe = ltc2945_probe,
+	.probe_new = ltc2945_probe,
 	.id_table = ltc2945_id,
 };
 

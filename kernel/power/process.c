@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * drivers/power/process.c - Functions for starting/stopping processes on 
+ * drivers/power/process.c - Functions for starting/stopping processes on
  *                           suspend transitions.
  *
  * Originally from swsusp.
@@ -22,6 +22,16 @@
 #include <linux/kmod.h>
 #include <trace/events/power.h>
 #include <linux/cpuset.h>
+#include <linux/moduleparam.h>
+
+#include <trace/hooks/power.h>
+
+//#ifdef CONFIG_VENDOR_EDIT
+/* yang59.zhou@tcl.com 2025/12/04 Open the stack log of the failed str freezing operation */
+bool pm_debug_tasks;
+module_param(pm_debug_tasks, bool, 0644);
+MODULE_PARM_DESC(pm_debug_tasks, "Enable/disable PM debug messages");
+//#endif
 
 /*
  * Timeout for stopping processes
@@ -97,17 +107,24 @@ static int try_to_freeze_tasks(bool user_only)
 		       todo - wq_busy, wq_busy);
 
 		if (wq_busy)
-			show_workqueue_state();
-
+			show_all_workqueues();
+//#ifdef CONFIG_VENDOR_EDIT
+/* yang59.zhou@tcl.com 2025/12/04 Open the stack log of the failed str freezing operation */
+		pm_debug_messages_on = pm_debug_tasks;
+//#endif
 		if (pm_debug_messages_on) {
 			read_lock(&tasklist_lock);
 			for_each_process_thread(g, p) {
 				if (p != current && !freezer_should_skip(p)
-				    && freezing(p) && !frozen(p))
+				    && freezing(p) && !frozen(p)) {
 					sched_show_task(p);
+					trace_android_vh_try_to_freeze_todo_unfrozen(p);
+				}
 			}
 			read_unlock(&tasklist_lock);
 		}
+
+		trace_android_vh_try_to_freeze_todo(todo, elapsed_msecs, wq_busy);
 	} else {
 		pr_cont("(elapsed %d.%03d seconds) ", elapsed_msecs / 1000,
 			elapsed_msecs % 1000);
@@ -149,7 +166,7 @@ int freeze_processes(void)
 	BUG_ON(in_atomic());
 
 	/*
-	 * Now that the whole userspace is frozen we need to disbale
+	 * Now that the whole userspace is frozen we need to disable
 	 * the OOM killer to disallow any further interference with
 	 * killable tasks. There is no guarantee oom victims will
 	 * ever reach a point they go away we have to wait with a timeout.
@@ -238,7 +255,7 @@ void thaw_kernel_threads(void)
 
 	read_lock(&tasklist_lock);
 	for_each_process_thread(g, p) {
-		if (p->flags & (PF_KTHREAD | PF_WQ_WORKER))
+		if (p->flags & PF_KTHREAD)
 			__thaw_task(p);
 	}
 	read_unlock(&tasklist_lock);

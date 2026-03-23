@@ -32,7 +32,6 @@
 
 
 #define DMX_FILTER_SIZE 16
-#define DMX_MAX_PLANES  8
 
 /**
  * enum dmx_output - Output for the demux.
@@ -238,17 +237,6 @@ enum dmx_buffer_flags {
 	DMX_BUFFER_FLAG_DISCONTINUITY_INDICATOR		= 1 << 4,
 };
 
-struct dmx_plane {
-	__u32		bytesused;
-	__u32		length;
-	union {
-		__u32	mem_offset;
-		__u64	userptr;
-		__s32	fd;
-	} m;
-	__u32		data_offset;
-};
-
 /**
  * struct dmx_buffer - dmx buffer info
  *
@@ -272,12 +260,7 @@ struct dmx_plane {
 struct dmx_buffer {
 	__u32			index;
 	__u32			bytesused;
-	union {
-		__u32		offset;
-		__u64		userptr;
-		__s32		fd;
-		struct dmx_plane *planes;
-	};
+	__u32			offset;
 	__u32			length;
 	__u32			flags;
 	__u32			count;
@@ -293,15 +276,8 @@ struct dmx_buffer {
  * All reserved fields must be set to zero.
  */
 struct dmx_requestbuffers {
-	__u32 type;
-	#define DMX_TYPE_CAPTURE		1
-	#define DMX_TYPE_CAPTURE_MPLANE	2
-	__u32 memory;
-	#define DMX_MEMORY_MMAP			1
-	#define DMX_MEMORY_USERPTR		2
-	#define DMX_MEMORY_DMABUF		3
 	__u32			count;
-	__u32			size[DMX_MAX_PLANES];
+	__u32			size;
 };
 
 /**

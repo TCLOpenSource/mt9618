@@ -186,6 +186,11 @@ void eeprom_93cx6_read(struct eeprom_93cx6 *eeprom, const u8 word,
 	eeprom_93cx6_write_bits(eeprom, command,
 		PCI_EEPROM_WIDTH_OPCODE + eeprom->width);
 
+	if (has_quirk_extra_read_cycle(eeprom)) {
+		eeprom_93cx6_pulse_high(eeprom);
+		eeprom_93cx6_pulse_low(eeprom);
+	}
+
 	/*
 	 * Read the requested 16 bits.
 	 */
@@ -228,7 +233,7 @@ EXPORT_SYMBOL_GPL(eeprom_93cx6_multiread);
 /**
  * eeprom_93cx6_readb - Read a byte from eeprom
  * @eeprom: Pointer to eeprom structure
- * @word: Byte index from where we should start reading
+ * @byte: Byte index from where we should start reading
  * @data: target pointer where the information will have to be stored
  *
  * This function will read a byte of the eeprom data
@@ -252,6 +257,11 @@ void eeprom_93cx6_readb(struct eeprom_93cx6 *eeprom, const u8 byte,
 	eeprom_93cx6_write_bits(eeprom, command,
 		PCI_EEPROM_WIDTH_OPCODE + eeprom->width + 1);
 
+	if (has_quirk_extra_read_cycle(eeprom)) {
+		eeprom_93cx6_pulse_high(eeprom);
+		eeprom_93cx6_pulse_low(eeprom);
+	}
+
 	/*
 	 * Read the requested 8 bits.
 	 */
@@ -270,7 +280,7 @@ EXPORT_SYMBOL_GPL(eeprom_93cx6_readb);
  * @eeprom: Pointer to eeprom structure
  * @byte: Index from where we should start reading
  * @data: target pointer where the information will have to be stored
- * @words: Number of bytes that should be read.
+ * @bytes: Number of bytes that should be read.
  *
  * This function will read all requested bytes from the eeprom,
  * this is done by calling eeprom_93cx6_readb() multiple times.

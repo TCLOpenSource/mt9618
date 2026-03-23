@@ -143,8 +143,8 @@ exit:
 }
 
 static int prism2_add_key(struct wiphy *wiphy, struct net_device *dev,
-			  u8 key_index, bool pairwise, const u8 *mac_addr,
-			  struct key_params *params)
+			  int link_id, u8 key_index, bool pairwise,
+			  const u8 *mac_addr, struct key_params *params)
 {
 	struct wlandevice *wlandev = dev->ml_priv;
 	u32 did;
@@ -172,7 +172,7 @@ static int prism2_add_key(struct wiphy *wiphy, struct net_device *dev,
 }
 
 static int prism2_get_key(struct wiphy *wiphy, struct net_device *dev,
-			  u8 key_index, bool pairwise,
+			  int link_id, u8 key_index, bool pairwise,
 			  const u8 *mac_addr, void *cookie,
 			  void (*callback)(void *cookie, struct key_params*))
 {
@@ -202,7 +202,8 @@ static int prism2_get_key(struct wiphy *wiphy, struct net_device *dev,
 }
 
 static int prism2_del_key(struct wiphy *wiphy, struct net_device *dev,
-			  u8 key_index, bool pairwise, const u8 *mac_addr)
+			  int link_id, u8 key_index, bool pairwise,
+			  const u8 *mac_addr)
 {
 	struct wlandevice *wlandev = dev->ml_priv;
 	u32 did;
@@ -227,7 +228,8 @@ static int prism2_del_key(struct wiphy *wiphy, struct net_device *dev,
 }
 
 static int prism2_set_default_key(struct wiphy *wiphy, struct net_device *dev,
-				  u8 key_index, bool unicast, bool multicast)
+				  int link_id, u8 key_index, bool unicast,
+				  bool multicast)
 {
 	struct wlandevice *wlandev = dev->ml_priv;
 
@@ -276,7 +278,7 @@ static int prism2_scan(struct wiphy *wiphy,
 	struct prism2_wiphy_private *priv = wiphy_priv(wiphy);
 	struct wlandevice *wlandev;
 	struct p80211msg_dot11req_scan msg1;
-	struct p80211msg_dot11req_scan_results msg2;
+	struct p80211msg_dot11req_scan_results *msg2;
 	struct cfg80211_bss *bss;
 	struct cfg80211_scan_info info = {};
 
@@ -300,6 +302,10 @@ static int prism2_scan(struct wiphy *wiphy,
 		netdev_err(dev, "Can't scan in AP mode\n");
 		return -EOPNOTSUPP;
 	}
+
+	msg2 = kzalloc(sizeof(*msg2), GFP_KERNEL);
+	if (!msg2)
+		return -ENOMEM;
 
 	priv->scan_request = request;
 
@@ -342,33 +348,31 @@ static int prism2_scan(struct wiphy *wiphy,
 	for (i = 0; i < numbss; i++) {
 		int freq;
 
-		memset(&msg2, 0, sizeof(msg2));
-		msg2.msgcode = DIDMSG_DOT11REQ_SCAN_RESULTS;
-		msg2.bssindex.data = i;
+		msg2->msgcode = DIDMSG_DOT11REQ_SCAN_RESULTS;
+		msg2->bssindex.data = i;
 
 		result = p80211req_dorequest(wlandev, (u8 *)&msg2);
 		if ((result != 0) ||
-		    (msg2.resultcode.data != P80211ENUM_resultcode_success)) {
+		    (msg2->resultcode.data != P80211ENUM_resultcode_success)) {
 			break;
 		}
 
 		ie_buf[0] = WLAN_EID_SSID;
-		ie_buf[1] = msg2.ssid.data.len;
+		ie_buf[1] = msg2->ssid.data.len;
 		ie_len = ie_buf[1] + 2;
-		memcpy(&ie_buf[2], &msg2.ssid.data.data, msg2.ssid.data.len);
-		freq = ieee80211_channel_to_frequency(msg2.dschannel.data,
+		memcpy(&ie_buf[2], &msg2->ssid.data.data, msg2->ssid.data.len);
+		freq = ieee80211_channel_to_frequency(msg2->dschannel.data,
 						      NL80211_BAND_2GHZ);
 		bss = cfg80211_inform_bss(wiphy,
-			ieee80211_get_channel(wiphy, freq),
-			CFG80211_BSS_FTYPE_UNKNOWN,
-			(const u8 *)&msg2.bssid.data.data,
-			msg2.timestamp.data, msg2.capinfo.data,
-			msg2.beaconperiod.data,
-			ie_buf,
-			ie_len,
-			(msg2.signal.data - 65536) * 100, /* Conversion to signed type */
-			GFP_KERNEL
-		);
+					  ieee80211_get_channel(wiphy, freq),
+					  CFG80211_BSS_FTYPE_UNKNOWN,
+					  (const u8 *)&msg2->bssid.data.data,
+					  msg2->timestamp.data, msg2->capinfo.data,
+					  msg2->beaconperiod.data,
+					  ie_buf,
+					  ie_len,
+					  (msg2->signal.data - 65536) * 100, /* Conversion to signed type */
+					  GFP_KERNEL);
 
 		if (!bss) {
 			err = -ENOMEM;
@@ -379,12 +383,13 @@ static int prism2_scan(struct wiphy *wiphy,
 	}
 
 	if (result)
-		err = prism2_result2err(msg2.resultcode.data);
+		err = prism2_result2err(msg2->resultcode.data);
 
 exit:
 	info.aborted = !!(err);
 	cfg80211_scan_done(request, &info);
 	priv->scan_request = NULL;
+	kfree(msg2);
 	return err;
 }
 
@@ -644,7 +649,7 @@ void prism2_disconnected(struct wlandevice *wlandev)
 void prism2_roamed(struct wlandevice *wlandev)
 {
 	struct cfg80211_roam_info roam_info = {
-		.bssid = wlandev->bssid,
+		.links[0].bssid = wlandev->bssid,
 	};
 
 	cfg80211_roamed(wlandev->netdev, &roam_info, GFP_KERNEL);

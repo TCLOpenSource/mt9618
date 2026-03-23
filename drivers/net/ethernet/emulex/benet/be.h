@@ -33,7 +33,6 @@
 #include "be_hw.h"
 #include "be_roce.h"
 
-#define DRV_VER			"12.0.0.0"
 #define DRV_NAME		"be2net"
 #define BE_NAME			"Emulex BladeEngine2"
 #define BE3_NAME		"Emulex BladeEngine3"
@@ -564,7 +563,7 @@ struct be_adapter {
 	struct be_dma_mem mbox_mem_alloced;
 
 	struct be_mcc_obj mcc_obj;
-	struct mutex mcc_lock;	/* For serializing mcc cmds to BE card */
+	spinlock_t mcc_lock;	/* For serializing mcc cmds to BE card */
 	spinlock_t mcc_cq_lock;
 
 	u16 cfg_num_rx_irqs;		/* configured via set-channels */
@@ -655,8 +654,6 @@ struct be_adapter {
 	u8 hba_port_num;
 	u16 pvid;
 	__be16 vxlan_port;		/* offloaded vxlan port num */
-	int vxlan_port_count;		/* active vxlan port count */
-	struct list_head vxlan_port_list;	/* vxlan port list */
 	struct phy_info phy;
 	u8 wol_cap;
 	bool wol_en;
@@ -680,9 +677,6 @@ struct be_adapter {
 struct be_cmd_work {
 	struct work_struct work;
 	struct be_adapter *adapter;
-	union {
-		__be16 vxlan_port;
-	} info;
 };
 
 #define be_physfn(adapter)		(!adapter->virtfn)

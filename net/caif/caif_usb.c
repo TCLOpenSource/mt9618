@@ -62,7 +62,7 @@ static int cfusbl_transmit(struct cflayer *layr, struct cfpkt *pkt)
 	hpad = (info->hdr_len + CFUSB_PAD_DESCR_SZ) & (CFUSB_ALIGNMENT - 1);
 
 	if (skb_headroom(skb) < ETH_HLEN + CFUSB_PAD_DESCR_SZ + hpad) {
-		pr_warn("Headroom to small\n");
+		pr_warn("Headroom too small\n");
 		kfree_skb(skb);
 		return -EIO;
 	}
@@ -133,6 +133,9 @@ static int cfusbl_device_notify(struct notifier_block *me, unsigned long what,
 	struct usbnet *usbnet;
 	struct usb_device *usbdev;
 	int res;
+
+	if (what == NETDEV_UNREGISTER && dev->reg_state >= NETREG_UNREGISTERED)
+		return 0;
 
 	/* Check whether we have a NCM device, and find its VID/PID. */
 	if (!(dev->dev.parent && dev->dev.parent->driver &&

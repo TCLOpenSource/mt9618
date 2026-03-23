@@ -7,7 +7,6 @@
 #include <linux/export.h>
 #include <linux/sched.h>
 #include <linux/string.h>
-#include <linux/cryptohash.h>
 #include <linux/delay.h>
 #include <linux/in6.h>
 #include <linux/syscalls.h>
@@ -45,11 +44,6 @@ extern void __aeabi_lmul(void);
 extern void __aeabi_uidiv(void);
 extern void __aeabi_uidivmod(void);
 extern void __aeabi_ulcmp(void);
-
-#ifdef CONFIG_MTK_32BIT_DIV_PATCH
-extern unsigned long long __aeabi_uldivmod(unsigned long long, unsigned long long);
-extern long long __aeabi_ldivmod(long long, long long);
-#endif
 
 extern void fpundefinstr(void);
 
@@ -147,10 +141,6 @@ EXPORT_SYMBOL(__aeabi_lmul);
 EXPORT_SYMBOL(__aeabi_uidiv);
 EXPORT_SYMBOL(__aeabi_uidivmod);
 EXPORT_SYMBOL(__aeabi_ulcmp);
-#ifdef CONFIG_MTK_32BIT_DIV_PATCH
-EXPORT_SYMBOL(__aeabi_uldivmod);
-EXPORT_SYMBOL(__aeabi_ldivmod);
-#endif
 #endif
 
 	/* bitops */

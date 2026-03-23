@@ -44,7 +44,7 @@ altro, utili riferimenti:
 - "C:  A Reference Manual" di Harbison and Steele [Prentice Hall]
 
 Il kernel è stato scritto usando GNU C e la toolchain GNU.
-Sebbene si attenga allo standard ISO C89, esso utilizza una serie di
+Sebbene si attenga allo standard ISO C11, esso utilizza una serie di
 estensioni che non sono previste in questo standard. Il kernel è un
 ambiente C indipendente, che non ha alcuna dipendenza dalle librerie
 C standard, così alcune parti del C standard non sono supportate.
@@ -357,17 +357,10 @@ benvenuti.
 Riportare Bug
 -------------
 
-https://bugzilla.kernel.org è dove gli sviluppatori del kernel Linux tracciano
-i bachi del kernel. Gli utenti sono incoraggiati nel riportare tutti i bachi
-che trovano utilizzando questo strumento.
-Per maggiori dettagli su come usare il bugzilla del kernel, guardare:
-
-	https://bugzilla.kernel.org/page.cgi?id=faq.html
-
-Il file admin-guide/reporting-bugs.rst nella cartella principale del kernel
-fornisce un buon modello sul come segnalare un baco nel kernel, e spiega quali
-informazioni sono necessarie agli sviluppatori per poter aiutare il
-rintracciamento del problema.
+Il file 'Documentation/admin-guide/reporting-issues.rst' nella
+cartella principale del kernel spiega come segnalare un baco nel
+kernel, e fornisce dettagli su quali informazioni sono necessarie agli
+sviluppatori del kernel per poter studiare il problema.
 
 Gestire i rapporti sui bug
 --------------------------
@@ -380,8 +373,14 @@ al corrente della vostra presenza. Riparare bachi è una delle migliori vie per
 acquisire meriti tra gli altri sviluppatori, perchè non a molte persone piace
 perdere tempo a sistemare i bachi di altri.
 
-Per lavorare sui rapporti di bachi già riportati, andate su
-https://bugzilla.kernel.org.
+Per lavorare sui bachi già segnalati, per prima cosa cercate il
+sottosistema che vi interessa. Poi, verificate nel file MAINTAINERS
+dove vengono collezionati solitamente i bachi per quel sottosistema;
+spesso sarà una lista di discussione, raramente un bugtracker. Cercate
+bachi nell'archivio e aiutate dove credete di poterlo fare. Potete
+anche consultare https://bugzilla.kernel.org; però, solo una manciata di
+sottosistemi lo usano attivamente, ciò nonostante i bachi che
+coinvolgono l'intero kernel sono sempre riportati lì.
 
 Liste di discussione
 --------------------

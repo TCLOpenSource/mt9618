@@ -20,6 +20,8 @@
 #include <linux/dma-heap.h>
 #include <uapi/linux/dma-heap.h>
 
+#include <trace/hooks/dmabuf.h>
+
 #define DEVNAME "dma_heap"
 
 #define NUM_HEAP_MINORS 128
@@ -80,10 +82,15 @@ struct dma_buf *dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
 				      unsigned int fd_flags,
 				      unsigned int heap_flags)
 {
+	bool vh_valid = false;
+
+	trace_android_vh_dmabuf_heap_flags_validation(heap,
+		len, fd_flags, heap_flags, &vh_valid);
+
 	if (fd_flags & ~DMA_HEAP_VALID_FD_FLAGS)
 		return ERR_PTR(-EINVAL);
 
-	if (heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS)
+	if (heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS && !vh_valid)
 		return ERR_PTR(-EINVAL);
 	/*
 	 * Allocations from all heaps have to begin
@@ -297,7 +304,7 @@ EXPORT_SYMBOL_GPL(dma_heap_get_name);
 
 struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
 {
-	struct dma_heap *heap, *err_ret;
+	struct dma_heap *heap, *h, *err_ret;
 	unsigned int minor;
 	int ret;
 
@@ -308,15 +315,6 @@ struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
 
 	if (!exp_info->ops || !exp_info->ops->allocate) {
 		pr_err("dma_heap: Cannot add heap with invalid ops struct\n");
-		return ERR_PTR(-EINVAL);
-	}
-
-	/* check the name is unique */
-	heap = dma_heap_find(exp_info->name);
-	if (heap) {
-		pr_err("dma_heap: Already registered heap named %s\n",
-		       exp_info->name);
-		dma_heap_put(heap);
 		return ERR_PTR(-EINVAL);
 	}
 
@@ -363,13 +361,27 @@ struct dma_heap *dma_heap_add(const struct dma_heap_export_info *exp_info)
 	/* Make sure it doesn't disappear on us */
 	heap->heap_dev = get_device(heap->heap_dev);
 
-	/* Add heap to the list */
 	mutex_lock(&heap_list_lock);
+	/* check the name is unique */
+	list_for_each_entry(h, &heap_list, list) {
+		if (!strcmp(h->name, exp_info->name)) {
+			mutex_unlock(&heap_list_lock);
+			pr_err("dma_heap: Already registered heap named %s\n",
+			       exp_info->name);
+			err_ret = ERR_PTR(-EINVAL);
+			put_device(heap->heap_dev);
+			goto err3;
+		}
+	}
+
+	/* Add heap to the list */
 	list_add(&heap->list, &heap_list);
 	mutex_unlock(&heap_list_lock);
 
 	return heap;
 
+err3:
+	device_destroy(dma_heap_class, heap->heap_devt);
 err2:
 	cdev_del(&heap->heap_cdev);
 err1:
@@ -385,21 +397,81 @@ static char *dma_heap_devnode(struct device *dev, umode_t *mode)
 	return kasprintf(GFP_KERNEL, "dma_heap/%s", dev_name(dev));
 }
 
+static ssize_t total_pools_kb_show(struct kobject *kobj,
+				   struct kobj_attribute *attr, char *buf)
+{
+	struct dma_heap *heap;
+	u64 total_pool_size = 0;
+
+	mutex_lock(&heap_list_lock);
+	list_for_each_entry(heap, &heap_list, list) {
+		if (heap->ops->get_pool_size)
+			total_pool_size += heap->ops->get_pool_size(heap);
+	}
+	mutex_unlock(&heap_list_lock);
+
+	return sysfs_emit(buf, "%llu\n", total_pool_size / 1024);
+}
+
+static struct kobj_attribute total_pools_kb_attr =
+	__ATTR_RO(total_pools_kb);
+
+static struct attribute *dma_heap_sysfs_attrs[] = {
+	&total_pools_kb_attr.attr,
+	NULL,
+};
+
+ATTRIBUTE_GROUPS(dma_heap_sysfs);
+
+static struct kobject *dma_heap_kobject;
+
+static int dma_heap_sysfs_setup(void)
+{
+	int ret;
+
+	dma_heap_kobject = kobject_create_and_add("dma_heap", kernel_kobj);
+	if (!dma_heap_kobject)
+		return -ENOMEM;
+
+	ret = sysfs_create_groups(dma_heap_kobject, dma_heap_sysfs_groups);
+	if (ret) {
+		kobject_put(dma_heap_kobject);
+		return ret;
+	}
+
+	return 0;
+}
+
+static void dma_heap_sysfs_teardown(void)
+{
+	kobject_put(dma_heap_kobject);
+}
+
 static int dma_heap_init(void)
 {
 	int ret;
 
-	ret = alloc_chrdev_region(&dma_heap_devt, 0, NUM_HEAP_MINORS, DEVNAME);
+	ret = dma_heap_sysfs_setup();
 	if (ret)
 		return ret;
 
+	ret = alloc_chrdev_region(&dma_heap_devt, 0, NUM_HEAP_MINORS, DEVNAME);
+	if (ret)
+		goto err_chrdev;
+
 	dma_heap_class = class_create(THIS_MODULE, DEVNAME);
 	if (IS_ERR(dma_heap_class)) {
-		unregister_chrdev_region(dma_heap_devt, NUM_HEAP_MINORS);
-		return PTR_ERR(dma_heap_class);
+		ret = PTR_ERR(dma_heap_class);
+		goto err_class;
 	}
 	dma_heap_class->devnode = dma_heap_devnode;
 
 	return 0;
+
+err_class:
+	unregister_chrdev_region(dma_heap_devt, NUM_HEAP_MINORS);
+err_chrdev:
+	dma_heap_sysfs_teardown();
+	return ret;
 }
 subsys_initcall(dma_heap_init);

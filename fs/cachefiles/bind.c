@@ -108,8 +108,6 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
 	atomic_set(&fsdef->usage, 1);
 	fsdef->type = FSCACHE_COOKIE_TYPE_INDEX;
 
-	_debug("- fsdef %p", fsdef);
-
 	/* look up the directory at the root of the cache */
 	ret = kern_path(cache->rootdirname, LOOKUP_DIRECTORY, &path);
 	if (ret < 0)
@@ -117,6 +115,12 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
 
 	cache->mnt = path.mnt;
 	root = path.dentry;
+
+	ret = -EINVAL;
+	if (is_idmapped_mnt(path.mnt)) {
+		pr_warn("File cache on idmapped mounts not supported");
+		goto error_unsupported;
+	}
 
 	/* check parameters */
 	ret = -EOPNOTSUPP;
@@ -245,6 +249,8 @@ error_open_root:
 	kmem_cache_free(cachefiles_object_jar, fsdef);
 error_root_object:
 	cachefiles_end_secure(cache, saved_cred);
+	put_cred(cache->cache_cred);
+	cache->cache_cred = NULL;
 	pr_err("Failed to register: %d\n", ret);
 	return ret;
 }
@@ -265,6 +271,7 @@ void cachefiles_daemon_unbind(struct cachefiles_cache *cache)
 
 	dput(cache->graveyard);
 	mntput(cache->mnt);
+	put_cred(cache->cache_cred);
 
 	kfree(cache->rootdirname);
 	kfree(cache->secctx);

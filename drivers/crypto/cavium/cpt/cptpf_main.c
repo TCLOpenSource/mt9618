@@ -10,7 +10,6 @@
 #include <linux/moduleparam.h>
 #include <linux/pci.h>
 #include <linux/printk.h>
-#include <linux/version.h>
 
 #include "cptpf.h"
 
@@ -45,7 +44,7 @@ static void cpt_disable_cores(struct cpt_device *cpt, u64 coremask,
 		dev_err(dev, "Cores still busy %llx", coremask);
 		grp = cpt_read_csr64(cpt->reg_base,
 				     CPTX_PF_EXEC_BUSY(0));
-		if (timeout--)
+		if (!timeout--)
 			break;
 
 		udelay(CSR_DELAY);
@@ -244,7 +243,7 @@ cpt_init_fail:
 
 struct ucode_header {
 	u8 version[CPT_UCODE_VERSION_SZ];
-	u32 code_length;
+	__be32 code_length;
 	u32 data_length;
 	u64 sram_address;
 };
@@ -290,10 +289,10 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
 
 	/* Byte swap 64-bit */
 	for (j = 0; j < (mcode->code_size / 8); j++)
-		((u64 *)mcode->code)[j] = cpu_to_be64(((u64 *)mcode->code)[j]);
+		((__be64 *)mcode->code)[j] = cpu_to_be64(((u64 *)mcode->code)[j]);
 	/*  MC needs 16-bit swap */
 	for (j = 0; j < (mcode->code_size / 2); j++)
-		((u16 *)mcode->code)[j] = cpu_to_be16(((u16 *)mcode->code)[j]);
+		((__be16 *)mcode->code)[j] = cpu_to_be16(((u16 *)mcode->code)[j]);
 
 	dev_dbg(dev, "mcode->code_size = %u\n", mcode->code_size);
 	dev_dbg(dev, "mcode->is_ae = %u\n", mcode->is_ae);
@@ -303,6 +302,8 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
 
 	ret = do_cpt_init(cpt, mcode);
 	if (ret) {
+		dma_free_coherent(&cpt->pdev->dev, mcode->code_size,
+				  mcode->code, mcode->phys_base);
 		dev_err(dev, "do_cpt_init failed with ret: %d\n", ret);
 		goto fw_release;
 	}
@@ -395,7 +396,7 @@ static void cpt_disable_all_cores(struct cpt_device *cpt)
 		dev_err(dev, "Cores still busy");
 		grp = cpt_read_csr64(cpt->reg_base,
 				     CPTX_PF_EXEC_BUSY(0));
-		if (timeout--)
+		if (!timeout--)
 			break;
 
 		udelay(CSR_DELAY);
@@ -404,7 +405,7 @@ static void cpt_disable_all_cores(struct cpt_device *cpt)
 	cpt_write_csr64(cpt->reg_base, CPTX_PF_EXE_CTL(0), 0);
 }
 
-/**
+/*
  * Ensure all cores are disengaged from all groups by
  * calling cpt_disable_all_cores() before calling this
  * function.
@@ -571,15 +572,9 @@ static int cpt_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 		goto cpt_err_disable_device;
 	}
 
-	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(48));
+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(48));
 	if (err) {
-		dev_err(dev, "Unable to get usable DMA configuration\n");
-		goto cpt_err_release_regions;
-	}
-
-	err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(48));
-	if (err) {
-		dev_err(dev, "Unable to get 48-bit DMA for consistent allocations\n");
+		dev_err(dev, "Unable to get usable 48-bit DMA configuration\n");
 		goto cpt_err_release_regions;
 	}
 

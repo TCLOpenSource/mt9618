@@ -29,10 +29,8 @@
 #include <linux/slab.h>
 #include <linux/hugetlb.h>
 
-#include <asm/pgalloc.h>
 #include <asm/prom.h>
 #include <asm/io.h>
-#include <asm/pgtable.h>
 #include <asm/mmu.h>
 #include <asm/smp.h>
 #include <asm/machdep.h>
@@ -56,11 +54,6 @@
 phys_addr_t total_memory;
 phys_addr_t total_lowmem;
 
-phys_addr_t memstart_addr = (phys_addr_t)~0ull;
-EXPORT_SYMBOL(memstart_addr);
-phys_addr_t kernstart_addr;
-EXPORT_SYMBOL(kernstart_addr);
-
 #ifdef CONFIG_RELOCATABLE
 /* Used in __va()/__pa() */
 long long virt_phys_offset;
@@ -77,12 +70,6 @@ EXPORT_SYMBOL(agp_special_page);
 
 void MMU_init(void);
 
-/*
- * this tells the system to map all of ram with the segregs
- * (i.e. page tables) instead of the bats.
- * -- Cort
- */
-int __map_without_bats;
 int __map_without_ltlbs;
 
 /* max amount of low RAM to map in */
@@ -93,19 +80,16 @@ unsigned long __max_low_memory = MAX_LOW_MEM;
  */
 static void __init MMU_setup(void)
 {
-	/* Check for nobats option (used in mapin_ram). */
-	if (strstr(boot_command_line, "nobats")) {
-		__map_without_bats = 1;
-	}
+	if (IS_ENABLED(CONFIG_PPC_8xx))
+		return;
 
-	if (strstr(boot_command_line, "noltlbs")) {
+	if (IS_ENABLED(CONFIG_KFENCE))
 		__map_without_ltlbs = 1;
-	}
-	if (debug_pagealloc_enabled()) {
-		__map_without_bats = 1;
+
+	if (debug_pagealloc_enabled())
 		__map_without_ltlbs = 1;
-	}
-	if (strict_kernel_rwx_enabled() && !IS_ENABLED(CONFIG_PPC_8xx))
+
+	if (strict_kernel_rwx_enabled())
 		__map_without_ltlbs = 1;
 }
 

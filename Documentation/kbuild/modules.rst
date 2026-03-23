@@ -21,6 +21,7 @@ This document describes how to build an out-of-tree kernel module.
 	   --- 4.1 Kernel Includes
 	   --- 4.2 Single Subdirectory
 	   --- 4.3 Several Subdirectories
+	   --- 4.4 UAPI Headers Installation
 	=== 5. Module Installation
 	   --- 5.1 INSTALL_MOD_PATH
 	   --- 5.2 INSTALL_MOD_DIR
@@ -131,6 +132,10 @@ executed to make module versioning work.
 		/lib/modules/<kernel_release>/extra/, but a prefix may
 		be added with INSTALL_MOD_PATH (discussed in section 5).
 
+	headers_install
+		Export headers in a format suitable for userspace. The default
+		location is $PWD/usr. INSTALL_HDR_PATH can change this path.
+
 	clean
 		Remove all generated files in the module directory only.
 
@@ -182,7 +187,8 @@ module 8123.ko, which is built from the following files::
 	8123_pci.c
 	8123_bin.o_shipped	<= Binary blob
 
---- 3.1 Shared Makefile
+3.1 Shared Makefile
+-------------------
 
 	An external module always includes a wrapper makefile that
 	supports building the module using "make" with no arguments.
@@ -331,7 +337,7 @@ according to the following rule:
 	      There are two notable exceptions to this rule: larger
 	      subsystems have their own directory under include/, such as
 	      include/scsi; and architecture specific headers are located
-	      under arch/$(ARCH)/include/.
+	      under arch/$(SRCARCH)/include/.
 
 4.1 Kernel Includes
 -------------------
@@ -405,6 +411,17 @@ according to the following rule:
 	pointing to the directory where the currently executing kbuild
 	file is located.
 
+4.4 UAPI Headers Installation
+-----------------------------
+
+	External modules may export headers to userspace in a similar
+	fashion to the in-tree counterpart drivers. kbuild supports
+	running headers_install target in an out-of-tree. The location
+	where kbuild searches for headers is $(M)/include/uapi and
+	$(M)/arch/$(SRCARCH)/include/uapi.
+
+	See also Documentation/kbuild/headers_install.rst.
+
 
 5. Module Installation
 ======================
@@ -470,9 +487,9 @@ build.
 
 	The syntax of the Module.symvers file is::
 
-	<CRC>       <Symbol>         <Module>                         <Export Type>     <Namespace>
+		<CRC>       <Symbol>         <Module>                         <Export Type>     <Namespace>
 
-	0xe1cc2a05  usb_stor_suspend drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL USB_STORAGE
+		0xe1cc2a05  usb_stor_suspend drivers/usb/storage/usb-storage  EXPORT_SYMBOL_GPL USB_STORAGE
 
 	The fields are separated by tabs and values may be empty (e.g.
 	if no namespace is defined for an exported symbol).
@@ -492,11 +509,8 @@ build.
 	to the symbols from the kernel to check if all external symbols
 	are defined. This is done in the MODPOST step. modpost obtains
 	the symbols by reading Module.symvers from the kernel source
-	tree. If a Module.symvers file is present in the directory
-	where the external module is being built, this file will be
-	read too. During the MODPOST step, a new Module.symvers file
-	will be written containing all exported symbols that were not
-	defined in the kernel.
+	tree. During the MODPOST step, a new Module.symvers file will be
+	written containing all exported symbols from that external module.
 
 6.3 Symbols From Another External Module
 ----------------------------------------
@@ -504,7 +518,7 @@ build.
 	Sometimes, an external module uses exported symbols from
 	another external module. Kbuild needs to have full knowledge of
 	all symbols to avoid spitting out warnings about undefined
-	symbols. Three solutions exist for this situation.
+	symbols. Two solutions exist for this situation.
 
 	NOTE: The method with a top-level kbuild file is recommended
 	but may be impractical in certain situations.
@@ -531,21 +545,9 @@ build.
 		will then do the expected and compile both modules with
 		full knowledge of symbols from either module.
 
-	Use an extra Module.symvers file
-		When an external module is built, a Module.symvers file
-		is generated containing all exported symbols which are
-		not defined in the kernel. To get access to symbols
-		from bar.ko, copy the Module.symvers file from the
-		compilation of bar.ko to the directory where foo.ko is
-		built. During the module build, kbuild will read the
-		Module.symvers file in the directory of the external
-		module, and when the build is finished, a new
-		Module.symvers file is created containing the sum of
-		all symbols defined and not part of the kernel.
-
 	Use "make" variable KBUILD_EXTRA_SYMBOLS
-		If it is impractical to copy Module.symvers from
-		another module, you can assign a space separated list
+		If it is impractical to add a top-level kbuild file,
+		you can assign a space separated list
 		of files to KBUILD_EXTRA_SYMBOLS in your build file.
 		These files will be loaded by modpost during the
 		initialization of its symbol tables.

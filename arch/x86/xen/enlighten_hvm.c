@@ -11,8 +11,10 @@
 
 #include <asm/cpu.h>
 #include <asm/smp.h>
+#include <asm/io_apic.h>
 #include <asm/reboot.h>
 #include <asm/setup.h>
+#include <asm/idtentry.h>
 #include <asm/hypervisor.h>
 #include <asm/e820/api.h>
 #include <asm/early_ioremap.h>
@@ -99,15 +101,8 @@ static void __init init_hvm_pv_info(void)
 	/* PVH set up hypercall page in xen_prepare_pvh(). */
 	if (xen_pvh_domain())
 		pv_info.name = "Xen PVH";
-	else {
-		u64 pfn;
-		uint32_t msr;
-
+	else
 		pv_info.name = "Xen HVM";
-		msr = cpuid_ebx(base + 2);
-		pfn = __pa(hypercall_page);
-		wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
-	}
 
 	xen_setup_features();
 
@@ -116,6 +111,17 @@ static void __init init_hvm_pv_info(void)
 		this_cpu_write(xen_vcpu_id, ebx);
 	else
 		this_cpu_write(xen_vcpu_id, smp_processor_id());
+}
+
+DEFINE_IDTENTRY_SYSVEC(sysvec_xen_hvm_callback)
+{
+	struct pt_regs *old_regs = set_irq_regs(regs);
+
+	inc_irq_stat(irq_hv_callback_count);
+
+	xen_hvm_evtchn_do_upcall();
+
+	set_irq_regs(old_regs);
 }
 
 #ifdef CONFIG_KEXEC_CORE
@@ -151,10 +157,10 @@ static int xen_cpu_up_prepare_hvm(unsigned int cpu)
 	else
 		per_cpu(xen_vcpu_id, cpu) = cpu;
 	rc = xen_vcpu_setup(cpu);
-	if (rc)
+	if (rc || !xen_have_vector_callback)
 		return rc;
 
-	if (xen_have_vector_callback && xen_feature(XENFEAT_hvm_safe_pvclock))
+	if (xen_feature(XENFEAT_hvm_safe_pvclock))
 		xen_setup_timer(cpu);
 
 	rc = xen_smp_intr_init(cpu);
@@ -270,6 +276,10 @@ static uint32_t __init xen_platform_hvm(void)
 
 	if (xen_pv_domain())
 		return 0;
+
+	/* Set correct hypercall function. */
+	if (xen_domain)
+		xen_hypercall_setfunc();
 
 	if (xen_pvh_domain() && nopv) {
 		/* Guest booting via the Xen-PVH boot entry goes here */

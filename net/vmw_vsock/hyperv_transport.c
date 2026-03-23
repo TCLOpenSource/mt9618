@@ -13,15 +13,16 @@
 #include <linux/hyperv.h>
 #include <net/sock.h>
 #include <net/af_vsock.h>
+#include <asm/hyperv-tlfs.h>
 
 /* Older (VMBUS version 'VERSION_WIN10' or before) Windows hosts have some
- * stricter requirements on the hv_sock ring buffer size of six 4K pages. Newer
- * hosts don't have this limitation; but, keep the defaults the same for compat.
+ * stricter requirements on the hv_sock ring buffer size of six 4K pages.
+ * hyperv-tlfs defines HV_HYP_PAGE_SIZE as 4K. Newer hosts don't have this
+ * limitation; but, keep the defaults the same for compat.
  */
-#define PAGE_SIZE_4K		4096
-#define RINGBUFFER_HVS_RCV_SIZE (PAGE_SIZE_4K * 6)
-#define RINGBUFFER_HVS_SND_SIZE (PAGE_SIZE_4K * 6)
-#define RINGBUFFER_HVS_MAX_SIZE (PAGE_SIZE_4K * 64)
+#define RINGBUFFER_HVS_RCV_SIZE (HV_HYP_PAGE_SIZE * 6)
+#define RINGBUFFER_HVS_SND_SIZE (HV_HYP_PAGE_SIZE * 6)
+#define RINGBUFFER_HVS_MAX_SIZE (HV_HYP_PAGE_SIZE * 64)
 
 /* The MTU is 16KB per the host side's design */
 #define HVS_MTU_SIZE		(1024 * 16)
@@ -54,7 +55,8 @@ struct hvs_recv_buf {
  * ringbuffer APIs that allow us to directly copy data from userspace buffer
  * to VMBus ringbuffer.
  */
-#define HVS_SEND_BUF_SIZE (PAGE_SIZE_4K - sizeof(struct vmpipe_proto_header))
+#define HVS_SEND_BUF_SIZE \
+		(HV_HYP_PAGE_SIZE - sizeof(struct vmpipe_proto_header))
 
 struct hvs_send_buf {
 	/* The header before the payload data */
@@ -364,10 +366,10 @@ static void hvs_open_connection(struct vmbus_channel *chan)
 	} else {
 		sndbuf = max_t(int, sk->sk_sndbuf, RINGBUFFER_HVS_SND_SIZE);
 		sndbuf = min_t(int, sndbuf, RINGBUFFER_HVS_MAX_SIZE);
-		sndbuf = ALIGN(sndbuf, PAGE_SIZE);
+		sndbuf = ALIGN(sndbuf, HV_HYP_PAGE_SIZE);
 		rcvbuf = max_t(int, sk->sk_rcvbuf, RINGBUFFER_HVS_RCV_SIZE);
 		rcvbuf = min_t(int, rcvbuf, RINGBUFFER_HVS_MAX_SIZE);
-		rcvbuf = ALIGN(rcvbuf, PAGE_SIZE);
+		rcvbuf = ALIGN(rcvbuf, HV_HYP_PAGE_SIZE);
 	}
 
 	ret = vmbus_open(chan, sndbuf, rcvbuf, NULL, 0, hvs_channel_cb,
@@ -397,7 +399,7 @@ static void hvs_open_connection(struct vmbus_channel *chan)
 
 	if (conn_from_host) {
 		new->sk_state = TCP_ESTABLISHED;
-		sk->sk_ack_backlog++;
+		sk_acceptq_added(sk);
 
 		hvs_new->vm_srv_id = *if_type;
 		hvs_new->host_srv_id = *if_instance;
@@ -520,12 +522,9 @@ static bool hvs_close_lock_held(struct vsock_sock *vsk)
 
 static void hvs_release(struct vsock_sock *vsk)
 {
-	struct sock *sk = sk_vsock(vsk);
 	bool remove_sock;
 
-	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
 	remove_sock = hvs_close_lock_held(vsk);
-	release_sock(sk);
 	if (remove_sock)
 		vsock_remove_sock(vsk);
 }
@@ -539,6 +538,7 @@ static void hvs_destruct(struct vsock_sock *vsk)
 		vmbus_hvsock_device_unregister(chan);
 
 	kfree(hvs);
+	vsk->trans = NULL;
 }
 
 static int hvs_dgram_bind(struct vsock_sock *vsk, struct sockaddr_vm *addr)
@@ -597,7 +597,7 @@ static ssize_t hvs_stream_dequeue(struct vsock_sock *vsk, struct msghdr *msg,
 		return -EOPNOTSUPP;
 
 	if (need_refill) {
-		hvs->recv_desc = hv_pkt_iter_first(hvs->chan);
+		hvs->recv_desc = hv_pkt_iter_first_raw(hvs->chan);
 		ret = hvs_update_recv_data(hvs);
 		if (ret)
 			return ret;
@@ -611,7 +611,7 @@ static ssize_t hvs_stream_dequeue(struct vsock_sock *vsk, struct msghdr *msg,
 
 	hvs->recv_data_len -= to_read;
 	if (hvs->recv_data_len == 0) {
-		hvs->recv_desc = hv_pkt_iter_next(hvs->chan, hvs->recv_desc);
+		hvs->recv_desc = hv_pkt_iter_next_raw(hvs->chan, hvs->recv_desc);
 		if (hvs->recv_desc) {
 			ret = hvs_update_recv_data(hvs);
 			if (ret)
@@ -634,7 +634,7 @@ static ssize_t hvs_stream_enqueue(struct vsock_sock *vsk, struct msghdr *msg,
 	ssize_t ret = 0;
 	ssize_t bytes_written = 0;
 
-	BUILD_BUG_ON(sizeof(*send_buf) != PAGE_SIZE_4K);
+	BUILD_BUG_ON(sizeof(*send_buf) != HV_HYP_PAGE_SIZE);
 
 	send_buf = kmalloc(sizeof(*send_buf), GFP_KERNEL);
 	if (!send_buf)
@@ -863,6 +863,24 @@ static int hvs_remove(struct hv_device *hdev)
 	return 0;
 }
 
+/* hv_sock connections can not persist across hibernation, and all the hv_sock
+ * channels are forced to be rescinded before hibernation: see
+ * vmbus_bus_suspend(). Here the dummy hvs_suspend() and hvs_resume()
+ * are only needed because hibernation requires that every vmbus device's
+ * driver should have a .suspend and .resume callback: see vmbus_suspend().
+ */
+static int hvs_suspend(struct hv_device *hv_dev)
+{
+	/* Dummy */
+	return 0;
+}
+
+static int hvs_resume(struct hv_device *dev)
+{
+	/* Dummy */
+	return 0;
+}
+
 /* This isn't really used. See vmbus_match() and vmbus_probe() */
 static const struct hv_vmbus_device_id id_table[] = {
 	{},
@@ -874,6 +892,8 @@ static struct hv_driver hvs_drv = {
 	.id_table	= id_table,
 	.probe		= hvs_probe,
 	.remove		= hvs_remove,
+	.suspend	= hvs_suspend,
+	.resume		= hvs_resume,
 };
 
 static int __init hvs_init(void)

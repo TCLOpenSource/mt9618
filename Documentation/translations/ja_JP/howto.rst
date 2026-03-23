@@ -1,3 +1,7 @@
+.. raw:: latex
+
+	\kerneldocCJKoff
+
 NOTE:
 This is a version of Documentation/process/howto.rst translated into Japanese.
 This document is maintained by Tsugikazu Shibata <tshibata@ab.jp.nec.com>
@@ -10,6 +14,10 @@ a fork. So if you have any comments or updates for this file, please
 try to update the original English file first.
 
 ----------------------------------
+
+.. raw:: latex
+
+	\kerneldocCJKon
 
 この文書は、
 Documentation/process/howto.rst
@@ -57,7 +65,7 @@ Linux カーネル開発のやり方
  - 『新・詳説 C 言語 H&S リファレンス』 (サミュエル P ハービソン/ガイ L スティール共著 斉藤 信男監訳)[ソフトバンク]
 
 カーネルは GNU C と GNU ツールチェインを使って書かれています。カーネル
-は ISO C89 仕様に準拠して書く一方で、標準には無い言語拡張を多く使って
+は ISO C11 仕様に準拠して書く一方で、標準には無い言語拡張を多く使って
 います。カーネルは標準 C ライブラリに依存しない、C 言語非依存環境です。
 そのため、C の標準の中で使えないものもあります。特に任意の long long
 の除算や浮動小数点は使えません。カーネルがツールチェインや C 言語拡張

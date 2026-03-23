@@ -76,7 +76,7 @@ static bool ms5611_prom_is_valid(u16 *prom, size_t len)
 
 	crc = (crc >> 12) & 0x000F;
 
-	return crc_orig != 0x0000 && crc == crc_orig;
+	return crc == crc_orig;
 }
 
 static int ms5611_read_prom(struct iio_dev *indio_dev)
@@ -442,7 +442,6 @@ int ms5611_probe(struct iio_dev *indio_dev, struct device *dev,
 	st->pressure_osr =
 		&ms5611_avail_pressure_osr[ARRAY_SIZE(ms5611_avail_pressure_osr)
 					   - 1];
-	indio_dev->dev.parent = dev;
 	indio_dev->name = name;
 	indio_dev->info = &ms5611_info;
 	indio_dev->channels = ms5611_channels;

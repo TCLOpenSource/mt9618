@@ -27,7 +27,6 @@
 #include <linux/pagemap.h>
 #include <linux/uaccess.h>
 #include <linux/mem_encrypt.h>
-#include <asm/pgtable.h>
 #include <asm/io.h>
 #include "internal.h"
 
@@ -374,6 +373,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
 		/* leave now if filled buffer already */
 		if (buflen == 0)
 			return acc;
+
+		cond_resched();
 	}
 
 	list_for_each_entry(m, &vmcore_list, list) {
@@ -395,6 +396,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
 			if (buflen == 0)
 				return acc;
 		}
+
+		cond_resched();
 	}
 
 	return acc;
@@ -445,10 +448,6 @@ static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
 #endif
 }
 
-static const struct vm_operations_struct vmcore_mmap_ops = {
-	.fault = mmap_vmcore_fault,
-};
-
 /**
  * vmcore_alloc_buf - allocate buffer in vmalloc memory
  * @sizez: size of buffer
@@ -476,6 +475,11 @@ static inline char *vmcore_alloc_buf(size_t size)
  * virtually contiguous user-space in ELF layout.
  */
 #ifdef CONFIG_MMU
+
+static const struct vm_operations_struct vmcore_mmap_ops = {
+	.fault = mmap_vmcore_fault,
+};
+
 /*
  * remap_oldmem_pfn_checked - do remap_oldmem_pfn_range replacing all pages
  * reported as not being ram with the zero page.
@@ -672,10 +676,10 @@ static int mmap_vmcore(struct file *file, struct vm_area_struct *vma)
 }
 #endif
 
-static const struct file_operations proc_vmcore_operations = {
-	.read		= read_vmcore,
-	.llseek		= default_llseek,
-	.mmap		= mmap_vmcore,
+static const struct proc_ops vmcore_proc_ops = {
+	.proc_read	= read_vmcore,
+	.proc_lseek	= default_llseek,
+	.proc_mmap	= mmap_vmcore,
 };
 
 static struct vmcore* __init get_new_element(void)
@@ -1508,11 +1512,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
 	return 0;
 
 out_err:
-	if (buf)
-		vfree(buf);
-
-	if (dump)
-		vfree(dump);
+	vfree(buf);
+	vfree(dump);
 
 	return ret;
 }
@@ -1560,7 +1561,7 @@ static int __init vmcore_init(void)
 	elfcorehdr_free(elfcorehdr_addr);
 	elfcorehdr_addr = ELFCORE_ADDR_ERR;
 
-	proc_vmcore = proc_create("vmcore", S_IRUSR, NULL, &proc_vmcore_operations);
+	proc_vmcore = proc_create("vmcore", S_IRUSR, NULL, &vmcore_proc_ops);
 	if (proc_vmcore)
 		proc_vmcore->size = vmcore_size;
 	return 0;

@@ -21,9 +21,6 @@
 #include <media/videobuf2-core.h>
 #include <media/videobuf2-dma-contig.h>
 #include <media/videobuf2-vmalloc.h>
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-#include <media/videobuf2-dma-sg.h>
-#endif
 
 /**
  * enum dvb_buf_type - types of Digital TV memory-mapped buffers
@@ -33,9 +30,6 @@
  */
 enum dvb_buf_type {
 	DVB_BUF_TYPE_CAPTURE        = 1,
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	DVB_BUF_TYPE_CAPTURE_MPLANE = 2,
-#endif
 };
 
 /**
@@ -62,14 +56,6 @@ enum dvb_vb2_states {
 	DVB_VB2_STATE_STREAMON	= 0x4,
 };
 
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-enum dvb_vb2_plane_attrs {
-	DVB_VB2_PLANE_ATTR_NONE		= 0x0,
-	DVB_VB2_PLANE_ATTR_NONBLOCK	= 0x1,
-	DVB_VB2_PLANE_ATTR_WO_COPY	= 0x2,
-};
-#endif
-
 #define DVB_VB2_NAME_MAX (20)
 
 /**
@@ -81,9 +67,6 @@ enum dvb_vb2_plane_attrs {
 struct dvb_buffer {
 	struct vb2_buffer	vb;
 	struct list_head	list;
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	struct vb2_plane	planes[VB2_MAX_PLANES];
-#endif
 };
 
 /**
@@ -113,33 +96,16 @@ struct dvb_buffer {
  */
 struct dvb_vb2_ctx {
 	struct vb2_queue	vb_q;
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	enum dvb_buf_type	type;
-	enum vb2_memory		memory;
-#endif
 	struct mutex		mutex;
 	spinlock_t		slock;
 	struct list_head	dvb_q;
 	struct dvb_buffer	*buf;
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	int	offset[VB2_MAX_PLANES];
-	int	remain[VB2_MAX_PLANES];
-#else
-	int offset;
-	int remain;
-#endif
+	int	offset;
+	int	remain;
 	int	state;
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	int buf_siz[VB2_MAX_PLANES];
-#else
 	int	buf_siz;
-#endif
 	int	buf_cnt;
 	int	nonblocking;
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-	u32 plane_attr[VB2_MAX_PLANES];
-	int plane_depth;
-#endif
 
 	enum dmx_buffer_flags flags;
 	u32	count;
@@ -191,28 +157,6 @@ int dvb_vb2_release(struct dvb_vb2_ctx *ctx);
  * Return: 0 if not streaming, 1 otherwise.
  */
 int dvb_vb2_is_streaming(struct dvb_vb2_ctx *ctx);
-
-#ifdef CONFIG_ARCH_MEDIATEK_DTV
-int dvb_vb2_set_plane_attr(struct dvb_vb2_ctx *ctx,
-			unsigned int plane_no,
-			enum dvb_vb2_plane_attrs attrs);
-
-/**
- * dvb_vb2_fill_plane - fills a plane of VB2 buffer
- * @ctx:	control struct for VB2 handler
- * @src:	place where the data is stored
- * @len:	number of bytes to be copied from @src
- * @plane_no:
- *		plane number of VB2 buffer
- * @buffer_flags:
- *		pointer to buffer flags as defined by &enum dmx_buffer_flags.
- *		can be NULL.
- */
-int dvb_vb2_fill_plane(struct dvb_vb2_ctx *ctx,
-			const unsigned char *src, int len,
-			unsigned int plane_no,
-			enum dmx_buffer_flags *buffer_flags);
-#endif
 
 /**
  * dvb_vb2_fill_buffer - fills a VB2 buffer

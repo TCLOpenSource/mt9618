@@ -57,8 +57,8 @@ static int timer_of_irq_init(struct device_node *np,
 	if (of_irq->name) {
 		of_irq->irq = ret = of_irq_get_byname(np, of_irq->name);
 		if (ret < 0) {
-			pr_err("Failed to get interrupt %s for %s\n",
-			       of_irq->name, np->full_name);
+			pr_err("Failed to get interrupt %s for %pOF\n",
+			       of_irq->name, np);
 			return ret;
 		}
 	} else	{
@@ -212,10 +212,10 @@ out_fail:
 EXPORT_SYMBOL_GPL(timer_of_init);
 
 /**
- * timer_of_cleanup - release timer_of ressources
+ * timer_of_cleanup - release timer_of resources
  * @to: timer_of structure
  *
- * Release the ressources that has been used in timer_of_init().
+ * Release the resources that has been used in timer_of_init().
  * This function should be called in init error cases
  */
 void timer_of_cleanup(struct timer_of *to)
